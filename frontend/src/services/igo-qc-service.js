@@ -26,7 +26,7 @@ export function getSeqAnalysisProjects() {
         .catch(error => {throw new Error('Unable to fetch Seq Analysis Projects: ' + error) });
      */
     return axios
-        .get(config.IGO_QC + '/getSeqAnalysisProjects')
+        .get(config.NODE_API_ROOT + 'homePage/getSeqAnalysisProjects')
         .then(resp => {return parseResp(resp) })
         .catch(error => {throw new Error('Unable to fetch Seq Analysis Projects: ' + error) });
 }

@@ -1,5 +1,5 @@
 var express = require('express');
-const projectController = require('../controllers/HomePageController');
+const projectController = require('../controllers/ProjectController');
 var router = express.Router();
 
 router.get('/:projectId', projectController.renderProjectPage); // do we want to set this up differently?

@@ -1,13 +1,13 @@
 require('dotenv').config();
-
+const http = require('http');
 const path = require('path');
 const express = require("express");
+const apiRouter = require('./routes/api');
 
-//routes
-// const api = require('./routes/api');
-// const getSeqAnalysisProjects = require('./routes/seqAnalysisProjects');
 
-const PORT = process.env.PORT || 3001;
+const port = process.env.PORT || 3001;
+const hostname = '127.0.0.1';
+
 const LIMS_AUTH = {
     username: process.env.LIMS_USER,
     password: process.env.LIMS_PASSWORD,
@@ -15,30 +15,35 @@ const LIMS_AUTH = {
 const LIMS_URL = process.env.LIMS_URL;
 const app = express();
 
+const corsConfig = {
+    origin: true,
+    credentials: true,
+};
+
+//To allow cross-origin requests
+// app.use(cors(corsConfig));
+
 // Have Node serve the files for our built frontend app
 app.use(express.static(path.resolve(__dirname, '../frontend/build')));
 
 // Handle GET requests to /api route
-app.get("/api", (req, res) => {
-    res.json({ message: "Hello from server!" });
-});
-
-// app.use('/homeData/', seqAnalysisProjectsRouter);
-// app.use('/project/, projectRouter);
-
-// Handle GET requests to /getSeqAnalysisProjects route
-// app.get("/api/getSeqAnalysisProjects", getSeqAnalysisProjects);
-
-// // Handle GET requests to /recentRuns route
-// app.get("/recentRuns", (req, res) => {
+// app.get("/api", (req, res) => {
 //     res.json({ message: "Hello from server!" });
 // });
+app.use('/api/', apiRouter);
 
 // All other GET requests not handled before will return our React app
-app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../frontend/build', 'index.html'));
+app.use('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../frontend/public', 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
+app.get('/', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../frontend/public', 'index.html'));
 });
+
+const server = http.createServer(app);
+server.listen(port, hostname, () => {
+    console.log(`Server running at http://${hostname}:${port}/`);
+});
+
+module.exports = server;

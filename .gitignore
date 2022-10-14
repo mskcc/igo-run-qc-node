@@ -1,0 +1,16 @@
+#vs code configurations
+.vscode/
+
+.DS_Store
+
+# Dependency directories
+*/node_modules/
+
+# dotenv environment variables file
+backend/.env
+backend/.prettierrc.json
+backend/.eslintrc.json
+frontend/src/config.dev.js
+frontend/src/config.js
+frontend/src/config.prod.js
+frontend/src/lims_user_config_prod

@@ -3,30 +3,17 @@ import axios from 'axios';
 import config from '../config.js';
 import { handleError, getData } from '../utils/service-utils';
 
-// TODO - remove
-const parseResp = (resp) => {
-    const payload = resp.data
-    return payload.data
+const parseResp = function (resp) {
+    const data = resp.data || [];
+    return data;
 };
-export function getFeedback() {
-    return axios
-        .get(config.IGO_QC + '/getFeedback')
-        .then(resp => {return parseResp(resp) })
-        .catch(error => {throw new Error('Unable to get Feedback: ' + error) });
-}
 
 /**
 * Sends service call to retrieve most recent deliveries
 */
 export function getSeqAnalysisProjects() {
-    /* MOCK DATA - TODO: REMOVE */
-    /*
-    return new Promise((resolve) => { resolve(seqAnalysisProjects) })
-        .then(resp => {return parseResp(resp) })
-        .catch(error => {throw new Error('Unable to fetch Seq Analysis Projects: ' + error) });
-     */
     return axios
-        .get(config.IGO_QC + '/getSeqAnalysisProjects')
+        .get(config.NODE_API_ROOT + '/homePage/getSeqAnalysisProjects')
         .then(resp => {return parseResp(resp) })
         .catch(error => {throw new Error('Unable to fetch Seq Analysis Projects: ' + error) });
 }
@@ -40,24 +27,12 @@ export function getRequestProjects() {
         .catch(error => { throw new Error('Unable to fetch Request Projects: ' + error) });
 }
 export const getProjectInfo = (projectId) => {
-    /* MOCK DATA - TODO: REMOVE */
-    /*
-    return new Promise((resolve) => { resolve(projectInfo) })
-        .then(getData)
-        .catch(handleError);
-     */
     return axios.get(config.IGO_QC + `/projectInfo/${projectId}`)
         .then(getData)
         .catch(handleError)
 };
 export const setRunStatus = (run, project, status, recipe) => {
     return axios.get(`${config.IGO_QC}/changeRunStatus?recordId=${run}&project=${project}&status=${status}&recipe=${recipe}`)
-        .then(getData)
-        .catch(handleError)
-};
-export const submitFeedback = (body, subject, type) => {
-    const content = { body, subject, type };
-    return axios.post(`${config.IGO_QC}/submitFeedback`, content)
         .then(getData)
         .catch(handleError)
 };

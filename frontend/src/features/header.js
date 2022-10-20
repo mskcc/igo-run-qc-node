@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(3),
   },
   header: {
-    backgroundColor: theme.palette.primary.logo,
+    backgroundColor: '#006098',
     color: 'white',
     textAlign: 'center',
   },

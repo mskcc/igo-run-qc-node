@@ -1,9 +1,8 @@
 const winston = require('winston');
 
 const { format } = winston;
-const { constants } = require('./constants');
 
-const logLabel = constants.logger;
+const logLabel = 'RunQc';
 const container = new winston.Container();
 
 const fileConfig = format.combine(

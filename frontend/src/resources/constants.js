@@ -32,3 +32,11 @@ export const CELL_RANGER_SAMPLE_NAME = 'id';
 // HANDSONTABLE
 // Columns not shown as selectors, i.e. shouldn't be toggled off so are not shown
 export const TABLE_MANDATORY_COLUMNS = new Set(['Sample', 'QC Status', 'QC Record Id']);
+
+// PAGE STATE
+export const HOME_PAGE = 'HOME';
+export const PROJECT_PAGE = 'PROJECT';
+
+export const NEEDS_REVIEW_STATE_ID = 'projectsToReview';
+export const FURTHER_SEQ_STATE_ID = 'projectsToSequenceFurther';
+export const PENDING_REQUESTS_STATE_ID = 'requestsPending';

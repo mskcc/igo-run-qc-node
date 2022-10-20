@@ -30,7 +30,7 @@ exports.errorResponse = function (res, msg) {
         message: 'Warning: ' + msg,
     };
     console.log(msg);
-    
+    logger.log('error', msg);
 
     res.status(500).json(data);
 };

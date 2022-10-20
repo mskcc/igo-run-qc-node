@@ -1,29 +1,45 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Header from './components/header';
+import Header from './features/header';
+import { HOME_PAGE, PROJECT_PAGE } from './resources/constants';
+import { HomePage } from './features/home/homePage';
+import { connect } from 'react-redux';
+import * as homePageActions from './redux/actions/homePageActions';
 
-function App() {
-  const [data, setData] = React.useState(null);
+function App({state, dispatch}) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(HOME_PAGE);
 
-  React.useEffect(() => {
-    fetch("/api")
-      .then((res) => res.json())
-      .then((data) => setData(data.message));
-  }, []);
+  // useEffect(() => {
+  //   dispatch.fetchSeqAnalysisData()
+  //     .catch(error => console.error(error));
+  // }, []);
 
   return (
     <div className="App">
       <Router>
         <Header />
-        <p>{!data ? "Loading..." : data}</p>
-        {/* <Switch>
-          <Route path='/' component={HomePage} />
-        </Switch> */}
+        <div className='body-container'>
+          {page === HOME_PAGE ? 
+            <HomePage/>
+          :
+            null
+          }
+        </div>
+        {/* <p>{!data ? 'IGO App home page' : JSON.stringify(data)}</p> */}
       </Router>
       
     </div>
   );
 }
 
+// const mapStateToProps = (state) => ({
+//   ...state
+// });
+// const mapDispatchToProps = {
+//   ...homePageActions
+// };
+
+// export default connect(mapStateToProps, mapDispatchToProps)(App);
 export default App;

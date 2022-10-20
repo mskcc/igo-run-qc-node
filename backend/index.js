@@ -2,17 +2,16 @@ require('dotenv').config();
 const http = require('http');
 const path = require('path');
 const express = require("express");
+const cors = require('cors');
+
 const apiRouter = require('./routes/api');
 
 
 const port = process.env.PORT || 3001;
 const hostname = '127.0.0.1';
 
-const LIMS_AUTH = {
-    username: process.env.LIMS_USER,
-    password: process.env.LIMS_PASSWORD,
-};
-const LIMS_URL = process.env.LIMS_URL;
+var publicDir = path.join(__dirname, 'public');
+
 const app = express();
 
 const corsConfig = {
@@ -20,8 +19,8 @@ const corsConfig = {
     credentials: true,
 };
 
-//To allow cross-origin requests
-// app.use(cors(corsConfig));
+// To allow cross-origin requests
+app.use(cors(corsConfig));
 
 // Have Node serve the files for our built frontend app
 app.use(express.static(path.resolve(__dirname, '../frontend/build')));
@@ -34,11 +33,11 @@ app.use('/api/', apiRouter);
 
 // All other GET requests not handled before will return our React app
 app.use('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../frontend/public', 'index.html'));
+    res.sendFile(path.join(publicDir, 'index.html'));
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../frontend/public', 'index.html'));
+    res.sendFile(path.join(publicDir, 'index.html'));
 });
 
 const server = http.createServer(app);

@@ -2,7 +2,7 @@ import { SET_PROJECTS } from "../actionTypes";
 
 const initialState = {};
 
-const projects = (state = initialState, action) => {
+const projectsReducer = (state = initialState, action) => {
     switch (action.type) {
         case SET_PROJECTS: {
             return action.payload;
@@ -13,4 +13,4 @@ const projects = (state = initialState, action) => {
     }
 };
 
-export default projects;
+export default projectsReducer;

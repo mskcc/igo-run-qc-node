@@ -1,4 +1,12 @@
-import { legacy_createStore as createStore} from "redux";
-import rootReducer from "./reducers";
+import projectsReducer from "./reducers/projectsReducer";
+import homeReducer from "./reducers/homeReducer";
+import { configureStore } from '@reduxjs/toolkit';
 
-export default createStore(rootReducer);
+const store = configureStore({
+    reducer: {
+      projects: projectsReducer,
+      home: homeReducer
+    }
+  });
+
+export default store;

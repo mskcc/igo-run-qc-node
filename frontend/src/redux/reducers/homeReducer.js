@@ -5,10 +5,20 @@ import {
     SET_RECENT_DELIVERIES,
     SET_RECENT_RUNS
 } from "../actionTypes";
+import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {};
 
-const homeData = (state = initialState, action) => {
+const homeSlice = createSlice({
+    name: 'home',
+    initialState,
+    reducers: {
+        
+    }
+})
+
+
+const homeReducer = (state = initialState, action) => {
     switch (action.type) {
         case SET_NEEDS_REVIEW: 
             return {
@@ -41,4 +51,4 @@ const homeData = (state = initialState, action) => {
     }
 };
 
-export default homeData;
+export default homeReducer;

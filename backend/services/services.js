@@ -18,7 +18,7 @@ const axiosConfig = {
 };
 
 const info = (url) => logger.info(`Successfully retrieved response from ${url}`);
-const errorlog = (url) => logger.error(url);
+const errorlog = (url, error) => logger.error(`${url} : ${error}`);
 
 const formatData = function (resp) {
     const data = resp.data || [];
@@ -27,21 +27,18 @@ const formatData = function (resp) {
 
 exports.getRecentDeliveries = () => {
     const url = `${LIMS_URL}/getRecentDeliveries`;
+    logger.info(`Sending request to ${url}`);
     return axios
         .get(url, {
             auth: { ...LIMS_AUTH },
             ...axiosConfig,
         })
         .then((resp) => {
-            if (resp.data && resp.data[0] && resp.data[0].includes('ERROR')) {
-                errorlog(url);
-                return [];
-            }
             info(url);
             return resp;
         })
         .catch((error) => {
-            errorlog(url);
+            errorlog(url, error);
             throw error;
         })
         .then((resp) => {
@@ -51,21 +48,19 @@ exports.getRecentDeliveries = () => {
 
 exports.getSequencingRequests = () => {
     const url = `${LIMS_URL}/getSequencingRequests?days=30&delivered=false`;
+    logger.info(`Sending request to ${url}`);
     return axios
         .get(url, {
             auth: { ...LIMS_AUTH },
             ...axiosConfig,
         })
         .then((resp) => {
-            if (resp.data && resp.data[0] && resp.data[0].includes('ERROR')) {
-                errorlog(url);
-                return [];
-            }
+            // const data = resp.requests || [];
             info(url);
             return resp;
         })
         .catch((error) => {
-            errorlog(url);
+            errorlog(url, error);
             throw error;
         })
         .then((resp) => {
@@ -81,10 +76,6 @@ exports.getRequestProjects = () => {
             ...axiosConfig,
         })
         .then((resp) => {
-            if (resp.data && resp.data[0] && resp.data[0].includes('ERROR')) {
-                errorlog(url);
-                return [];
-            }
             info(url);
             return resp;
         })
@@ -105,10 +96,6 @@ exports.getProjectQc = (projectId) => {
             ...axiosConfig,
         })
         .then((resp) => {
-            if (resp.data && resp.data[0] && resp.data[0].includes('ERROR')) {
-                errorlog(url);
-                return [];
-            }
             info(url);
             return resp;
         })
@@ -129,10 +116,6 @@ exports.getPickListValues = () => {
             ...axiosConfig,
         })
         .then((resp) => {
-            if (resp.data && resp.data[0] && resp.data[0].includes('ERROR')) {
-                errorlog(url);
-                return [];
-            }
             info(url);
             return resp;
         })
@@ -154,10 +137,6 @@ exports.getCrossCheckMetrics = (projects) => {
             ...axiosConfig,
         })
         .then((resp) => {
-            if (resp.data && resp.data[0] && resp.data[0].includes('ERROR')) {
-                errorlog(url);
-                return [];
-            }
             info(url);
             return resp;
         })
@@ -178,10 +157,6 @@ exports.getCellRangerSample = (project, ngsType) => {
             ...axiosConfig,
         })
         .then((resp) => {
-            if (resp.data && resp.data[0] && resp.data[0].includes('ERROR')) {
-                errorlog(url);
-                return [];
-            }
             info(url);
             return resp;
         })
@@ -202,10 +177,6 @@ exports.ngsStatsDownload = (ngsType, sample, projectId, run, download = true) =>
             ...axiosConfig,
         })
         .then((resp) => {
-            if (resp.data && resp.data[0] && resp.data[0].includes('ERROR')) {
-                errorlog(url);
-                return [];
-            }
             info(url);
             return resp;
         })

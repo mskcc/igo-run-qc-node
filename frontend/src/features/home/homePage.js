@@ -1,5 +1,5 @@
 import React from 'react';
-import { SeqAnalysis } from './seqAnalysis';
+import SeqAnalysis from './seqAnalysis';
 
 export const HomePage = () => {
     return (

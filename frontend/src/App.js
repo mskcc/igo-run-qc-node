@@ -1,26 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Header from './components/header';
-import { getSeqAnalysisProjects } from './services/igo-qc-service';
+import Header from './features/header';
 import { HOME_PAGE, PROJECT_PAGE } from './resources/constants';
-import { HomePage } from './components/homePage';
+import { HomePage } from './features/home/homePage';
+import { connect } from 'react-redux';
+import * as homePageActions from './redux/actions/homePageActions';
 
-function App() {
-  const [data, setData] = useState(null);
+function App({state, dispatch}) {
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(HOME_PAGE);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await getSeqAnalysisProjects();
-      const dataRetrieved = response;
-      setData(dataRetrieved);
-    }
-
-    fetchData()
-      .catch(error => console.error(error));
-  }, []);
+  // useEffect(() => {
+  //   dispatch.fetchSeqAnalysisData()
+  //     .catch(error => console.error(error));
+  // }, []);
 
   return (
     <div className="App">
@@ -40,4 +34,12 @@ function App() {
   );
 }
 
+// const mapStateToProps = (state) => ({
+//   ...state
+// });
+// const mapDispatchToProps = {
+//   ...homePageActions
+// };
+
+// export default connect(mapStateToProps, mapDispatchToProps)(App);
 export default App;

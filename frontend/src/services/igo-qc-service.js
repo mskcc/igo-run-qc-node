@@ -12,12 +12,6 @@ const parseResp = function (resp) {
 * Sends service call to retrieve most recent deliveries
 */
 export function getSeqAnalysisProjects() {
-    /* MOCK DATA - TODO: REMOVE */
-    /*
-    return new Promise((resolve) => { resolve(seqAnalysisProjects) })
-        .then(resp => {return parseResp(resp) })
-        .catch(error => {throw new Error('Unable to fetch Seq Analysis Projects: ' + error) });
-     */
     return axios
         .get(config.NODE_API_ROOT + '/homePage/getSeqAnalysisProjects')
         .then(resp => {return parseResp(resp) })
@@ -33,12 +27,6 @@ export function getRequestProjects() {
         .catch(error => { throw new Error('Unable to fetch Request Projects: ' + error) });
 }
 export const getProjectInfo = (projectId) => {
-    /* MOCK DATA - TODO: REMOVE */
-    /*
-    return new Promise((resolve) => { resolve(projectInfo) })
-        .then(getData)
-        .catch(handleError);
-     */
     return axios.get(config.IGO_QC + `/projectInfo/${projectId}`)
         .then(getData)
         .catch(handleError)

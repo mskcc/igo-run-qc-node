@@ -37,6 +37,10 @@ export const TABLE_MANDATORY_COLUMNS = new Set(['Sample', 'QC Status', 'QC Recor
 export const HOME_PAGE = 'HOME';
 export const PROJECT_PAGE = 'PROJECT';
 
+// REDUX STORE IDs
 export const NEEDS_REVIEW_STATE_ID = 'projectsToReview';
 export const FURTHER_SEQ_STATE_ID = 'projectsToSequenceFurther';
 export const PENDING_REQUESTS_STATE_ID = 'requestsPending';
+export const RECENT_DELIVERIES_STATE_ID = 'recentDeliveries';
+export const RECENT_RUNS_STATE_ID = 'recentRuns';
+export const PROJECT_QC_STATE_ID = 'projectQc';

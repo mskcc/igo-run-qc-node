@@ -23,12 +23,19 @@ exports.addProjectProperties = (project) => {
                         projectObj.needsReview = true;
                     }
                     if (qc.run) {
-                        let trimmedRun = qc.run.substr(-11);
+                        let trimmedRun = qc.run.substring(0, qc.run.length - 11);
                         if (!projectObj.allRuns.includes(trimmedRun)) {
                             projectObj.allRuns.push(trimmedRun);
                         }
                     }
-                    projectObj.recentDate = qc.createDate;
+                    const numericDate = qc.createDate
+                    const stringDate = new Date(numericDate).toISOString();
+                    //slice date and time out of stringDate string: 2022-10-21T14:05:30.074Z
+                    const tempDateString = stringDate.replace('T', ' ');
+                    const formattedDate = tempDateString.substring(0, tempDateString.length - 8);
+                    projectObj.date = formattedDate;
+                    projectObj.recentDate = numericDate;
+                    projectObj.ordering = numericDate;
                 }
             }
         }

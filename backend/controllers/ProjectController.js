@@ -23,8 +23,8 @@ exports.projectQc = [
                 let [projectQcResults] = results;
                 const projectQc = projectQcResults[0];
 
-                if (projectQc.length === 0) {
-                    return apiResponse.errorResponse(res, 'No project QC data.');
+                if (projectQc.length === 0 || projectQc.samples === []) {
+                    return apiResponse.errorResponse(res, `No project data for project ${projectId}`);
                 }
 
                 const responseObject = {

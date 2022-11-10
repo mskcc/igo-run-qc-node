@@ -5,7 +5,6 @@ var router = express.Router();
 router.get('/getSeqAnalysisProjects', homePageController.getSeqAnalysisProjects);
 router.get('/getRequestProjects', homePageController.getRecentDeliveries);
 router.get('/getRecentRuns', homePageController.getRecentRuns);
-// router.get('/changeRunStatus', homePageController.changeRunStatus);
 // router.get('/getCrosscheckMetrics', homePageController.getCrosscheckMetrics);
 // router.get('/getInterOpsData', homePageController.getInterOpsData);
 // router.get('/ngsStatsDownload', homePageController.ngsStatsDownload);

@@ -23,6 +23,20 @@
   --material-gray: #eceff1;
 }
 
+.header {
+  background-color: '#006098';
+  color: 'white';
+  text-align: 'center';
+}
+
+.header-logo {
+  margin-right: 15px;
+}
+
+.header-title {
+  margin-right: 15px;
+}
+
 body {
   margin: 0;
   padding: 0;

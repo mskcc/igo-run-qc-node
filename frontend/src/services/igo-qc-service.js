@@ -1,30 +1,38 @@
-import axios from 'axios';
+import axios from "axios";
 
-import config from '../config.js';
-import { handleError, getData } from '../utils/service-utils';
+import config from "../config.js";
+// import { handleError, getData } from '../utils/service-utils';
 
-const parseResp = function (resp) {
-    const data = resp.data || [];
-    return data;
+const parseResp = function(resp) {
+  const data = resp.data || [];
+  return data;
 };
 
 /**
-* Sends service call to retrieve most recent deliveries
-*/
+ * Sends service call to retrieve most recent deliveries
+ */
 export function getSeqAnalysisProjects() {
-    return axios
-        .get(config.NODE_API_ROOT + '/homePage/getSeqAnalysisProjects')
-        .then(resp => {return parseResp(resp) })
-        .catch(error => {throw new Error('Unable to fetch Seq Analysis Projects: ' + error) });
+  return axios
+    .get(config.NODE_API_ROOT + "/homePage/getSeqAnalysisProjects")
+    .then(resp => {
+      return parseResp(resp);
+    })
+    .catch(error => {
+      throw new Error("Unable to fetch Seq Analysis Projects: " + error);
+    });
 }
 /**
  * Sends service call to retrieve most recent deliveries
  */
 export function getRequestProjects() {
-    return axios
-        .get(config.NODE_API_ROOT + '/homePage/getRequestProjects')
-        .then(resp => { return parseResp(resp) })
-        .catch(error => { throw new Error('Unable to fetch Request Projects: ' + error) });
+  return axios
+    .get(config.NODE_API_ROOT + "/homePage/getRequestProjects")
+    .then(resp => {
+      return parseResp(resp);
+    })
+    .catch(error => {
+      throw new Error("Unable to fetch Request Projects: " + error);
+    });
 }
 // export const getProjectInfo = (projectId) => {
 //     return axios.get(config.IGO_QC + `/projectInfo/${projectId}`)
@@ -32,10 +40,15 @@ export function getRequestProjects() {
 //         .catch(handleError)
 // };
 
-export const getProjectQC = (projectId) => {
-    return axios.get(config.NODE_API_ROOT + `/project/getProjectQc/${projectId}`)
-        .then(resp => { return parseResp(resp) })
-        .catch(error => { throw new Error('Unable to fetch Project QC: ' + error) });
+export const getProjectQC = projectId => {
+  return axios
+    .get(config.NODE_API_ROOT + `/project/getProjectQc/${projectId}`)
+    .then(resp => {
+      return parseResp(resp);
+    })
+    .catch(error => {
+      throw new Error("Unable to fetch Project QC: " + error);
+    });
 };
 
 // export const setRunStatus = (run, project, status, recipe) => {
@@ -60,11 +73,15 @@ export const getProjectQC = (projectId) => {
  * Sends service call to retrieve chart data about most recent runs
  */
 export function getRecentRuns(numDays) {
-    const params = numDays ? `?days=${numDays}` : '';
-    return axios
-        .get(`${config.NODE_API_ROOT}/homePage/getRecentRuns${params}`)
-        .then(resp => {return parseResp(resp) })
-        .catch(error => {throw new Error('Unable to fetch Recent Runs: ' + error) });
+  const params = numDays ? `?days=${numDays}` : "";
+  return axios
+    .get(`${config.NODE_API_ROOT}/homePage/getRecentRuns${params}`)
+    .then(resp => {
+      return parseResp(resp);
+    })
+    .catch(error => {
+      throw new Error("Unable to fetch Recent Runs: " + error);
+    });
 }
 // export function saveConfig(type, value){
 //     return axios.post(config.IGO_QC + '/saveConfig', { type, value })

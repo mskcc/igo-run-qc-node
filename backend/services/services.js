@@ -108,7 +108,7 @@ exports.getProjectQc = (projectId) => {
         });
 }
 
-exports.getPickListValues = () => {
+exports.getStatusPickListValues = () => {
     const url = `${LIMS_URL}/getPickListValues?list=Sequencing+QC+Status`;
     return axios
         .get(url, {

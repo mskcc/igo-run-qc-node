@@ -4,8 +4,7 @@
   "private": true,
   "dependencies": {
     "@babel/core": "^7.19.3",
-    "@material-ui/core": "^4.11.0",
-    "@material-ui/icons": "^4.9.1",
+    "@babel/eslint-parser": "^7.19.1",
     "@reduxjs/toolkit": "^1.8.6",
     "@svgr/webpack": "^5.4.0",
     "axios": "^0.27.2",
@@ -34,7 +33,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix",
+    "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc"
   },
   "eslintConfig": {},
   "browserslist": {
@@ -52,20 +54,26 @@
   "devDependencies": {
     "@babel/preset-env": "^7.11.5",
     "@babel/preset-react": "^7.10.4",
-    "eslint": "^7.32.0",
+    "eslint": "^8.0.0",
     "eslint-config-prettier": "^4.3.0",
+    "eslint-config-react-app": "^7.0.1",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-flowtype": "2.50.1",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jsx-a11y": "^6.3.1",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-react": "^7.21.1",
+    "eslint-plugin-react": "^7.31.10",
     "eslint-plugin-standard": "^4.0.1",
     "lint-staged": "^8.2.1",
     "prettier": "^1.19.1",
     "webpack-dev-server": "^4.11.1"
   },
-  "proxy": "http://localhost:3228/"
+  "proxy": "http://localhost:3228/",
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
+  }
 }

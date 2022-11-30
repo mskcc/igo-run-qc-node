@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { getProjectQC } from "../../services/igo-qc-service";
-import { setProjectQCData, selectProjectDataById } from "./projectSlice";
+import React, { useEffect, useState } from 'react';
+import { Card } from '../common/card';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProjectQC } from '../../services/igo-qc-service';
+import { setProjectQCData, selectProjectDataById } from './projectSlice';
 
 export const ProjectPage = () => {
   const { projectId } = useParams();
@@ -24,9 +25,12 @@ export const ProjectPage = () => {
     } else {
       setProjectData(selectProjectData);
     }
-  });
+  },[selectProjectData, projectId, dispatch]);
 
   return (
-    <div>{projectData ? JSON.stringify(projectData) : "Project page!"}</div>
+    <Card>
+      <h2 className={'title'}>Project {projectId} Details</h2>
+      <div>{projectData ? JSON.stringify(projectData) : 'Project page!'}</div>
+    </Card>
   );
 };

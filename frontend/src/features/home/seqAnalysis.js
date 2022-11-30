@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
-import { Card } from "../common/card";
-import React from "react";
-import { useSelector } from "react-redux";
+import { Card } from '../common/card';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import {
   selectFurtherSeqData,
   selectNeedsReviewData,
   selectPendingRequestsData
-} from "./homeSlice";
+} from './homeSlice';
 
 export const SeqAnalysis = () => {
   // const { needsReview, requiresSequencing, awaitingAction } = state;
@@ -17,12 +17,12 @@ export const SeqAnalysis = () => {
   return (
     <div>
       <Card>
-        <h3>Sequence Analysis</h3>
-        <h4>Needs Review</h4>
+        <h2 className={'title'}>Sequence Analysis</h2>
+        <h3 className={'title'}>Needs Review</h3>
         {/* {JSON.stringify(needsReview)} */}
-        <h4>Requires Further Sequencing</h4>
+        <h3 className={'title'}>Requires Further Sequencing</h3>
         {/* {JSON.stringify(requiresSequencing)} */}
-        <h4>Awaiting Further Action</h4>
+        <h3 className={'title'}>Awaiting Further Action</h3>
         {/* {JSON.stringify(awaitingAction)} */}
       </Card>
     </div>

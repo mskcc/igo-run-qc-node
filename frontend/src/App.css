@@ -24,23 +24,75 @@
 }
 
 .header {
-  background-color: '#006098';
+  background-color: #319ae8;
   color: 'white';
   text-align: 'center';
+  width: 100%;
+  z-index: 1100;
+  display: flex;
+  height: 64px;
+  justify-content: space-between;
+}
+
+.header-content {
+  display: flex;
+  position: relative;
+  min-height: 64px;
+  margin-left:10px;
 }
 
 .header-logo {
-  margin-right: 15px;
+  margin: 10px;
+  overflow: hidden;
+  border-radius: 50%;
 }
 
 .header-title {
-  margin-right: 15px;
+  margin: 20px;
+  color: white;
+  font-size: 20px;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 500;
+}
+
+.home-button {
+  font-size: 35px;
+  margin-top: 10px;
+}
+
+.home-button a {
+  color: white !important;
+  text-decoration: none !important;
+  cursor: pointer;
+}
+
+.search-bar {
+  display: flex;
+  margin: 15px;
+  margin-right: 70px;
+}
+
+.search-bar button {
+  cursor: pointer;
+  margin-left: 5px;
+  width: 35px;
+  border-color: #eceff1;
+  border-radius: 4px;
+  background-color: #d5d4c7;
+  border-style: solid;
+  border-width: 1px;
+  color: white;
+}
+
+.search-bar input {
+  border-radius: 4px;
+  border-style: none;
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   width: 100vw;
@@ -61,6 +113,11 @@ body {
   border: var(--mskcc-medium-orange);
   border-style: solid;
   border-width: 2px;
+  border-radius: 5px;
   margin-bottom: 10px;
   padding: 20px;
+}
+
+.title {
+  font-weight: 500 !important;
 }

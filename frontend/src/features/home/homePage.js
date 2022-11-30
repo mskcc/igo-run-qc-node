@@ -1,6 +1,8 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import SeqAnalysis from "./seqAnalysis";
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import SeqAnalysis from './seqAnalysis';
+import RecentDeliveries from './recentDeliveries';
+import RecentRuns from './recentRuns';
 import {
   getSeqData,
   getRecentDeliveries,
@@ -10,7 +12,7 @@ import {
   selectPendingRequestsData,
   selectRecentDeliveriesData,
   selectRecentRunsData
-} from "./homeSlice";
+} from './homeSlice';
 
 export const HomePage = () => {
   const dispatch = useDispatch();
@@ -37,6 +39,8 @@ export const HomePage = () => {
   return (
     <div>
       <SeqAnalysis />
+      <RecentDeliveries />
+      <RecentRuns />
     </div>
   );
 };

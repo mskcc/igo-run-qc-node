@@ -1,5 +1,4 @@
 const e = require('express');
-const { logger } = require('../util/winston');
 
 // Adds properties to project object to display in the table
 exports.addProjectProperties = (project) => {
@@ -85,7 +84,7 @@ exports.getProjectInfo = (projectQc, projectStatusList) => {
             }
         }
 
-        // enriching
+        // enriching done in separate function for readability
 
     });
 
@@ -137,5 +136,20 @@ exports.getRequesterInfo = (projectQc, sample) => {
     }
 
     return requester;
-    //TODO FINISH FUNCTION REWRITE INSIDE getProjectInfo (loop through samples)
 };
+
+exports.enrichSamples = (samples) => {
+    let sumReadsMap = {};
+    let sumMtcMap = {};
+    samples.forEach((sample)=> {
+        const sampleQc = sample['qc'];
+        const qcStatus = sampleQc['qcStatus'];
+        if (qcStatus !== 'Failed' && qcStatus !== 'Failed-Reprocess') {
+            if (sampleQc['readsExamined'] > 0) {
+                sumReadsMap[sample['baseId']] = sampleQc['readsExamined'];
+            } else {
+                sumReadsMap[sample['baseId']] = sampleQc['unpairedReadsExamined'];
+            }
+        } 
+    });
+}

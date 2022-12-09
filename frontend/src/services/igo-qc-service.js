@@ -1,6 +1,5 @@
-import axios from "axios";
-
-import config from "../config.js";
+import axios from 'axios';
+import config from '../config.js';
 // import { handleError, getData } from '../utils/service-utils';
 
 const parseResp = function(resp) {
@@ -13,12 +12,12 @@ const parseResp = function(resp) {
  */
 export function getSeqAnalysisProjects() {
   return axios
-    .get(config.NODE_API_ROOT + "/homePage/getSeqAnalysisProjects")
+    .get(config.NODE_API_ROOT + '/homePage/getSeqAnalysisProjects')
     .then(resp => {
       return parseResp(resp);
     })
     .catch(error => {
-      throw new Error("Unable to fetch Seq Analysis Projects: " + error);
+      throw new Error('Unable to fetch Seq Analysis Projects: ' + error);
     });
 }
 /**
@@ -26,12 +25,12 @@ export function getSeqAnalysisProjects() {
  */
 export function getRequestProjects() {
   return axios
-    .get(config.NODE_API_ROOT + "/homePage/getRequestProjects")
+    .get(config.NODE_API_ROOT + '/homePage/getRequestProjects')
     .then(resp => {
       return parseResp(resp);
     })
     .catch(error => {
-      throw new Error("Unable to fetch Request Projects: " + error);
+      throw new Error('Unable to fetch Request Projects: ' + error);
     });
 }
 // export const getProjectInfo = (projectId) => {
@@ -40,6 +39,17 @@ export function getRequestProjects() {
 //         .catch(handleError)
 // };
 
+export function getCrosscheckMetrics(projects) {
+  return axios
+    .get(config.NODE_API_ROOT + `/homePage/getCrosscheckMetrics?projects=${projects}`)
+    .then(resp => {
+      return parseResp(resp);
+    })
+    .catch(error => {
+      throw new Error('Unable to fetch Request Projects: ' + error);
+    });
+}
+
 export const getProjectQC = projectId => {
   return axios
     .get(config.NODE_API_ROOT + `/project/getProjectQc/${projectId}`)
@@ -47,7 +57,7 @@ export const getProjectQC = projectId => {
       return parseResp(resp);
     })
     .catch(error => {
-      throw new Error("Unable to fetch Project QC: " + error);
+      throw new Error('Unable to fetch Project QC: ' + error);
     });
 };
 
@@ -73,14 +83,14 @@ export const getProjectQC = projectId => {
  * Sends service call to retrieve chart data about most recent runs
  */
 export function getRecentRuns(numDays) {
-  const params = numDays ? `?days=${numDays}` : "";
+  const params = numDays ? `?days=${numDays}` : '';
   return axios
     .get(`${config.NODE_API_ROOT}/homePage/getRecentRuns${params}`)
     .then(resp => {
       return parseResp(resp);
     })
     .catch(error => {
-      throw new Error("Unable to fetch Recent Runs: " + error);
+      throw new Error('Unable to fetch Recent Runs: ' + error);
     });
 }
 // export function saveConfig(type, value){

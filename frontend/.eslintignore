@@ -1,2 +1,5 @@
 # Dependency directories
 node_modules/
+src/config.js
+src/resources/constants.js
+constants.js

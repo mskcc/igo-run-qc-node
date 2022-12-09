@@ -99,6 +99,7 @@ body {
   overflow: hidden;
   font-size: 15px;
   background-color: var(--material-gray);
+  overflow-y: scroll;
 }
 
 .body-container {
@@ -120,4 +121,151 @@ body {
 
 .title {
   font-weight: 500 !important;
+  color: #3a3a39;
+  margin-top: 5px;
+}
+
+.sub-title {
+  color: #006098;
+  margin-top: 20px;
+}
+
+
+/* HOME PAGE TABLE CLASSES  */
+.fill-width {
+  width: 100%;
+}
+.text-align-center {
+  text-align: center;
+}
+.light-blue-border {
+  border: 2px solid #d6e0f5;
+}
+.border-collapse {
+  border-collapse: collapse;
+  /* border-spacing: 0; */
+}
+.em5 {
+  font-size: 1.5em;
+}
+.mskcc-medium-blue {
+  color: #40b4e5;
+}
+.mskcc-red{
+  color: #b1132d;
+}
+.mskcc-dark-yellow{
+  color: #ffc20e;
+}
+.mskcc-dark-green{
+  color: #4c8b2b;
+}
+.data-container {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.project-table {
+  color: #3a3a39;
+  border-radius: 4px;
+}
+.project-row p {
+  font-size: 14px;
+}
+.project-row:hover {
+  background-color: #eaeffa;
+  color: #193167;
+}
+.project-row .project-row-link a {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.project-row .project-row-link:hover {
+  cursor: pointer;
+}
+.run-info-button {
+  width: 65px;
+  height: 40px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.run-info-button svg {
+  color: #40b4e5;
+  margin-top:4px;
+}
+.box {
+  background-color: #fff;
+  border-radius: 6px;
+  box-shadow: 0 2px 3px rgba(10,10,10,.1), 0 0 0 1px rgba(10,10,10,.1);
+  color: #4a4a4a;
+}
+.height-50px {
+  height: 50px;
+}
+.inline-block {
+  display: inline-block;
+}
+.width-250px {
+  width: 250px
+}
+.width-30px {
+  width: 30px;
+}
+.width-65px {
+  width: 65px;
+}
+.pos-rel {
+  position: relative;
+}
+.float-right {
+  float: right;
+}
+.margin-left-10 {
+  margin-left: 10px;
+}
+.btn-info {
+  background-color: #209cee;
+  color: #fff;
+}
+.hover:hover{
+  cursor: pointer;
+}
+.btn-update {
+  border-bottom-right-radius: 4px;
+  border-top-right-radius: 4px;
+  height: 100%;
+}
+.flag-container p {
+  display: none;
+  margin-bottom: 0px;
+}
+.flag-container:hover p {
+  display: block;
+}
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+/* Tooltip text */
+.tooltip .tooltiptext {
+  transition: 0s visibility;
+  visibility: hidden;
+  width: 100px;
+  background-color: #d9d9d9;
+  color: black;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  font-family: "Roboto", "Helvetica", "Arial", "sans-serif";
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+  top: -15px;
+  left: 105%;
+}
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  transition-delay: 0.3s;
+  box-shadow: 1px 1px #9e9e98;
 }

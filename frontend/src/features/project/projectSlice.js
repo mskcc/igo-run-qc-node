@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { PROJECT_QC_STATE_ID } from "../../resources/constants";
+import { createSlice } from '@reduxjs/toolkit';
+import { PROJECT_QC_STATE_ID } from '../../resources/constants';
 
 const initialState = {
   entities: {}
@@ -7,7 +7,7 @@ const initialState = {
 
 // Reducers
 const projectSlice = createSlice({
-  name: "project",
+  name: 'project',
   initialState,
   reducers: {
     setProjectQCData: {

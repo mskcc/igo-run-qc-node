@@ -68,6 +68,28 @@ exports.getSequencingRequests = () => {
         });
 }
 
+exports.getRecentRuns = (numDays) => {
+    const url = `${LIMS_URL}/getRecentRuns?days=${numDays}`;
+    logger.info(`Sending request to ${url}`);
+    return axios
+        .get(url, {
+            auth: { ...LIMS_AUTH },
+            ...axiosConfig,
+        })
+        .then((resp) => {
+            // const data = resp.requests || [];
+            info(url);
+            return resp;
+        })
+        .catch((error) => {
+            errorlog(url, error);
+            throw error;
+        })
+        .then((resp) => {
+            return formatData(resp);
+        });
+}
+
 exports.getRequestProjects = () => {
     const url = `${LIMS_URL}/getRecentDeliveries?time=2&units=d`;
     return axios
@@ -129,7 +151,6 @@ exports.getStatusPickListValues = () => {
 }
 
 exports.getCrossCheckMetrics = (projects) => {
-    //TODO BREAK PROJECTS INTO COMMA SEPARATED LIST?
     const url = `${NGS_STATS_API_URL}/getCrosscheckMetrics?projects=${projects}`;
     return axios
         .get(url, {
@@ -147,7 +168,7 @@ exports.getCrossCheckMetrics = (projects) => {
         .then((resp) => {
             return formatData(resp);
         });
-}
+  }
 
 exports.getCellRangerSample = (project, ngsType) => {
     const url = `${NGS_STATS_API_URL}/getCellRangerSample?project=${project}&type=${ngsType}`;

@@ -1,16 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 import {
   FURTHER_SEQ_STATE_ID,
   NEEDS_REVIEW_STATE_ID,
   PENDING_REQUESTS_STATE_ID,
   RECENT_DELIVERIES_STATE_ID,
-  RECENT_RUNS_STATE_ID
-} from "../../resources/constants";
+  RECENT_RUNS_STATE_ID,
+  METRICS_PROJECT_LIST_STATE_ID
+} from '../../resources/constants';
 import {
   getSeqAnalysisProjects,
   getRequestProjects,
-  getRecentRuns
-} from "../../services/igo-qc-service";
+  getRecentRuns,
+  getCrosscheckMetrics
+} from '../../services/igo-qc-service';
+import { setProjectFlags } from '../../resources/projectHelper';
 
 const initialState = {
   entities: {}
@@ -18,7 +21,7 @@ const initialState = {
 
 // Reducers
 const homeSlice = createSlice({
-  name: "home",
+  name: 'home',
   initialState,
   reducers: {
     setNeedsReviewData(state, action) {
@@ -45,6 +48,11 @@ const homeSlice = createSlice({
       const data = action.payload;
       const id = RECENT_RUNS_STATE_ID;
       state.entities[id] = data;
+    },
+    setCrosscheckMetricsProjList(state, action) {
+      const data = action.payload;
+      const id = METRICS_PROJECT_LIST_STATE_ID;
+      state.entities[id] = data;
     }
   }
 });
@@ -54,7 +62,8 @@ export const {
   setFurtherSeqData,
   setPendingRequestsData,
   setRecentDeliveriesData,
-  setRecentRunsData
+  setRecentRunsData,
+  setCrosscheckMetricsProjList
 } = homeSlice.actions;
 
 export default homeSlice.reducer;
@@ -67,19 +76,38 @@ export const getSeqData = () => async dispatch => {
     projectsToSequenceFurther,
     requestsPending
   } = response.data;
-  dispatch(setNeedsReviewData(projectsToReview));
-  dispatch(setFurtherSeqData(projectsToSequenceFurther));
+
+  // Call crosscheck metrics on all projects in @resp
+  const projectsToReviewList = projectsToReview.map((proj) => {return proj['requestId'];});
+  const projectsToSequenceFurtherList = projectsToSequenceFurther.map((proj) => {return proj['requestId'];});
+  const projectList = projectsToSequenceFurtherList.concat(projectsToReviewList);
+  const crossCheckResp = await getCrosscheckMetrics(projectList);
+  const crossCheckData = crossCheckResp.data ? crossCheckResp.data.metricsData : {};
+  dispatch(setCrosscheckMetricsProjList(crossCheckData));
+  const projectsToReviewWithFlags = setProjectFlags(projectsToReview, crossCheckData);
+  const projectsToSeqFurtherWithFlags = setProjectFlags(projectsToSequenceFurther, crossCheckData);
+
+  dispatch(setNeedsReviewData(projectsToReviewWithFlags));
+  dispatch(setFurtherSeqData(projectsToSeqFurtherWithFlags));
   dispatch(setPendingRequestsData(requestsPending));
 };
 
 export const getRecentDeliveries = () => async dispatch => {
   const response = await getRequestProjects();
   const { recentDeliveries } = response.data;
-  dispatch(setRecentDeliveriesData(recentDeliveries));
+
+  // Call crosscheck metrics on all projects in @resp
+  const projectList = recentDeliveries.map((proj) => { return proj['requestId']; });
+  const crossCheckResp = await getCrosscheckMetrics(projectList);
+  const crossCheckData = crossCheckResp.data ? crossCheckResp.data.metricsData : {};
+  dispatch(setCrosscheckMetricsProjList(crossCheckData));
+  const recentDeliveriesWithFlags = setProjectFlags(recentDeliveries, crossCheckData);
+
+  dispatch(setRecentDeliveriesData(recentDeliveriesWithFlags));
 };
 
-export const getRecentRunsData = () => async dispatch => {
-  const response = await getRecentRuns();
+export const getRecentRunsData = (numDays) => async dispatch => {
+  const response = await getRecentRuns(numDays);
   const { recentRuns } = response.data;
   dispatch(setRecentRunsData(recentRuns));
 };

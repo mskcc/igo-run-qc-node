@@ -6,7 +6,7 @@ exports.addProjectProperties = (project) => {
     const samples = projectObj.samples;
     projectObj.needsReview = false;
     projectObj.ready = false;
-    projectObj.allRuns = [];
+    projectObj.allRuns = '';
     projectObj.recentDate = 0;
 
     if (samples.length > 0) {
@@ -24,8 +24,11 @@ exports.addProjectProperties = (project) => {
                     }
                     if (qc.run) {
                         let trimmedRun = qc.run.substring(0, qc.run.length - 11);
-                        if (!projectObj.allRuns.includes(trimmedRun)) {
-                            projectObj.allRuns.push(trimmedRun);
+                        const runs = projectObj.allRuns;
+                        if (runs.length === 0) {
+                            projectObj.allRuns = trimmedRun;
+                        } else if (!runs.includes(trimmedRun)) {
+                            projectObj.allRuns = projectObj.allRuns.concat(`, ${trimmedRun}`);
                         }
                     }
                     const numericDate = qc.createDate
@@ -110,20 +113,11 @@ exports.getProjectInfo = (projectQc, projectStatusList) => {
 
 exports.getRequesterInfo = (projectQc, sample) => {
     const labelValues = ['requestId', 'investigator',  'pi', 'projectManager', 'cmoProject', 'requestName'];
-    const booleanLabels = ['pipelinable', 'analysisRequested'];
     
     let requester = {};
     labelValues.forEach((label) => {
         if (!(label in projectQc)) {
             requester[label] = 'N/A';
-        } else {
-            requester[label] = projectQc[label];
-        }
-    });
-
-    booleanLabels.forEach((label) => {
-        if (!(label in projectQc)) {
-            requester[label] = false;
         } else {
             requester[label] = projectQc[label];
         }

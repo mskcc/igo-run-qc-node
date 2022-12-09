@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
-import { Card } from '../common/card';
 import React from 'react';
+import { Card } from '../common/card';
 import { useSelector } from 'react-redux';
+import DataGrid from './dataGrid';
 import {
   selectFurtherSeqData,
   selectNeedsReviewData,
@@ -9,7 +10,6 @@ import {
 } from './homeSlice';
 
 export const SeqAnalysis = () => {
-  // const { needsReview, requiresSequencing, awaitingAction } = state;
   const needsReview = useSelector(state => selectNeedsReviewData(state));
   const requiresSequencing = useSelector(state => selectFurtherSeqData(state));
   const awaitingAction = useSelector(state => selectPendingRequestsData(state));
@@ -18,12 +18,14 @@ export const SeqAnalysis = () => {
     <div>
       <Card>
         <h2 className={'title'}>Sequence Analysis</h2>
-        <h3 className={'title'}>Needs Review</h3>
-        {/* {JSON.stringify(needsReview)} */}
-        <h3 className={'title'}>Requires Further Sequencing</h3>
-        {/* {JSON.stringify(requiresSequencing)} */}
-        <h3 className={'title'}>Awaiting Further Action</h3>
-        {/* {JSON.stringify(awaitingAction)} */}
+        <div className={'data-container'}>
+          <h3 className={'title sub-title'}>Needs Review</h3>
+          <DataGrid projects={needsReview}/>
+          <h3 className={'title sub-title'}>Requires Further Sequencing</h3>
+          <DataGrid projects={requiresSequencing}/>
+          <h3 className={'title sub-title'}>Awaiting Further Action</h3>
+          <DataGrid projects={awaitingAction}/>
+        </div>
       </Card>
     </div>
   );

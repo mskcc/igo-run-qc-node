@@ -46,7 +46,6 @@ exports.notFoundResponse = function (res, msg) {
         message: msg,
     };
     logger.log('error', msg);
-    // console.log(data);
     res.status(404).json(data);
 };
 

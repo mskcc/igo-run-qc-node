@@ -1,9 +1,9 @@
 const supportsWebGl = () => {
   try {
     // Try to throw an error
-    const canvas = document.createElement("canvas");
+    const canvas = document.createElement('canvas');
     const ctx =
-      canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+      canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
     ctx.getSupportedExtensions();
   } catch (e) {
     return false;
@@ -12,13 +12,13 @@ const supportsWebGl = () => {
   return true;
 };
 export const preProcess = data => {
-  const charts = data["charts"] || [];
+  const charts = data['charts'] || [];
 
   for (let i = 0; i < charts.length; i++) {
     const chart = charts[i];
     if (chart.layout) {
       chart.title = chart.layout.title;
-      chart.layout.title = "";
+      chart.layout.title = '';
     }
   }
 
@@ -32,8 +32,8 @@ export const preProcess = data => {
     if (chart.data) {
       for (let j = 0; j < chart.data.length; j++) {
         const trace = chart.data[j];
-        if (trace.type === "scattergl") {
-          trace.type = "scatter";
+        if (trace.type === 'scattergl') {
+          trace.type = 'scatter';
         }
       }
     }

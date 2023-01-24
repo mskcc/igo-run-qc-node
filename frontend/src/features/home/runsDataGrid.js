@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { FaChartBar } from 'react-icons/fa';
+import { FaChartBar, FaDna } from 'react-icons/fa';
 import { AiFillFileText } from 'react-icons/ai';
+import { MdOutlineDoNotDisturb } from "react-icons/md";
 import config from '../../config';
 import { getRecentRunsData } from './homeSlice';
 
-export const RunsDataGrid = ({runs}) => {
+export const RunsDataGrid = ({runs, runsWithPicard}) => {
     const dispatch = useDispatch();
     const [numDays, setNumDays] = useState(7);
     const [tempNumDays, setTempNumDays] = useState(numDays);
@@ -24,7 +25,7 @@ export const RunsDataGrid = ({runs}) => {
     };
 
     const updateRecentRuns = (newDays) => {
-      dispatch(getRecentRunsData(numDays));
+      dispatch(getRecentRunsData(newDays));
     };
 
     const renderRunUpdateBtn = () => {
@@ -43,7 +44,7 @@ export const RunsDataGrid = ({runs}) => {
     };
 
     const renderHeaders = () => {
-        const headers = ['Run Name', 'Date', 'Lane Summary', 'Run Stats'];
+        const headers = ['Run Name', 'Date', 'Lane Summary', 'Run Stats', 'Picard Stats'];
 
         return <thead><tr className='fill-width'>
             { headers.map( (field) =>
@@ -73,11 +74,24 @@ export const RunsDataGrid = ({runs}) => {
                     </a>
                 </td>
                 <td className={'text-align-center light-blue-border'}>
-                    <a href={`${config.SITE_HOME}${run['runStats']}`} target='_blank'>
+                    <a href={`${config.SITE_HOME}${run['runStats']}`}>
                         <button className='table-btn run-info-button em5'>
                             <FaChartBar />
                         </button>
                     </a>
+                </td>
+                <td className={'text-align-center light-blue-border'}>
+                { runsWithPicard && runsWithPicard.has(name) ?
+                    <a href={`${config.NGS_STATS}/ngs-stats/get-picard-run-excel/${name}`} target="_blank">
+                        <button className="table-btn run-info-button em5">
+                            <FaDna />
+                        </button>
+                    </a>
+                        :
+                    <div className='no-picard-stats em5'>
+                        <MdOutlineDoNotDisturb />
+                    </div>
+                }
                 </td>
             </tr>;
             runElements.push(element);

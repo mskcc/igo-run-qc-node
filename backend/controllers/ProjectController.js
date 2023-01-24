@@ -1,5 +1,6 @@
 const apiResponse = require('../util/apiResponse');
 const apiServices = require('../services/services');
+const { enrichSampleInfo } = require('../util/helpers');
 
 /**
  * returns 
@@ -11,8 +12,6 @@ exports.projectQc = [
     function(req, res) {
         const projectId = req.params.projectId
         let projectQcPromise = apiServices.getProjectQc(projectId);
-        // TODO - do we need to do this every look up? Or just once on project page load :)
-        let getStatusLabel = apiServices.getStatusPickListValues();
         Promise.all([projectQcPromise])
             .then((results) => {
                 if(!results) {
@@ -26,8 +25,14 @@ exports.projectQc = [
                     return apiResponse.errorResponse(res, `No project data for project ${projectId}`);
                 }
 
+                const enrichedSamples = enrichSampleInfo(projectQc.samples);
+                const enrichedProjectQc = {
+                    ...projectQc,
+                    samples: enrichedSamples
+                };
+
                 const responseObject = {
-                    projectQc
+                    projectQc: enrichedProjectQc
                 };
                 return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
             })

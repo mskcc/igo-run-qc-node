@@ -22,6 +22,7 @@
     "express-validator": "^6.6.1",
     "fs": "^0.0.1-security",
     "glob": "^8.0.3",
+    "jwt-in-cookie": "^1.0.16",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.0"
   },

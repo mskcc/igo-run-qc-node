@@ -32,7 +32,7 @@ exports.successResponseWithData = function (res, msg, data) {
 exports.errorResponse = function (res, msg) {
     var data = {
         status: 0,
-        message: 'Warning: ' + msg,
+        message: 'Error: ' + msg,
     };
     console.log(msg);
     logger.log('error', msg);

@@ -4,13 +4,12 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Header from './features/header';
 import { HomePage } from './features/home/homePage';
 import { ProjectPage } from './features/project/projectPage';
+import InterOpsDataPage from './features/interOpsData/interOpsDataPage';
 import config from './config';
 
 function App() {
-  // const [isLoading, setIsLoading] = useState(true);
-
   return (
-    <div className='App'>
+    <div id='App' className='App'>
       <Router basename={config.BASENAME}>
         <Header />
         <div className='body-container'>
@@ -21,9 +20,11 @@ function App() {
             <Route exact path='/projects/:projectId'>
               <ProjectPage />
             </Route>
+            <Route exact path='/getInterOpsData'>
+              <InterOpsDataPage />
+            </Route>
           </Switch>
         </div>
-        {/* <p>{!data ? 'IGO App home page' : JSON.stringify(data)}</p> */}
       </Router>
     </div>
   );

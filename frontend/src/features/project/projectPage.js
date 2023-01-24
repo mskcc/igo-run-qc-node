@@ -7,6 +7,7 @@ import { FaDna } from 'react-icons/fa';
 import { TiDownload } from 'react-icons/ti';
 import { getProjectQC } from '../../services/igo-qc-service';
 import { setProjectQCData, selectProjectDataById } from './projectSlice';
+import { selectCrosscheckMetrics } from '../home/homeSlice';
 import { QcTable } from './qcTable';
 import { AdditionalColumnsModal } from '../common/additionalColumnsModal';
 import { PED_PEG, TABLE_HEADERS, ADDITIONAL_10X_TABLE_HEADERS } from '../../resources/constants';
@@ -14,7 +15,6 @@ import { mapColumnsToHideByRecipe, orderSampleQcData } from '../../resources/pro
 import { downloadExcel } from '../../utils/other-utils';
 import config from '../../config';
 import { downloadNgsStatsFile, mapCellRangerRecipe } from '../../services/ngs-stats-service';
-import { QualityChecksModal } from '../common/qualityChecksModal';
 
 export const ProjectPage = () => {
   const { projectId } = useParams();
@@ -27,10 +27,13 @@ export const ProjectPage = () => {
   const [orderedSampleInfo, setOrderedSampleInfo] = useState([]);
   const [showWebSummaries, setShowWebSummaries] = useState(false);
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
-  const [isQualityCheckModalOpen, setIsQualityCheckModalOpen] = useState(false);
+  const [qualityCheckStatus, setQualityCheckStatus] = useState(null);
+
   const selectProjectData = useSelector(state =>
     selectProjectDataById(state, projectId)
   );
+  const selectCrosscheckMetricsData = useSelector(state => selectCrosscheckMetrics(state));
+  console.log(selectCrosscheckMetricsData);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,6 +55,15 @@ export const ProjectPage = () => {
       setIsLoading(false);
       setProjectData(selectProjectData);
       handleProjectDetails(selectProjectData);
+
+      // Quality Checks - fingerprinting info
+      if (projectId && selectCrosscheckMetricsData) {
+        const qCStatus = selectCrosscheckMetricsData[projectId.toString()];
+        if (qCStatus && qCStatus.flag) {
+          setQualityCheckStatus(qCStatus.flag);
+        }
+      }
+      
     }
   },[selectProjectData, projectId, dispatch]);
 
@@ -78,12 +90,6 @@ export const ProjectPage = () => {
   };
   const handleColumnModalOpen = () => {
     setIsColumnModalOpen(true);
-  };
-  const handleQualityCheckModalClose = () => {
-    setIsQualityCheckModalOpen(false);
-  };
-  const handleQualityCheckModalOpen = () => {
-    setIsQualityCheckModalOpen(true);
   };
   const handleAddColumns = (columnNames) => {
     let columnIndicesToAdd = [];
@@ -113,7 +119,6 @@ export const ProjectPage = () => {
   return (
     <Card>
       <AdditionalColumnsModal isOpen={isColumnModalOpen} onModalClose={handleColumnModalClose} addColumns={handleAddColumns} hiddenColumns={dataColumnsToHide} />
-      <QualityChecksModal isOpen={isQualityCheckModalOpen} onModalClose={handleQualityCheckModalClose} projectId={projectData.requestId} entries={''} />
       <div className='project-title'>
         <h2 className={'title text-align-center'}>Project {projectId} Details</h2>
       </div>
@@ -164,7 +169,12 @@ export const ProjectPage = () => {
               : ''
               }
             </div>
-            <div onClick={handleQualityCheckModalOpen} className='additional-actions'>Quality Checks</div>
+            
+            <a href={`${config.SITE_HOME}/projects/fingerprinting/${projectId}`}>
+              <div className={`additional-actions ${qualityCheckStatus}`}>
+                Quality Checks
+              </div>
+            </a>
             <div onClick={handleColumnModalOpen} className='additional-actions'>Additional Columns</div>
           </div>
         </div>

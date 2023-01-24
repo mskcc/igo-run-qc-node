@@ -3,7 +3,7 @@ const XLSX = require('xlsx');
 
 export const downloadExcel = (data, headers, fileName) => {
   const xlsxData = Object.assign([], data);
-  const translatedXlsxData = mapDataObjKeys(xlsxData, headers);
+  const translatedXlsxData = headers ? mapDataObjKeys(xlsxData, headers) : xlsxData;
   const fileType =
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
   const fileExtension = '.xlsx';

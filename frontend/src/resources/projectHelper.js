@@ -171,3 +171,34 @@ export const getColumnNamesFromIndices = (indices) => {
     });
     return columnNames;
 };
+
+// TODO refactor - this is old logic 
+export const filterDuplicatePairs = (entryList) => {
+    const orderedEntries = entryList
+        // Remove any same-sample lines
+        .filter((entry) => {
+            return entry['igoIdA'] !== entry['igoIdB'];
+        })
+        // Order alphabetically by igoIdA & igoIdB
+        .sort((e1, e2) => {
+            const id1 = e1['igoIdA'].toUpperCase() + e1['igoIdB'].toUpperCase();
+            const id2 = e2['igoIdA'].toUpperCase() + e2['igoIdB'].toUpperCase();
+
+            return (id1 < id2) ? -1 : (id1 > id2) ? 1 : 0;
+        });
+
+    const filteredEntries = [];
+    const pairs = new Set();
+    for(let entry of orderedEntries){
+        // Get unique key for every pair (must sort)
+        const key_list = [entry['igoIdA'], entry['igoIdB']].sort();
+        key_list.push(entry['result']);
+        const key = key_list.join(',');
+
+        if(!pairs.has(key)){
+            pairs.add(key);
+            filteredEntries.push(entry);
+        }
+    }
+    return filteredEntries;
+};

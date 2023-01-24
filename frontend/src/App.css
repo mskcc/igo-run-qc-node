@@ -424,6 +424,18 @@ body {
   margin: 5px;
   text-align: center;
   width: 145px;
+  color: black !important;
+  text-decoration: none !important;
+}
+a:link {
+  text-decoration: none !important;
+}
+.FAIL {
+  /* --mskcc-red with a bit of transparency */
+  background-color: rgba(177, 19, 45, 0.8);
+}
+.PASS {
+  background-color: var(--mskcc-light-green);
 }
 .hidden {
   display: none;
@@ -512,4 +524,32 @@ body {
   margin-top: 15px;
   margin-left: 78%;
   white-space: nowrap;
+}
+
+/* FINGERPRINTING */
+/* #fingerprintTable {
+  overflow: scroll;
+} */
+.fingerprint-title {
+  color: black;
+  font-size: x-large;
+  font-weight: 600;
+  text-align: center;
+}
+.fingerprint-subtitle {
+  font-size: large;
+  color: var(--mskcc-dark-orange);
+  text-align: center;
+  margin: 10px;
+}
+.icons-container {
+  text-align: center;
+  color: var(--mskcc-dark-blue);
+  margin: 20px;
+  display: flex;
+  justify-content: center;
+}
+.icons-container div {
+  padding: 0 10px;
+  cursor: pointer;
 }

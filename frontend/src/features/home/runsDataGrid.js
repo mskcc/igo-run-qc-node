@@ -74,7 +74,7 @@ export const RunsDataGrid = ({runs, runsWithPicard}) => {
                     </a>
                 </td>
                 <td className={'text-align-center light-blue-border'}>
-                    <a href={`${config.SITE_HOME}${run['runStats']}`}>
+                    <a href={`${config.SITE_HOME}/${run['runStats']}`}>
                         <button className='table-btn run-info-button em5'>
                             <FaChartBar />
                         </button>

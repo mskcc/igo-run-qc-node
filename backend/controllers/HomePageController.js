@@ -2,7 +2,6 @@ const glob = require('glob');
 const fs = require('fs');
 const apiResponse = require('../util/apiResponse');
 const apiServices = require('../services/services');
-const { authenticate } = require('../util/jwt');
 const utils = require('../util/helpers');
 const { loggers } = require('winston');
 const logger = loggers.get('logger');
@@ -17,7 +16,6 @@ const DIR_PATH = process.env.FASTQC_PATH;
     }
  */
 exports.getSeqAnalysisProjects = [
-    authenticate,
     function (req, res) {
         let recentDeliveriesPromise = apiServices.getRecentDeliveries();
         let seqRequestsPromise = apiServices.getSequencingRequests();

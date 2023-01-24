@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createSelector } from '@reduxjs/toolkit';
 import {
   FURTHER_SEQ_STATE_ID,
   NEEDS_REVIEW_STATE_ID,
@@ -116,9 +116,9 @@ export const getRecentRunsData = (numDays) => async dispatch => {
 // Selectors
 const selectHomeEntities = state => state.home.entities;
 
-// export const selectHomeData = createSelector(selectHomeEntities, (entities) =>
-//   Object.values(entities)
-// )
+export const selectHomeData = createSelector(selectHomeEntities, (entities) =>
+  Object.values(entities)
+);
 
 export const selectNeedsReviewData = state => {
   return selectHomeEntities(state)[NEEDS_REVIEW_STATE_ID];
@@ -134,4 +134,7 @@ export const selectRecentDeliveriesData = state => {
 };
 export const selectRecentRunsData = state => {
   return selectHomeEntities(state)[RECENT_RUNS_STATE_ID];
+};
+export const selectCrosscheckMetrics = state => {
+  return selectHomeEntities(state)[METRICS_PROJECT_LIST_STATE_ID];
 };

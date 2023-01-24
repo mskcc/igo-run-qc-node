@@ -5,6 +5,7 @@ import Header from './features/header';
 import { HomePage } from './features/home/homePage';
 import { ProjectPage } from './features/project/projectPage';
 import InterOpsDataPage from './features/interOpsData/interOpsDataPage';
+import FingerprintingTable from './features/project/fingerprinting';
 import config from './config';
 
 function App() {
@@ -22,6 +23,9 @@ function App() {
             </Route>
             <Route exact path='/getInterOpsData'>
               <InterOpsDataPage />
+            </Route>
+            <Route exact path='/projects/fingerprinting/:projectId'>
+              <FingerprintingTable />
             </Route>
           </Switch>
         </div>

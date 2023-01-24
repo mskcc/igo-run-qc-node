@@ -82,7 +82,7 @@ export const DataGrid = ({projects}) => {
             const iconValues = iconFields.map( (field) => project[field] );
             const element = <tr className='fill-width project-row' key={project.requestId}>
                         <td className='project-row-link text-align-center light-blue-border' key={`${project.requestId}-link`}>
-                            <a href={`${config.SITE_HOME}projects/${project.requestId}`} className='em5 mskcc-medium-blue'>
+                            <a href={`${config.SITE_HOME}/projects/${project.requestId}`} className='em5 mskcc-medium-blue'>
                                 <BsFillArrowRightCircleFill />
                             </a>
                         </td>

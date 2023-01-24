@@ -1,5 +1,6 @@
 const e = require('express');
 
+
 // Adds properties to project object to display in the table
 exports.addProjectProperties = (project) => {
     let projectObj = Object.assign({}, project);
@@ -46,6 +47,7 @@ exports.addProjectProperties = (project) => {
     return projectObj;
 };
 
+// based on old version - not currently used
 exports.getProjectInfo = (projectQc, projectStatusList) => {
     const samples = projectQc.samples;
     const commonSample = samples[0];
@@ -111,6 +113,7 @@ exports.getProjectInfo = (projectQc, projectStatusList) => {
 
 };
 
+//based on old version - not currently used
 exports.getRequesterInfo = (projectQc, sample) => {
     const labelValues = ['requestId', 'investigator',  'pi', 'projectManager', 'cmoProject', 'requestName'];
     
@@ -132,18 +135,43 @@ exports.getRequesterInfo = (projectQc, sample) => {
     return requester;
 };
 
-exports.enrichSamples = (samples) => {
-    let sumReadsMap = {};
-    let sumMtcMap = {};
-    samples.forEach((sample)=> {
+
+exports.enrichSampleInfo = (samples) => {
+    const sampleReadsHash = {};
+    const sampleMTCHash = {};
+    let enrichedSamples = samples;
+    enrichedSamples.forEach((sample)=> {
         const sampleQc = sample['qc'];
         const qcStatus = sampleQc['qcStatus'];
         if (qcStatus !== 'Failed' && qcStatus !== 'Failed-Reprocess') {
-            if (sampleQc['readsExamined'] > 0) {
-                sumReadsMap[sample['baseId']] = sampleQc['readsExamined'];
+            // set sumReads
+            const readsToSum = sampleQc['readsExamined'] > 0 ? 'readsExamined' : 'unpairedReadsExamined';
+
+            if (sampleReadsHash[sample.baseId]) {
+                // update hash
+                const newSum = sampleReadsHash[sample.baseId] + sampleQc[readsToSum];
+                sampleReadsHash[sample.baseId] = newSum;
             } else {
-                sumReadsMap[sample['baseId']] = sampleQc['unpairedReadsExamined'];
+                // set sample reads in hash
+                sampleReadsHash[sample.baseId] = sampleQc[readsToSum];
+            }
+
+            // set meantargetcoverage
+            const targetCoverage = sample['recipe'] === 'HumanWholeGenome' ? 'mean_COVERAGE' : 'meanTargetCoverage';
+            if (sampleMTCHash[sample.baseId]) {
+                const newSum = sampleMTCHash[sample.baseId] + sampleQc[targetCoverage];
+                sampleMTCHash[sample.baseId] = newSum;
+            } else {
+                sampleMTCHash[sample.baseId] = sampleQc[targetCoverage];
             }
         } 
     });
-}
+
+    // unfortunately have to loop through again
+    enrichedSamples.forEach(sample => {
+        sample['sumReads'] = sampleReadsHash[sample.baseId];
+        sample['sumMTC'] = sampleMTCHash[sample.baseId];
+    });
+
+    return enrichedSamples;
+};

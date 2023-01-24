@@ -269,10 +269,71 @@ exports.getCrosscheckMetrics = [
                     metricsData
                 };
                 
-                return apiResponse.successResponseWithData(res, 'Operation success', responseObject);                
+                return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
+            })
+            .catch((reasons) => {
+                return apiResponse.errorResponse(res, `Could not retrieve data from NGS: ${reasons}`);
+            });
+    }
+];
+
+exports.getInterOpsData = [
+    function(req, res) {
+        const runId = req.query.runId;
+        if (!runId || runId.length === 0) {
+            return apiResponse.errorResponse(res, 'Missing runId for interops data');
+        }
+        // remove '_laneBarcode.html' to just use runName
+        const runName = runId.slice(0, -18);
+        let interOpsDataPromise = apiServices.getInterOpsData(runName);
+        Promise.all([interOpsDataPromise])
+            .then((results) => {
+                if (!results) {
+                    return apiResponse.errorResponse(res, `Could not get interops data.`);
+                }
+                let [interOpsDataResult] = results;
+                const interOpsData = interOpsDataResult ? interOpsDataResult : {};
+                if (interOpsData.length === 0) {
+                    return apiResponse.errorResponse(res, `No interops data received.`);
+                }
+
+                let responseObject = {
+                    interOpsData
+                };
+
+                return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
             })
             .catch((reasons) => {
                 return apiResponse.errorResponse(res, `Could not retrieve data from LIMS: ${reasons}`);
+            });
+    }
+];
+
+exports.ngsStatsDownload = [
+    function(req, res) {
+        const type = req.query.type;
+        const sample = req.query.sample;
+        const projectId = req.query.project;
+        const run = req.query.run;
+
+        let ngsStatsDownloadPromise = apiServices.ngsStatsDownload(type, sample, projectId, run);
+        Promise.all([ngsStatsDownloadPromise])
+            .then((results) => {
+                if (!results) {
+                    return apiResponse.errorResponse(res, `Could not get NGS stats download data.`);
+                }
+                let [ngsStatsDownloadResult] = results;
+                const ngsDownloadData = ngsStatsDownloadResult || {};
+                
+                let responseObject = {
+                    ngsDownloadData
+                };
+
+                return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
+
+            })
+            .catch((reasons) => {
+                return apiResponse.errorResponse(res, `Could not retrieve data from NGS: ${reasons}`);
             });
     }
 ];

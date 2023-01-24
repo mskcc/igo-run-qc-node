@@ -77,6 +77,7 @@ export const getSeqData = () => async dispatch => {
     requestsPending
   } = response.data;
 
+  
   // Call crosscheck metrics on all projects in @resp
   const projectsToReviewList = projectsToReview.map((proj) => {return proj['requestId'];});
   const projectsToSequenceFurtherList = projectsToSequenceFurther.map((proj) => {return proj['requestId'];});
@@ -101,8 +102,8 @@ export const getRecentDeliveries = () => async dispatch => {
   const crossCheckResp = await getCrosscheckMetrics(projectList);
   const crossCheckData = crossCheckResp.data ? crossCheckResp.data.metricsData : {};
   dispatch(setCrosscheckMetricsProjList(crossCheckData));
+  
   const recentDeliveriesWithFlags = setProjectFlags(recentDeliveries, crossCheckData);
-
   dispatch(setRecentDeliveriesData(recentDeliveriesWithFlags));
 };
 
@@ -114,6 +115,10 @@ export const getRecentRunsData = (numDays) => async dispatch => {
 
 // Selectors
 const selectHomeEntities = state => state.home.entities;
+
+// export const selectHomeData = createSelector(selectHomeEntities, (entities) =>
+//   Object.values(entities)
+// )
 
 export const selectNeedsReviewData = state => {
   return selectHomeEntities(state)[NEEDS_REVIEW_STATE_ID];

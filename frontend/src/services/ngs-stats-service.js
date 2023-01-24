@@ -82,13 +82,15 @@ export const downloadNgsStatsFile = (
   sample = `${sample}_IGO_${igoId}`;
   return axios
     .get(
-      config.IGO_QC +
-        `/ngsStatsDownload?type=${type}&sample=${sample}&project=${project}&run=${run}&download=${download}`
+      config.NODE_API_ROOT +
+        `/homePage/ngsStatsDownload?type=${type}&sample=${sample}&project=${project}&run=${run}&download=${download}`
     )
     .then(res => {
       const payload = res['data'] || {};
       const data = payload['data'];
-      downloadHtml(data, sample);
+      if (data) {
+        downloadHtml(data, sample);
+      }
       return data;
     })
     .catch(handleError);

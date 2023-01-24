@@ -168,7 +168,27 @@ exports.getCrossCheckMetrics = (projects) => {
         .then((resp) => {
             return formatData(resp);
         });
-  }
+}
+
+exports.getInterOpsData = (runName) => {
+    const url = `${LIMS_URL}/getInterOpsData?runId=${runName}`;
+    return axios
+        .get(url, {
+            auth: { ...LIMS_AUTH },
+            ...axiosConfig,
+        })
+        .then((resp) => {
+            info(url);
+            return resp;
+        })
+        .catch((error) => {
+            errorlog(url);
+            throw error;
+        })
+        .then((resp) => {
+            return formatData(resp);
+        });
+}
 
 exports.getCellRangerSample = (project, ngsType) => {
     const url = `${NGS_STATS_API_URL}/getCellRangerSample?project=${project}&type=${ngsType}`;
@@ -192,6 +212,7 @@ exports.getCellRangerSample = (project, ngsType) => {
 
 exports.ngsStatsDownload = (ngsType, sample, projectId, run, download = true) => {
     const url = `${NGS_STATS_API_URL}/getCellRangerFile?run=${run}&project=${projectId}&sample=${sample}&type=${ngsType}&download=${download}`;
+    logger.info(`Submitting request to ${url}`);
     return axios
         .get(url, {
             auth: { ...LIMS_AUTH },

@@ -30,6 +30,9 @@ export const DataGrid = ({projects}) => {
     const validProjects = (projects) => {
         return projects && projects.length > 0;
     };
+    const isEmptyProjects = (projects) => {
+        return projects && projects.length === 0;
+    };
     
     const getPresentFields = (projects, fieldMap) => {
         const presentFields = Object.keys(fieldMap).filter((field) => {
@@ -107,14 +110,14 @@ export const DataGrid = ({projects}) => {
                 {renderHeaders()}
                 {renderProjects()}
             </table>;
-        } else if (projects === null) {
-            // LOADING - Input properties are still loading
-            return <div className='loader margin-auto'></div>;
-        } else {
+        } else if (isEmptyProjects(projects)) {
             // LOADED - No Data
             return <div>
                 <p className={'text-align-center'}>No Projects</p>
             </div>;
+        } else {
+            // LOADING - Input properties are still loading
+            return <div className="dot-elastic"></div>;
         }
     };
 

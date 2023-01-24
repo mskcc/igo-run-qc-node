@@ -1,11 +1,18 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Card } from '../common/card';
 import DataGrid from './dataGrid';
-import { selectRecentDeliveriesData } from './homeSlice';
+import { selectRecentDeliveriesData, getRecentDeliveries } from './homeSlice';
 
 export const RecentDeliveries = () => {
+    const dispatch = useDispatch();
     const recentDeliveries = useSelector(state => selectRecentDeliveriesData(state));
+    
+    useEffect(() => {
+      if (!recentDeliveries) {
+        dispatch(getRecentDeliveries());
+      }
+    });
 
     return (
         <div>

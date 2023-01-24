@@ -1,10 +1,49 @@
 import axios from 'axios';
 import config from '../config.js';
-// import { handleError, getData } from '../utils/service-utils';
+
+// axios.defaults.withCredentials = true;
+
+// Add a response interceptor
+// axios.interceptors.response.use(
+//   function(response) {
+//       // Do something with response data
+//       if (response.data.data) {
+//           response.payload = response.data.data;
+//           return response;
+//       }
+//       if (response.data) {
+//           response.payload = response.data;
+//           return response;
+//       }
+//       return response;
+//   },
+//   function(error) {
+//       // console.log(error);
+//       if (error.response) {
+//           error.payload = error.response.data;
+//           if (error.response.status === 401) {
+//               // Automatically redirect client to the login page
+//               window.location.href = `${config.AUTH_URL}/${config.SITE_HOME}`;
+//           }
+//       }
+//       // Do something with response error
+//       return Promise.reject(error);
+//   }
+// );
+
 
 const parseResp = function(resp) {
   const data = resp.data || [];
   return data;
+};
+
+const formatError = function (error) {
+  const status = error.response.status;
+  const message = error.response.data.message || '';
+  return {
+      status,
+      message
+  };
 };
 
 /**
@@ -46,7 +85,8 @@ export function getCrosscheckMetrics(projects) {
       return parseResp(resp);
     })
     .catch(error => {
-      throw new Error('Unable to fetch Request Projects: ' + error);
+      console.log('Unable to fetch Crosscheck Metrics: ' + error);
+      return formatError(error);
     });
 }
 
@@ -57,7 +97,19 @@ export const getProjectQC = projectId => {
       return parseResp(resp);
     })
     .catch(error => {
-      throw new Error('Unable to fetch Project QC: ' + error);
+      console.log('Unable to fetch Project QC: ' + error);
+      return formatError(error);
+    });
+};
+
+export function getInterOpsData(runId) {
+  return axios
+    .get(config.NODE_API_ROOT + `/homePage/getInterOpsData?runId=${runId}`)
+    .then(resp => {
+      return parseResp(resp);
+    })
+    .catch(error => {
+      throw new Error('Unable to fetch InterOps Data: ' + error);
     });
 };
 

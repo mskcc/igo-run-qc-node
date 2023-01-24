@@ -3,6 +3,7 @@ const http = require('http');
 const path = require('path');
 const express = require("express");
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const apiRouter = require('./routes/api');
 
@@ -14,6 +15,7 @@ var publicDir = path.join(__dirname, 'public');
 
 const app = express();
 
+app.use(cookieParser());
 const jwtInCookie = require('jwt-in-cookie');
 jwtInCookie.configure({ secret: process.env.JWT_SECRET });
 

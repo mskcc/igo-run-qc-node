@@ -16,3 +16,4 @@ frontend/src/config.prod.js
 frontend/src/lims_user_config_prod
 backend/RunQc_combined.log
 backend/RunQc_error.log
+frontend/build/

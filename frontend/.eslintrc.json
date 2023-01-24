@@ -9,9 +9,9 @@
     "comma-dangle": "off",
     "max-len": "off",
     "jsx-quotes": "off",
-    "import/no-import-module-exports": ["warning", {
-      "exceptions": ["node_modules/"]
-    }],
+    // "import/no-import-module-exports": ["warning", {
+    //   "exceptions": ["node_modules/"]
+    // }],
 
     "quotes": [
       "warn",

@@ -1,35 +1,35 @@
 import axios from 'axios';
 import config from '../config.js';
 
-// axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true;
 
 // Add a response interceptor
-// axios.interceptors.response.use(
-//   function(response) {
-//       // Do something with response data
-//       if (response.data.data) {
-//           response.payload = response.data.data;
-//           return response;
-//       }
-//       if (response.data) {
-//           response.payload = response.data;
-//           return response;
-//       }
-//       return response;
-//   },
-//   function(error) {
-//       // console.log(error);
-//       if (error.response) {
-//           error.payload = error.response.data;
-//           if (error.response.status === 401) {
-//               // Automatically redirect client to the login page
-//               window.location.href = `${config.AUTH_URL}/${config.SITE_HOME}`;
-//           }
-//       }
-//       // Do something with response error
-//       return Promise.reject(error);
-//   }
-// );
+axios.interceptors.response.use(
+  function(response) {
+      // Do something with response data
+      if (response.data.data) {
+          response.payload = response.data.data;
+          return response;
+      }
+      if (response.data) {
+          response.payload = response.data;
+          return response;
+      }
+      return response;
+  },
+  function(error) {
+      // console.log(error);
+      if (error.response) {
+          error.payload = error.response.data;
+          if (error.response.status === 401) {
+              // Automatically redirect client to the login page
+              window.location.href = `${config.AUTH_URL}/${config.SITE_HOME}`;
+          }
+      }
+      // Do something with response error
+      return Promise.reject(error);
+  }
+);
 
 
 const parseResp = function(resp) {

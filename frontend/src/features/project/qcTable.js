@@ -5,8 +5,7 @@ import 'handsontable/dist/handsontable.full.min.css';
 
 registerAllModules();
 
-export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders}) => {
-    
+export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders}) => {    
     return (
         <HotTable
             data={qcSamplesData}
@@ -16,6 +15,9 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders}) => {
             hiddenColumns={{
                 columns: columnsToHide
               }}
+            // columns={columnTypes}
+            columnSorting={true}
+            manualColumnMove={true}
             readOnly={true}
             readOnlyCellClassName={'project-table-row'}
             licenseKey="non-commercial-and-evaluation" // for non-commercial use only

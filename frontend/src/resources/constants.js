@@ -43,8 +43,10 @@ export const TABLE_MANDATORY_COLUMNS = new Set([
   "QC Record Id"
 ]);
 // PROJECT COLUMNS
-export const TABLE_HEADERS = ['QC Status', 'IGO ID', 'Sample', 'Initial Pool', 'Run', 'Recipe', 'Sum Reads', 'Examined Reads', 'Unmapped Reads', '% Adapters', '% Duplication', 'Bait Set', '% Target 100x', '% Target 30x', 'Mean Target Coverage', '% Off Bait', 'Sum Mean Target Coverage', '% mRNA', '% Ribosomal'];
+export const TABLE_HEADERS = ['QC Status', 'IGO ID', 'Sample', 'Initial Pool', 'Run', 'Recipe', 'Sum Reads', 'Examined Reads', 'Unmapped Reads', 'Requested Reads (Millions)', 'Tumor/Normal', '% Adapters', '% Duplication', 'Bait Set', '% Off Bait', '% Target 100x', '% Target 30x', 'Mean Target Coverage', 'Sum Mean Target Coverage', 'Requested Coverage', '% mRNA', '% Ribosomal', 'Stats Version'];
 export const ADDITIONAL_10X_TABLE_HEADERS = ['Estimated # of Cells', 'Fraction Read in Cells', 'Mean Reads Per Cell', '# of Reads', 'Reads Mapped to Genome', 'Reads Mapped to Transcriptome', 'Sequencing Saturation', 'Total Genes Detected'];
+
+export const NUMERIC_COLUMNS = ['Sum Reads', 'Examined Reads', 'Unmapped Reads', 'Requested Reads (Millions)'];
 
 // PAGE STATE
 export const HOME_PAGE = "HOME";
@@ -150,3 +152,4 @@ export const PERCENT_100X = 'percentTarget100x';
 export const PERCENT_OFF_BAIT = 'percentOffBait';
 export const BAIT_SET = 'baitSet';
 export const SUM_MTC = 'sumMTC';
+export const STATS_VERSION = 'statsVersion';

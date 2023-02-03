@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { getColumnNamesFromIndices } from '../../resources/projectHelper';
+import { MdClose } from 'react-icons/md';
 
 const customStyles = {
     content: {
@@ -51,7 +52,9 @@ export const AdditionalColumnsModal = ({isOpen, onModalClose, addColumns, hidden
             ariaHideApp={false}
         >
             <div className='modal-content-container'>
-                <button onClick={handleModalClose} className='modal-button'>X</button>
+                <button onClick={handleModalClose} className='modal-button em5'>
+                    <MdClose />
+                </button>
                 <div className='modal-header'>
                     <div className='em5'>Add Additional Columns</div>
                 </div>

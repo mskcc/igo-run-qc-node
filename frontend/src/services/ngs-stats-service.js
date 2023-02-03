@@ -88,10 +88,11 @@ export const downloadNgsStatsFile = (
     .then(res => {
       const payload = res['data'] || {};
       const data = payload['data'];
+      const ngsData = data.data;
       if (data) {
-        downloadHtml(data, sample);
+        downloadHtml(ngsData, sample);
       }
-      return data;
+      return ngsData;
     })
     .catch(handleError);
 };
@@ -119,14 +120,21 @@ export const mapCellRangerRecipe = recipe => {
  * @param type, String - Constant expected by ngs-stats endpoint
  * @returns {Promise<AxiosResponse<T>>}
  */
-// const getCellRangerData = (projectId, type) => {
-//   return axios
-//     .get(
-//       `${config.IGO_QC}/getCellRangerSample?project=${projectId}&type=${type}`
-//     )
-//     .then(processCellRangerResponse)
-//     .catch(handleError);
-// };
+export const getCellRangerData = (projectId, type) => {
+  return axios
+    .get(
+      `${config.NODE_API_ROOT}/project/getCellRangerSample?projectId=${projectId}&type=${type}`
+    )
+    .then(res => {
+      const payload = res['data'] || {};
+      const data = payload['data'];
+    
+      return data;
+    })
+    .catch(handleError);
+    // .then(processCellRangerResponse)
+    // .catch(handleError);
+};
 
 /**
  * Parses out relevant fields from cell-ranger response

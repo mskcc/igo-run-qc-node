@@ -8,6 +8,5 @@ router.get('/getRecentRuns', homePageController.getRecentRuns);
 router.get('/getCrosscheckMetrics', homePageController.getCrosscheckMetrics);
 router.get('/getInterOpsData', homePageController.getInterOpsData);
 router.get('/ngsStatsDownload', homePageController.ngsStatsDownload);
-// router.get('/getCellRangerSample', homePageController.getCellRangerSample);
 
 module.exports = router;

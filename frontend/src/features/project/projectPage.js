@@ -11,10 +11,10 @@ import { selectCrosscheckMetrics } from '../home/homeSlice';
 import { QcTable } from './qcTable';
 import { AdditionalColumnsModal } from '../common/additionalColumnsModal';
 import { PED_PEG, TABLE_HEADERS, ADDITIONAL_10X_TABLE_HEADERS } from '../../resources/constants';
-import { mapColumnsToHideByRecipe, orderSampleQcData } from '../../resources/projectHelper';
+import { mapColumnsToHideByRecipe, orderSampleQcData, getProjectType, orderDataWith10XColumns } from '../../resources/projectHelper';
 import { downloadExcel } from '../../utils/other-utils';
 import config from '../../config';
-import { downloadNgsStatsFile, mapCellRangerRecipe } from '../../services/ngs-stats-service';
+import { downloadNgsStatsFile, mapCellRangerRecipe, getCellRangerData } from '../../services/ngs-stats-service';
 
 export const ProjectPage = () => {
   const { projectId } = useParams();
@@ -28,20 +28,20 @@ export const ProjectPage = () => {
   const [showWebSummaries, setShowWebSummaries] = useState(false);
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
   const [qualityCheckStatus, setQualityCheckStatus] = useState(null);
+  const [recipeTypes, setRecipeTypes] = useState('');
+  const [is10xProject, setIs10xProject] = useState(false);
 
   const selectProjectData = useSelector(state =>
     selectProjectDataById(state, projectId)
   );
   const selectCrosscheckMetricsData = useSelector(state => selectCrosscheckMetrics(state));
-  console.log(selectCrosscheckMetricsData);
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await getProjectQC(projectId);
       if (response.status === 500) {
         setErrorMessage(response.message);
-      }
-      else {
+      } else {
         const { projectQc } = response.data;
         dispatch(setProjectQCData(projectQc, projectId));
       }
@@ -67,21 +67,56 @@ export const ProjectPage = () => {
     }
   },[selectProjectData, projectId, dispatch]);
 
+  // load cell ranger data if 10x project
+  useEffect(() => {
+    const fetch10XData = async (recipeToUse) => {
+      const response = await getCellRangerData(projectData.requestId, recipeToUse);
+      if (!response.cellRangerSampleResults) {
+        setErrorMessage('No Cell Ranger results found.');
+      } else {
+        const { data } = response.cellRangerSampleResults;
+        if (orderedSampleInfo.length) {
+          const allOrderedInfo = orderDataWith10XColumns(orderedSampleInfo, data);
+          setOrderedSampleInfo(allOrderedInfo);
+        }
+        
+      }
+    };
+    if(is10xProject) {
+      const recipeToUse = mapCellRangerRecipe(recipeTypes);
+      fetch10XData(recipeToUse);
+    }
+  }, [is10xProject]);
+
   const handleProjectDetails = (data) => {
     if (data.samples && data.samples.length > 0) {
       let recipe = data.samples[0].recipe;
       if (data.requestName === PED_PEG) {
           recipe = PED_PEG;
       }
-      if (recipe.includes('10X')) {
-        setTableHeaders(tableHeaders.concat(ADDITIONAL_10X_TABLE_HEADERS));
-      }
 
-      const columnsToHide = mapColumnsToHideByRecipe(recipe);
-      setDataColumnsToHide(columnsToHide);
+      //TODO make this nested if better
+      if (recipe.includes('10X')) {
+        const recipes = getProjectType(data.samples);
+        setRecipeTypes(recipes);
+        if (mapCellRangerRecipe(recipes)) {
+          setIs10xProject(true);
+          const allHeaders = tableHeaders.concat(ADDITIONAL_10X_TABLE_HEADERS);
+          setTableHeaders(allHeaders);
+          const columnsToHide = mapColumnsToHideByRecipe(recipe, allHeaders);
+          setDataColumnsToHide(columnsToHide);
+        } else {
+          const columnsToHide = mapColumnsToHideByRecipe(recipe, tableHeaders);
+          setDataColumnsToHide(columnsToHide);
+        }
+      } else {
+        const columnsToHide = mapColumnsToHideByRecipe(recipe, tableHeaders);
+        setDataColumnsToHide(columnsToHide);
+      }
 
       const sampleData = orderSampleQcData(data.samples);
       setOrderedSampleInfo(sampleData);
+
     }
   };
 
@@ -111,7 +146,7 @@ export const ProjectPage = () => {
       .then((data) => {
         if (!data) {
           // TODO add error UI messaging
-          console.log('Data not available.');
+          alert(`Data not available for ${row.qc.sampleName}.`);
         }
       });
   };

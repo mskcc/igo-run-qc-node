@@ -28,21 +28,23 @@ exports.getSeqAnalysisProjects = [
 
                 const reviewedRequestIdList = [];
                 let incompleteRequests = [];
-                const projectsToReview = [];
-                const projectsToSequenceFurther = [];
+                let projectsToReview = [];
+                let projectsToSequenceFurther = [];
                 let requestsPending = [];
 
                 // recent deliveries = reviewed requests
-                recentDeliveriesResult.forEach((project)=> {
-                    reviewedRequestIdList.push(project.requestId);
-
-                    const projectObj = utils.addProjectProperties(project);
-                    if (projectObj.needsReview) {
-                        projectsToReview.push(projectObj);
-                    } else {
-                        projectsToSequenceFurther.push(projectObj);
-                    }
-                });
+                if (recentDeliveriesResult && recentDeliveriesResult.length) {
+                    recentDeliveriesResult.forEach((project)=> {
+                        reviewedRequestIdList.push(project.requestId);
+    
+                        const projectObj = utils.addProjectProperties(project);
+                        if (projectObj.needsReview) {
+                            projectsToReview.push(projectObj);
+                        } else {
+                            projectsToSequenceFurther.push(projectObj);
+                        }
+                    });
+                }
                 
                 // sequencing requests = incomplete requests
                 if (!seqRequestsResults.requests) {

@@ -44,7 +44,7 @@ export const TABLE_MANDATORY_COLUMNS = new Set([
 ]);
 // PROJECT COLUMNS
 export const TABLE_HEADERS = ['QC Status', 'IGO ID', 'Sample', 'Initial Pool', 'Run', 'Recipe', 'Sum Reads', 'Examined Reads', 'Unmapped Reads', 'Requested Reads (Millions)', 'Tumor/Normal', '% Adapters', '% Duplication', 'Bait Set', '% Off Bait', '% Target 100x', '% Target 30x', 'Mean Target Coverage', 'Sum Mean Target Coverage', 'Requested Coverage', '% mRNA', '% Ribosomal', 'Stats Version'];
-export const ADDITIONAL_10X_TABLE_HEADERS = ['Estimated # of Cells', 'Fraction Read in Cells', 'Mean Reads Per Cell', '# of Reads', 'Reads Mapped to Genome', 'Reads Mapped to Transcriptome', 'Sequencing Saturation', 'Total Genes Detected'];
+export const ADDITIONAL_10X_TABLE_HEADERS = ['Estimated # of Cells', 'Fraction Reads in Cells', 'Mean Reads Per Cell', 'Median Genes Per Cell', 'Median UMI Counts Per Cell', '# of Reads', 'Q30 Bases in Barcode', 'Q30 Bases in Sample Index', 'Q30 Bases in UMI', 'Q30 Bases in RNA Read', 'Reads Mapped Antisense to Gene', 'Reads Mapped Confidently to Genome', 'Reads Mapped to Exonic Regions', 'Reads Mapped to Genome', 'Reads Mapped to Intergenic Regions', 'Reads Mapped to Intronic Regions', 'Reads Mapped to Transcriptome', 'Sequencing Saturation', 'Total Genes Detected', 'Valid Barcodes'];
 
 export const NUMERIC_COLUMNS = ['Sum Reads', 'Examined Reads', 'Unmapped Reads', 'Requested Reads (Millions)'];
 
@@ -153,3 +153,25 @@ export const PERCENT_OFF_BAIT = 'percentOffBait';
 export const BAIT_SET = 'baitSet';
 export const SUM_MTC = 'sumMTC';
 export const STATS_VERSION = 'statsVersion';
+
+// 10X DATA KEYS
+export const EST_NUMBER_OF_CELLS = 'EstimatedNumberOfCells';
+export const FRACTION_READS_IN_CELLS = 'FractionReadsInCells';
+export const MEAN_READS_PER_CELL = 'MeanReadsPerCell';
+export const MEDIAN_GENES_PER_CELL = 'MedianGenesPerCell';
+export const MEDIAN_UMI_COUNTS_PER_CELL = 'MedianUMICountsPerCell';
+export const NUMBER_OF_READS = 'NumberOfReads';
+export const Q30_BARCODE = 'Q30BasesInBarcode';
+export const Q30_SAMPLE_INDEX = 'Q30BasesInSampleIndex';
+export const Q30_UMI = 'Q30BasesInUMI';
+export const Q30_RNA_READ = 'Q30BasesinRNARead';
+export const READS_MAPPED_ANTISENSE = 'ReadsMappedAntisenseToGene';
+export const READS_MAPPED_CONFIDENTLY = 'ReadsMappedConfidentlyToGenome';
+export const READS_MAPPED_TO_EXONIC_REGIONS = 'ReadsMappedToExonicRegions';
+export const READS_MAPPED_TO_GENOME = 'ReadsMappedToGenome';
+export const READS_MAPPED_TO_INTERGENIC_REGIONS = 'ReadsMappedToIntergenicRegions';
+export const READS_MAPPED_TO_INTRONIC_REGIONS = 'ReadsMappedToIntronicRegions';
+export const READS_MAPPED_TO_TRANSCRIPTOME = 'ReadsMappedToTranscriptome';
+export const SEQUENCING_SATURATION = 'SequencingSaturation';
+export const TOTAL_GENES_DETECTED = 'TotalGenesDetected';
+export const VALID_BARCODES = 'ValidBarcodes';

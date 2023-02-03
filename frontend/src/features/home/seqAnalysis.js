@@ -1,26 +1,18 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Card } from '../common/card';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import DataGrid from './dataGrid';
 import {
   selectFurtherSeqData,
   selectNeedsReviewData,
-  selectPendingRequestsData,
-  getSeqData
+  selectPendingRequestsData
 } from './homeSlice';
 
 export const SeqAnalysis = () => {
-  const dispatch = useDispatch();
   const needsReview = useSelector(state => selectNeedsReviewData(state));
   const requiresSequencing = useSelector(state => selectFurtherSeqData(state));
   const awaitingAction = useSelector(state => selectPendingRequestsData(state));
-
-  useEffect(() => {
-    if (!needsReview || !requiresSequencing || !awaitingAction) {
-      dispatch(getSeqData());
-    }
-  });
 
   return (
     <div>

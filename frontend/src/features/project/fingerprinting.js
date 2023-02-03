@@ -21,10 +21,10 @@ const HEADERS = {
     'lodScoreNormalTumor': types.NUMERIC,
     'igoIdA': types.STRING,
     'igoIdB': types.STRING,
-    "tumorNormalA": types.STRING,
-    "tumorNormalB": types.STRING,
-    "patientIdA": types.STRING,
-    "patientIdB": types.STRING
+    'tumorNormalA': types.STRING,
+    'tumorNormalB': types.STRING,
+    'patientIdA': types.STRING,
+    'patientIdB': types.STRING
 };
 
 export const FingerprintingTable = () => {
@@ -34,9 +34,11 @@ export const FingerprintingTable = () => {
     const [showDescriptionModal, setShowDescriptionModal] = useState(false);
     const [columns, setColumns] = useState([]);
     const [colHeaders, setColHeaders] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (projectId && selectCrosscheckMetricsData)  {
+        if (projectId && selectCrosscheckMetricsData && selectCrosscheckMetricsData !== {})  {
+            setIsLoading(false);
             const rawData = selectCrosscheckMetricsData[projectId.toString()];
             if (rawData) {
                 const data = filterDuplicatePairs(rawData.entries);
@@ -44,9 +46,19 @@ export const FingerprintingTable = () => {
                 setColHeaders(Object.keys(HEADERS));
                 const cols = getColumns();
                 setColumns(cols);
+            } else {
+                setTableData([]);
             }
+        } else {
+            setTableData([]);
         }
-    }, [selectCrosscheckMetricsData]);
+    }, [projectId, selectCrosscheckMetricsData]);
+
+    useEffect(() => {
+        if (tableData === []) {
+            setIsLoading(false);
+        }
+    }, [tableData]);
 
     const getColumns = () => {
         return Object.keys(HEADERS).map((header)=>{
@@ -71,6 +83,41 @@ export const FingerprintingTable = () => {
         downloadExcel(entries, null, `${projectId}_fingerprinting`);
     };
 
+    const renderFingerprintingData = () => {
+        if (tableData === []) {
+            return <div className='text-align-center'>No data available for Project {projectId}</div>;
+        } else {
+            return (
+                <div>
+                    <div className='icons-container em5 '>
+                        <div onClick={handleQualityCheckModalOpen}>
+                            <IoInformationCircleOutline />
+                        </div>
+                        <div onClick={handleExcel}>
+                            <SiMicrosoftexcel />
+                        </div>
+                    </div>
+                    <div className='hottable-container'>
+                        <HotTable
+                            licenseKey='non-commercial-and-evaluation'
+                            id='fingerprintTable'
+                            height='auto'
+                            colHeaders={colHeaders}
+                            data={tableData}
+                            columns={columns}
+                            rowHeaders={true}
+                            filters='true'
+                            dropdownMenu={['filter_by_value', 'filter_action_bar']}
+                            columnSorting={true}
+                            manualColumnMove={true}
+                        />
+                    </div>
+                </div>
+                
+            );
+        }
+    };
+
     return (
         <div>
             <QualityChecksModal isOpen={showDescriptionModal} onModalClose={handleQualityCheckModalClose} />
@@ -78,30 +125,7 @@ export const FingerprintingTable = () => {
                 Fingerprinting
             </div>
             <div className='fingerprint-subtitle'>{projectId}</div>
-            {tableData ? (
-                <div className='icons-container em5 '>
-                    <div onClick={handleQualityCheckModalOpen}>
-                        <IoInformationCircleOutline />
-                    </div>
-                    <div onClick={handleExcel}>
-                        <SiMicrosoftexcel />
-                    </div>
-                </div>
-                ) :
-                    <div className='text-align-center'>No data available for Project {projectId}</div>
-                }
-                <HotTable
-                    licenseKey="non-commercial-and-evaluation"
-                    id="fingerprintTable"
-                    colHeaders={colHeaders}
-                    data={tableData}
-                    columns={columns}
-                    rowHeaders={true}
-                    filters="true"
-                    dropdownMenu={['filter_by_value', 'filter_action_bar']}
-                    columnSorting={true}
-                    manualColumnMove={true}
-                />
+            {isLoading ? <div className='dot-elastic'></div> : renderFingerprintingData()}
         </div>
     );
 };

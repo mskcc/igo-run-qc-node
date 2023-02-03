@@ -27,7 +27,7 @@ export const ProjectPage = () => {
   const [orderedSampleInfo, setOrderedSampleInfo] = useState([]);
   const [showWebSummaries, setShowWebSummaries] = useState(false);
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
-  const [qualityCheckStatus, setQualityCheckStatus] = useState(null);
+  const [qualityCheckStatus, setQualityCheckStatus] = useState('button-disabled');
   const [recipeTypes, setRecipeTypes] = useState('');
   const [is10xProject, setIs10xProject] = useState(false);
 
@@ -55,15 +55,6 @@ export const ProjectPage = () => {
       setIsLoading(false);
       setProjectData(selectProjectData);
       handleProjectDetails(selectProjectData);
-
-      // Quality Checks - fingerprinting info
-      if (projectId && selectCrosscheckMetricsData) {
-        const qCStatus = selectCrosscheckMetricsData[projectId.toString()];
-        if (qCStatus && qCStatus.flag) {
-          setQualityCheckStatus(qCStatus.flag);
-        }
-      }
-      
     }
   },[selectProjectData, projectId, dispatch]);
 
@@ -87,6 +78,17 @@ export const ProjectPage = () => {
       fetch10XData(recipeToUse);
     }
   }, [is10xProject]);
+
+  // setting quality checks button color based on results from crosscheck metrics
+  useEffect(() => {
+    // Quality Checks - fingerprinting info
+    if (projectId && selectCrosscheckMetricsData) {
+      const qCStatus = selectCrosscheckMetricsData[projectId.toString()];
+      if (qCStatus && qCStatus.flag) {
+        setQualityCheckStatus(qCStatus.flag);
+      }
+    }
+  }, [projectId, selectCrosscheckMetricsData]);
 
   const handleProjectDetails = (data) => {
     if (data.samples && data.samples.length > 0) {

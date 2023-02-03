@@ -437,6 +437,10 @@ a:link {
 .PASS {
   background-color: var(--mskcc-light-green);
 }
+.button-disabled {
+  opacity: .5;
+  cursor: default;
+}
 .hidden {
   display: none;
 }
@@ -481,7 +485,7 @@ a:link {
   border-style: solid;
   border-radius: 3px;
   cursor: pointer;
-  padding:5px 10px;
+  padding:5px 5px 0px 5px;
 }
 .modal-header {
   text-align: center;

@@ -33,7 +33,7 @@ export const RecentRuns = () => {
       } else {
         // Check for runs that have picard stats if recentRuns have been returned, but runsWithPicard has not been set
         if(!runsWithPicard && recentRuns.length > 0){
-          // fetchPicardStats();
+          fetchPicardStats();
         }
       }
     });

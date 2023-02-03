@@ -11,26 +11,6 @@ import {
 import { downloadHtml } from '../utils/other-utils';
 
 /**
- * Returns the fingerprint data for an input list of projects
- *
- * @param projects, String[]
- * @returns {Promise<AxiosResponse<T>>}
- *      e.g. {
- *          data: {
- *              [PROJECT_KEY]: {...},
- *              ...
- *          }
- *      }
- */
-// export const getCrosscheckMetrics = projects => {
-//   const projectList = projects.join(',');
-//   return axios
-//     .get(`${config.NGS_STATS}/ngs-stats/getCrosscheckMetrics?projects=${projectList}`)
-//     .then(getData)
-//     .catch(handleError);
-// };
-
-/**
  * Returns promise of request sent to ngs-stats for the excel sheet of a run
  *
  * @param run

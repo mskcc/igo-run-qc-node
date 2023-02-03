@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { FaChartBar, FaDna } from 'react-icons/fa';
 import { AiFillFileText } from 'react-icons/ai';
-import { MdOutlineDoNotDisturb } from "react-icons/md";
+import { MdOutlineDoNotDisturb } from 'react-icons/md';
 import config from '../../config';
 import { getRecentRunsData } from './homeSlice';
 
@@ -81,9 +81,9 @@ export const RunsDataGrid = ({runs, runsWithPicard}) => {
                     </a>
                 </td>
                 <td className={'text-align-center light-blue-border'}>
-                { runsWithPicard && runsWithPicard.has(name) ?
-                    <a href={`${config.NGS_STATS}/ngs-stats/get-picard-run-excel/${name}`} target="_blank">
-                        <button className="table-btn run-info-button em5">
+                { runsWithPicard && runsWithPicard.includes(name) ?
+                    <a href={`${config.NGS_STATS}/ngs-stats/get-picard-run-excel/${name}`} target='_blank'>
+                        <button className='table-btn run-info-button em5'>
                             <FaDna />
                         </button>
                     </a>

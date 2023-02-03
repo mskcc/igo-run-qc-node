@@ -2,7 +2,7 @@ import { PROJECT_FLAGS,  LIMS_REQUEST_ID, CROSSCHECK_METRICS_FLAG } from './cons
 import * as Constants from './constants';
 
 export const setProjectFlags = (projectList, crosscheckMetrics) => {
-    if(projectList === null || Object.keys(projectList).length === 0) return;
+    if(!projectList || Object.keys(projectList).length === 0) return [];
     const type = 'Fingerprinting';
     const updatedProjects = projectList.map((project) => {
         const pId = project[LIMS_REQUEST_ID];
@@ -19,8 +19,8 @@ export const setProjectFlags = (projectList, crosscheckMetrics) => {
     return updatedProjects;
 };
 
-export const mapColumnsToHideByRecipe = (recipe) => {
-    const columnHeaders = Constants.TABLE_HEADERS;
+export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
+    const columnHeaders = tableHeaders;
 
     const examinedReadsColumn = columnHeaders.indexOf('Examined Reads');
     const unmappedReadsColumn = columnHeaders.indexOf('Unmapped Reads');
@@ -130,10 +130,10 @@ export const orderSampleQcData = (qcSamples) => {
         sampleData.push(sample[Constants.INITIAL_POOL]);
         sampleData.push(sample.qc[Constants.RUN]);
         sampleData.push(sample[Constants.RECIPE]);
-        sampleData.push(sample[Constants.SUM_READS].toLocaleString('en-US'));
-        sampleData.push(sample.qc[Constants.READS_EXAMINED].toLocaleString('en-US'));
-        sampleData.push(sample.qc[Constants.UNMAPPED].toLocaleString('en-US'));
-        sampleData.push(sample[Constants.REQUESTED_READS].toLocaleString('en-US'));
+        sampleData.push(sample[Constants.SUM_READS]);
+        sampleData.push(sample.qc[Constants.READS_EXAMINED]);
+        sampleData.push(sample.qc[Constants.UNMAPPED]);
+        sampleData.push(sample[Constants.REQUESTED_READS]);
         sampleData.push(sample[Constants.TUMOR_OR_NORMAL]);
         const percentAdapters = Number((sample.qc[Constants.PERCENT_ADAPTERS] * 100).toFixed(6));
         sampleData.push(percentAdapters);
@@ -162,14 +162,50 @@ export const orderSampleQcData = (qcSamples) => {
         const statsVersion = sample.qc[Constants.STATS_VERSION] || '';
         sampleData.push(statsVersion);
 
-        // fill in 10x table values
-        if (sample[Constants.RECIPE].includes('10X')) {
-
-        }
-
         tableData.push(sampleData);
     });
 
+    return tableData;
+};
+
+//TODO maybe reshape how we fill the grid with data because this nested loop is poop
+export const orderDataWith10XColumns = (originalSampleData, tenXData) => {
+    let tableData = [];
+
+    originalSampleData.forEach((originalSample) => {
+        let sampleData = originalSample;
+
+        // always shown second in the grid data
+        const sampleId = originalSample[1];
+
+        // ensure we're pushing data to corresponding sample
+        tenXData.forEach((sample) => {
+            if (sample.id.includes(sampleId)) {
+                sampleData.push(sample[Constants.EST_NUMBER_OF_CELLS]);
+                sampleData.push(sample[Constants.FRACTION_READS_IN_CELLS]);
+                sampleData.push(sample[Constants.MEAN_READS_PER_CELL]);
+                sampleData.push(sample[Constants.MEDIAN_GENES_PER_CELL]);
+                sampleData.push(sample[Constants.MEDIAN_UMI_COUNTS_PER_CELL]);
+                sampleData.push(sample[Constants.NUMBER_OF_READS]);
+                sampleData.push(sample[Constants.Q30_BARCODE]);
+                sampleData.push(sample[Constants.Q30_SAMPLE_INDEX]);
+                sampleData.push(sample[Constants.Q30_UMI]);
+                sampleData.push(sample[Constants.Q30_RNA_READ]);
+                sampleData.push(sample[Constants.READS_MAPPED_ANTISENSE]);
+                sampleData.push(sample[Constants.READS_MAPPED_CONFIDENTLY]);
+                sampleData.push(sample[Constants.READS_MAPPED_TO_EXONIC_REGIONS]);
+                sampleData.push(sample[Constants.READS_MAPPED_TO_GENOME]);
+                sampleData.push(sample[Constants.READS_MAPPED_TO_INTERGENIC_REGIONS]);
+                sampleData.push(sample[Constants.READS_MAPPED_TO_INTRONIC_REGIONS]);
+                sampleData.push(sample[Constants.READS_MAPPED_TO_TRANSCRIPTOME]);
+                sampleData.push(sample[Constants.SEQUENCING_SATURATION]);
+                sampleData.push(sample[Constants.TOTAL_GENES_DETECTED]);
+                sampleData.push(sample[Constants.VALID_BARCODES]);
+            }
+        });
+        tableData.push(sampleData);
+    });
+    
     return tableData;
 };
 
@@ -224,4 +260,17 @@ export const filterDuplicatePairs = (entryList) => {
         }
     }
     return filteredEntries;
+};
+
+export const getProjectType = (samples) => {
+    const project_recipes = [];
+    const all_recipes = samples.map(sample => sample.recipe);
+    all_recipes.forEach(recipe => {
+        if (!project_recipes.includes(recipe)) {
+            project_recipes.push(recipe);
+        }
+    });
+    const recipesAsString = project_recipes.join(',');
+
+    return recipesAsString;
 };

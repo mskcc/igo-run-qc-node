@@ -10,7 +10,7 @@ const { enrichSampleInfo } = require('../util/helpers');
  */
 exports.projectQc = [
     function(req, res) {
-        const projectId = req.params.projectId
+        const projectId = req.params.projectId;
         let projectQcPromise = apiServices.getProjectQc(projectId);
         Promise.all([projectQcPromise])
             .then((results) => {
@@ -60,5 +60,25 @@ exports.qcStatusLabels = [
             .catch((reasons) => {
                 return apiResponse.errorResponse(res, `Could not retrieve data from LIMS: ${reasons}`);
             });
+    }
+];
+
+exports.getCellRangerSample = [
+    function(req, res) {
+        const projectId = req.query.projectId;
+        const ngsType = req.query.type;
+        let cellRangerSamplePromise = apiServices.getCellRangerSample(projectId, ngsType);
+        Promise.all([cellRangerSamplePromise])
+            .then((results) => {
+                if(!results) {
+                    return apiResponse.errorResponse(res, `Could not find Cell Ranger data for project ${projectId}.`);
+                }
+
+                let [cellRangerSampleResults] = results;
+                const responseObject = {
+                    cellRangerSampleResults
+                }
+                return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
+            })
     }
 ];

@@ -43,7 +43,7 @@ export const TABLE_MANDATORY_COLUMNS = new Set([
   "QC Record Id"
 ]);
 // PROJECT COLUMNS
-export const TABLE_HEADERS = ['QC Status', 'IGO ID', 'Sample', 'Initial Pool', 'Run', 'Recipe', 'Sum Reads', 'Examined Reads', 'Unmapped Reads', 'Requested Reads (Millions)', 'Tumor/Normal', '% Adapters', '% Duplication', 'Bait Set', '% Off Bait', '% Target 100x', '% Target 30x', 'Mean Target Coverage', 'Sum Mean Target Coverage', 'Requested Coverage', '% mRNA', '% Ribosomal', 'Stats Version'];
+export const TABLE_HEADERS = ['QC Status', 'IGO ID', 'Sample', 'QC Record Id', 'Initial Pool', 'Run', 'Recipe', 'Sum Reads', 'Examined Reads', 'Unmapped Reads', 'Requested Reads (Millions)', 'Tumor/Normal', '% Adapters', '% Duplication', 'Bait Set', '% Off Bait', '% Target 100x', '% Target 30x', 'Mean Target Coverage', 'Sum Mean Target Coverage', 'Requested Coverage', '% mRNA', '% Ribosomal', 'Stats Version'];
 export const ADDITIONAL_10X_TABLE_HEADERS = ['Estimated # of Cells', 'Fraction Reads in Cells', 'Mean Reads Per Cell', 'Median Genes Per Cell', 'Median UMI Counts Per Cell', '# of Reads', 'Q30 Bases in Barcode', 'Q30 Bases in Sample Index', 'Q30 Bases in UMI', 'Q30 Bases in RNA Read', 'Reads Mapped Antisense to Gene', 'Reads Mapped Confidently to Genome', 'Reads Mapped to Exonic Regions', 'Reads Mapped to Genome', 'Reads Mapped to Intergenic Regions', 'Reads Mapped to Intronic Regions', 'Reads Mapped to Transcriptome', 'Sequencing Saturation', 'Total Genes Detected', 'Valid Barcodes'];
 
 export const NUMERIC_COLUMNS = ['Sum Reads', 'Examined Reads', 'Unmapped Reads', 'Requested Reads (Millions)'];
@@ -121,6 +121,7 @@ export const TENX_GENOMICS_MULTIOME_EXP = '10X_Genomics_Multiome_GeneExpression'
 export const IGO_ID = 'baseId';
 export const CMO_ID = 'cmoId';
 export const QC_STATUS = 'qcStatus';
+export const RECORD_ID = 'recordId';
 export const SAMPLE_NAME = 'sampleName';
 export const RUN = 'run';
 export const QC_RECORD_ID = 'recordId';

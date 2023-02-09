@@ -127,6 +127,7 @@ export const orderSampleQcData = (qcSamples) => {
         sampleData.push(sample.qc[Constants.QC_STATUS]);
         sampleData.push(sample[Constants.IGO_ID]);
         sampleData.push(sample.qc[Constants.SAMPLE_NAME]);
+        sampleData.push(sample[Constants.RECORD_ID]);
         sampleData.push(sample[Constants.INITIAL_POOL]);
         sampleData.push(sample.qc[Constants.RUN]);
         sampleData.push(sample[Constants.RECIPE]);

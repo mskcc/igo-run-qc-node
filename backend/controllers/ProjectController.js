@@ -82,3 +82,29 @@ exports.getCellRangerSample = [
             })
     }
 ];
+
+exports.changeRunStatus = [
+    function(req, res) {
+        const samples = req.query.recordId;
+        const projectId = req.query.project;
+        const newStatus = req.query.status;
+        const recipe = req.query.recipe;
+        let updateRunStatusPromise = apiServices.setQCStatus(samples, newStatus, projectId, recipe);
+        Promise.all([updateRunStatusPromise])
+            .then((results) => {
+                console.log(results);
+                if(!results) {
+                    return apiResponse.errorResponse(res, 'Could not update status.');
+                }
+
+                let [statusResults] = results;
+                const responseObject = {
+                    statusResults
+                };
+                return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
+            })
+            .catch((reasons) => {
+                return apiResponse.errorResponse(res, `Error trying to update status: ${reasons}`);
+            });
+    }
+];

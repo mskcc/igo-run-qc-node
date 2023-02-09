@@ -72,11 +72,6 @@ export function getRequestProjects() {
       throw new Error('Unable to fetch Request Projects: ' + error);
     });
 }
-// export const getProjectInfo = (projectId) => {
-//     return axios.get(config.IGO_QC + `/projectInfo/${projectId}`)
-//         .then(getData)
-//         .catch(handleError)
-// };
 
 export function getCrosscheckMetrics(projects) {
   return axios
@@ -113,11 +108,16 @@ export function getInterOpsData(runId) {
     });
 };
 
-// export const setRunStatus = (run, project, status, recipe) => {
-//     return axios.get(`${config.IGO_QC}/changeRunStatus?recordId=${run}&project=${project}&status=${status}&recipe=${recipe}`)
-//         .then(getData)
-//         .catch(handleError)
-// };
+export const setRunStatus = (run, project, status, recipe) => {
+    return axios.get(`${config.NODE_API_ROOT}/project/changeRunStatus?recordId=${run}&project=${project}&status=${status}&recipe=${recipe}`)
+    .then(resp => {
+      return parseResp(resp);
+    })
+    .catch(error => {
+      console.log('Unable to update run status: ' + error);
+      return formatError(error);
+    });
+};
 
 // export const addComment = (projectId, commentText, username) => {
 //     const data = { projectId, commentText, username };

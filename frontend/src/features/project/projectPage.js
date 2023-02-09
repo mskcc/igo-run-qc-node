@@ -22,6 +22,7 @@ export const ProjectPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [projectData, setProjectData] = useState({});
   const [errorMessage, setErrorMessage] = useState('');
+  const [cellRangerError, setCellRangerError] = useState('');
   const [dataColumnsToHide, setDataColumnsToHide] = useState([]);
   const [tableHeaders, setTableHeaders] = useState(TABLE_HEADERS);
   const [orderedSampleInfo, setOrderedSampleInfo] = useState([]);
@@ -42,6 +43,7 @@ export const ProjectPage = () => {
       if (response.status === 500) {
         setErrorMessage(response.message);
       } else {
+        setErrorMessage('');
         const { projectQc } = response.data;
         dispatch(setProjectQCData(projectQc, projectId));
       }
@@ -54,6 +56,7 @@ export const ProjectPage = () => {
     } else {
       setIsLoading(false);
       setProjectData(selectProjectData);
+      setErrorMessage('');
       handleProjectDetails(selectProjectData);
     }
   },[selectProjectData, projectId, dispatch]);
@@ -63,7 +66,7 @@ export const ProjectPage = () => {
     const fetch10XData = async (recipeToUse) => {
       const response = await getCellRangerData(projectData.requestId, recipeToUse);
       if (!response.cellRangerSampleResults) {
-        setErrorMessage('No Cell Ranger results found.');
+        setCellRangerError('No Cell Ranger results found.');
       } else {
         const { data } = response.cellRangerSampleResults;
         if (orderedSampleInfo.length) {
@@ -160,8 +163,8 @@ export const ProjectPage = () => {
         <h2 className={'title text-align-center'}>Project {projectId} Details</h2>
       </div>
 
-      {!projectData || projectData.length === 0 ?
-        <div className='text-align-center'>{errorMessage}</div>
+      {errorMessage || !projectData || projectData.length === 0 ?
+        <div className='text-align-center error-message'>{errorMessage}</div>
       :
       <div className='project-info-container'>
         <div className='project-flexbox-container'>
@@ -215,10 +218,13 @@ export const ProjectPage = () => {
             <div onClick={handleColumnModalOpen} className='additional-actions'>Additional Columns</div>
           </div>
         </div>
+        {cellRangerError && (
+          <div className='text-align-center'>{cellRangerError}</div>
+        )}
         <div className='hottable-container'>
           {isLoading ? 
             <div className="dot-elastic"></div>
-            : <QcTable qcSamplesData={orderedSampleInfo} columnsToHide={dataColumnsToHide} tableHeaders={tableHeaders} />
+            : <QcTable qcSamplesData={orderedSampleInfo} columnsToHide={dataColumnsToHide} tableHeaders={tableHeaders} recipe={recipeTypes} />
           }
         </div>
       </div>

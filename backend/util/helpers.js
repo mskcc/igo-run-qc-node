@@ -48,29 +48,81 @@ exports.addProjectProperties = (project) => {
 };
 
 // based on old version - not currently used
-exports.getProjectInfo = (projectQc, projectStatusList) => {
-    const samples = projectQc.samples;
-    const commonSample = samples[0];
-    let requester = this.getRequesterInfo(projectQc, commonSample);
-    let statuses = {};
-    let recordIds = [];
-    // getStatuses, getRecordIds, enrichSamples, and some of getRequesterInfo all loop through samples
-    // move that logic into here for better efficiency!
+// exports.getProjectInfo = (projectQc, projectStatusList) => {
+//     const samples = projectQc.samples;
+//     const commonSample = samples[0];
+//     let requester = this.getRequesterInfo(projectQc, commonSample);
+//     let statuses = {};
+//     let recordIds = [];
+//     // getStatuses, getRecordIds, enrichSamples, and some of getRequesterInfo all loop through samples
+//     // move that logic into here for better efficiency!
 
+//     let sampleNames = [];
+//     let tumorCount = 0;
+//     let normalCount = 0;
+//     let labels = [];
+//     let enrichedSamples = [];
+
+//     for(let i = 0; i < projectStatusList.length; i++) {
+//         statuses[i] = 0;
+//     }
+//     samples.forEach((sample) => {
+//         let sampleQC = sample['qc'];
+//         let name = sampleQC['sampleName'];
+//         recordIds.push(sampleQC['recordId']);
+
+//         if(!sampleNames.includes(name)) {
+//             sampleNames.push(name);
+//             if(sample['tumorOrNormal'] === 'Tumor') {
+//                 tumorCount++;
+//             } else if(sample['tumorOrNormal'] === 'Normal') {
+//                 normalCount++;
+//             }
+//         }
+
+//         // statuses: Double check this is right... idk
+//         if(!(sampleQC['recordId'] in labels)) {
+//             if(!('qcStatus' in sampleQC)){
+//                 labels.push(sampleQC['recordId']);
+//             } else {
+//                 statuses[sampleQC['qcStatus']] += 1;
+//             }
+//         }
+
+//         // enriching done in separate function for readability
+
+//     });
+
+//     // rest of requester info
+//     requester['tumorCount'] = tumorCount;
+//     requester['normalCount'] = normalCount;
+//     if(!('sampleNumber' in projectQc)) {
+//         requester['numSamples'] = sampleNames.length;
+//     } else {
+//         requester['numSamples'] = projectQc['sampleNumber'];
+//     }
+
+//     const projectInfo = {
+//         'requester': requester,
+//         'statuses': statuses,
+//         'recordIds': recordIds
+//     };
+    
+//     return projectInfo;
+//     // separate functions: getChartLinks, getProjectType, grid(find js equivalent)
+
+// };
+
+
+exports.enrichProjectQC = (projectQc) => {
+    const samples = projectQc.samples;
     let sampleNames = [];
     let tumorCount = 0;
     let normalCount = 0;
-    let labels = [];
-    let enrichedSamples = [];
 
-    for(let i = 0; i < projectStatusList.length; i++) {
-        statuses[i] = 0;
-    }
     samples.forEach((sample) => {
         let sampleQC = sample['qc'];
         let name = sampleQC['sampleName'];
-        recordIds.push(sampleQC['recordId']);
-
         if(!sampleNames.includes(name)) {
             sampleNames.push(name);
             if(sample['tumorOrNormal'] === 'Tumor') {
@@ -79,60 +131,13 @@ exports.getProjectInfo = (projectQc, projectStatusList) => {
                 normalCount++;
             }
         }
-
-        // statuses: Double check this is right... idk
-        if(!(sampleQC['recordId'] in labels)) {
-            if(!('qcStatus' in sampleQC)){
-                labels.push(sampleQC['recordId']);
-            } else {
-                statuses[sampleQC['qcStatus']] += 1;
-            }
-        }
-
-        // enriching done in separate function for readability
-
     });
 
-    // rest of requester info
-    requester['tumorCount'] = tumorCount;
-    requester['normalCount'] = normalCount;
-    if(!('sampleNumber' in projectQc)) {
-        requester['numSamples'] = sampleNames.length;
-    } else {
-        requester['numSamples'] = projectQc['sampleNumber'];
-    }
-
-    const projectInfo = {
-        'requester': requester,
-        'statuses': statuses,
-        'recordIds': recordIds
+    return {
+        ...projectQc,
+        tumorCount: tumorCount,
+        normalCount: normalCount
     };
-    
-    return projectInfo;
-    // separate functions: getChartLinks, getProjectType, grid(find js equivalent)
-
-};
-
-//based on old version - not currently used
-exports.getRequesterInfo = (projectQc, sample) => {
-    const labelValues = ['requestId', 'investigator',  'pi', 'projectManager', 'cmoProject', 'requestName'];
-    
-    let requester = {};
-    labelValues.forEach((label) => {
-        if (!(label in projectQc)) {
-            requester[label] = 'N/A';
-        } else {
-            requester[label] = projectQc[label];
-        }
-    });
-
-    if(!('requestedNumberOfReads' in sample)) {
-        requester['requestedNumberOfReads'] = 'N/A';
-    } else {
-        requester['requestedNumberOfReads'] = sample['requestedNumberOfReads'];
-    }
-
-    return requester;
 };
 
 

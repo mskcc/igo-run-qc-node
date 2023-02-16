@@ -6,7 +6,7 @@ import { SiMicrosoftexcel } from 'react-icons/si';
 import { IoInformationCircleOutline } from 'react-icons/io5';
 import { filterDuplicatePairs } from '../../resources/projectHelper';
 import { QualityChecksModal } from '../common/qualityChecksModal';
-import { selectCrosscheckMetrics } from '../home/homeSlice';
+import { selectProjectCrosscheckMetricsById } from './projectSlice';
 import { downloadExcel } from '../../utils/other-utils';
 
 const types = {
@@ -29,7 +29,7 @@ const HEADERS = {
 
 export const FingerprintingTable = () => {
     const { projectId } = useParams();
-    const selectCrosscheckMetricsData = useSelector(state => selectCrosscheckMetrics(state));
+    const selectCrosscheckMetricsData = useSelector(state => selectProjectCrosscheckMetricsById(state, projectId));
     const [tableData, setTableData] = useState(null);
     const [showDescriptionModal, setShowDescriptionModal] = useState(false);
     const [columns, setColumns] = useState([]);
@@ -37,18 +37,14 @@ export const FingerprintingTable = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (projectId && selectCrosscheckMetricsData && selectCrosscheckMetricsData !== {})  {
+        if (selectCrosscheckMetricsData && selectCrosscheckMetricsData !== {})  {
             setIsLoading(false);
-            const rawData = selectCrosscheckMetricsData[projectId.toString()];
-            if (rawData) {
-                const data = filterDuplicatePairs(rawData.entries);
-                setTableData(data);
-                setColHeaders(Object.keys(HEADERS));
-                const cols = getColumns();
-                setColumns(cols);
-            } else {
-                setTableData([]);
-            }
+            const data = filterDuplicatePairs(selectCrosscheckMetricsData.entries);
+            setTableData(data);
+            setColHeaders(Object.keys(HEADERS));
+            const cols = getColumns();
+            setColumns(cols);
+            
         } else {
             setTableData([]);
         }
@@ -79,7 +75,7 @@ export const FingerprintingTable = () => {
     };
     
     const handleExcel = () => {
-        const entries = selectCrosscheckMetricsData[projectId.toString()].entries;
+        const entries = selectCrosscheckMetricsData.entries;
         downloadExcel(entries, null, `${projectId}_fingerprinting`);
     };
 

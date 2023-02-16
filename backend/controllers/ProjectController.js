@@ -1,6 +1,6 @@
 const apiResponse = require('../util/apiResponse');
 const apiServices = require('../services/services');
-const { enrichSampleInfo } = require('../util/helpers');
+const { enrichSampleInfo, enrichProjectQC } = require('../util/helpers');
 
 /**
  * returns 
@@ -26,13 +26,14 @@ exports.projectQc = [
                 }
 
                 const enrichedSamples = enrichSampleInfo(projectQc.samples);
-                const enrichedProjectQc = {
-                    ...projectQc,
+                const enrichedProjectQc = enrichProjectQC(projectQc);
+                const completeProjectQc = {
+                    ...enrichedProjectQc,
                     samples: enrichedSamples
                 };
 
                 const responseObject = {
-                    projectQc: enrichedProjectQc
+                    projectQc: completeProjectQc
                 };
                 return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
             })

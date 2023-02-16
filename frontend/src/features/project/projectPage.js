@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from '../common/card';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { SiMicrosoftexcel } from 'react-icons/si';
 import { FaDna } from 'react-icons/fa';
 import { TiDownload } from 'react-icons/ti';
-import { getProjectQC } from '../../services/igo-qc-service';
-import { setProjectQCData, selectProjectDataById } from './projectSlice';
-import { selectCrosscheckMetrics } from '../home/homeSlice';
+import { getProjectQC, getCrosscheckMetrics } from '../../services/igo-qc-service';
+import {
+  setProjectQCData,
+  selectProjectDataById,
+  setProjectCrosscheckMetrics,
+  selectProjectCrosscheckMetricsById
+} from './projectSlice';
 import { QcTable } from './qcTable';
 import { AdditionalColumnsModal } from '../common/additionalColumnsModal';
 import { PED_PEG, TABLE_HEADERS, ADDITIONAL_10X_TABLE_HEADERS } from '../../resources/constants';
@@ -18,6 +22,7 @@ import { downloadNgsStatsFile, mapCellRangerRecipe, getCellRangerData } from '..
 
 export const ProjectPage = () => {
   const { projectId } = useParams();
+  const history = useHistory();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [projectData, setProjectData] = useState({});
@@ -35,7 +40,9 @@ export const ProjectPage = () => {
   const selectProjectData = useSelector(state =>
     selectProjectDataById(state, projectId)
   );
-  const selectCrosscheckMetricsData = useSelector(state => selectCrosscheckMetrics(state));
+  const selectCrosscheckMetricsData = useSelector(state => 
+    selectProjectCrosscheckMetricsById(state, projectId)
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,16 +89,23 @@ export const ProjectPage = () => {
     }
   }, [is10xProject]);
 
-  // setting quality checks button color based on results from crosscheck metrics
+  // Quality Checks - fingerprinting info
   useEffect(() => {
-    // Quality Checks - fingerprinting info
-    if (projectId && selectCrosscheckMetricsData) {
-      const qCStatus = selectCrosscheckMetricsData[projectId.toString()];
-      if (qCStatus && qCStatus.flag) {
-        setQualityCheckStatus(qCStatus.flag);
+    const fetchCrosscheckMetrics = async () => {
+      const response = await getCrosscheckMetrics(projectId);
+      const metricsData = response.data && response.data.metricsData ? response.data.metricsData[projectId] : {};
+      dispatch(setProjectCrosscheckMetrics(metricsData, projectId));
+    };
+
+    if (!selectCrosscheckMetricsData) {
+      fetchCrosscheckMetrics().catch(error => console.log(error));      
+    } else {
+      // setting quality checks button color based on results from crosscheck metrics
+      if (selectCrosscheckMetricsData.flag) {
+        setQualityCheckStatus(selectCrosscheckMetricsData.flag);
       }
     }
-  }, [projectId, selectCrosscheckMetricsData]);
+  }, [projectId, selectCrosscheckMetricsData, dispatch]);
 
   const handleProjectDetails = (data) => {
     if (data.samples && data.samples.length > 0) {
@@ -125,6 +139,7 @@ export const ProjectPage = () => {
     }
   };
 
+  // ACTION BUTTONS
   const handleColumnModalClose = () => {
     setIsColumnModalOpen(false);
   };
@@ -156,6 +171,10 @@ export const ProjectPage = () => {
       });
   };
 
+  const handleQualityCheckClick = () => {
+    history.push(`/projects/fingerprinting/${projectId}`);
+  };
+
   return (
     <Card>
       <AdditionalColumnsModal isOpen={isColumnModalOpen} onModalClose={handleColumnModalClose} addColumns={handleAddColumns} hiddenColumns={dataColumnsToHide} />
@@ -184,6 +203,12 @@ export const ProjectPage = () => {
             <div className='project-info-data'>
               <span className='info-bold'>Number of Samples: </span>{projectData.sampleNumber}
             </div>
+            <div className='project-info-data'>
+              <span className='info-bold'>Tumor Count: </span>{projectData.tumorCount}
+            </div>
+            <div className='project-info-data'>
+              <span className='info-bold'>Normal Count: </span>{projectData.normalCount}
+            </div>
           </div>
           <div className='project-actions'>
             <div className='download-stats-container'>
@@ -209,12 +234,7 @@ export const ProjectPage = () => {
               : ''
               }
             </div>
-            
-            <a href={`${config.SITE_HOME}/projects/fingerprinting/${projectId}`}>
-              <div className={`additional-actions ${qualityCheckStatus}`}>
-                Quality Checks
-              </div>
-            </a>
+            <div onClick={handleQualityCheckClick} className={`additional-actions ${qualityCheckStatus}`}>Quality Checks</div>
             <div onClick={handleColumnModalOpen} className='additional-actions'>Additional Columns</div>
           </div>
         </div>

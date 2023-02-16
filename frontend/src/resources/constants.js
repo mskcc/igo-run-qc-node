@@ -61,6 +61,7 @@ export const RECENT_RUNS_STATE_ID = "recentRuns";
 export const PROJECT_QC_STATE_ID = "projectQc";
 export const METRICS_PROJECT_LIST_STATE_ID = "cmProjectList";
 export const QC_STATUS_PICKLIST = 'qcStatusPicklist';
+export const PROJECT_CROSSCHECK_METRICS = 'projectCrosscheckMetrics';
 
 // RECIPES
 export const CUSTOM_CAPTURE = 'CustomCapture';

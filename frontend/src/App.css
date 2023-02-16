@@ -45,6 +45,7 @@
   margin: 10px;
   overflow: hidden;
   border-radius: 50%;
+  width: 45px;
 }
 
 .header-title {
@@ -279,6 +280,9 @@ body {
 }
 .project-row .project-row-link:hover {
   cursor: pointer;
+}
+.qc-status-row {
+  background: linear-gradient(-135deg,#8fc7e8 10px,#fff 0);
 }
 .run-info-button {
   width: 65px;

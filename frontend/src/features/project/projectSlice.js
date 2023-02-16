@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { PROJECT_QC_STATE_ID, QC_STATUS_PICKLIST } from '../../resources/constants';
+import { PROJECT_QC_STATE_ID, QC_STATUS_PICKLIST, PROJECT_CROSSCHECK_METRICS } from '../../resources/constants';
 
 const initialState = {
   entities: {}
@@ -27,10 +27,22 @@ const projectSlice = createSlice({
       const id = QC_STATUS_PICKLIST;
       state.entities[id] = data;
     },
+    setProjectCrosscheckMetrics: {
+      reducer(state, action) {
+        const { metricsData, projectId } = action.payload;
+        const id = `${PROJECT_CROSSCHECK_METRICS}_${projectId}`;
+        state.entities[id] = metricsData;
+      },
+      prepare(metricsData, projectId) {
+        return {
+          payload: { metricsData, projectId }
+        };
+      }
+    },
   }
 });
 
-export const { setProjectQCData, setQcStatusPicklist } = projectSlice.actions;
+export const { setProjectQCData, setQcStatusPicklist, setProjectCrosscheckMetrics } = projectSlice.actions;
 
 export default projectSlice.reducer;
 
@@ -44,4 +56,9 @@ export const selectProjectDataById = (state, projectId) => {
 
 export const selectQcStatusPicklist = state => {
   return selectProjectEntities(state)[QC_STATUS_PICKLIST];
+};
+
+export const selectProjectCrosscheckMetricsById = (state, projectId) => {
+  const stateId = `${PROJECT_CROSSCHECK_METRICS}_${projectId}`;
+  return selectProjectEntities(state)[stateId];
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { HotTable } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
 import 'handsontable/dist/handsontable.full.min.css';
@@ -9,6 +9,7 @@ registerAllModules();
 
 export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) => {
     const [showModal, setShowModal] = useState(false);
+    const [customCells, setCustomCells] = useState([]);
     const [selectionSubject] = useState(new BehaviorSubject([])); // Observable that can emit updates of user-selection
     const [tableRef] = useState(React.createRef());
 
@@ -38,6 +39,19 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
         totalGenesColumn
     ];
 
+    useEffect(() => {
+      let cells = [];
+      const numOfRows = qcSamplesData.length;
+      for (let i = 0; i < numOfRows; i++) {
+        cells.push({
+          row: i,
+          col: 0,
+          className: 'qc-status-row',
+        });
+      }
+      setCustomCells(cells);
+    }, [qcSamplesData]);
+
     const handleCloseModal = () => {
       setShowModal(false);
     };
@@ -47,6 +61,10 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
      * and lose any sorting that the user has done
      */
      const afterSelection = (r1, c1, r2, c2) => {
+      const column = tableRef.current.hotInstance.getColHeader(c1);
+      if (column !== 'QC Status' || r1 === -1) {
+        return;
+      }
       setShowModal(true);
       // get column info to properly set records
       let recordIdColumn;
@@ -61,9 +79,6 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
           sampleNameColumn = i;
         }
       }
-
-      // PARENT COMPONENT - propogate event up
-      // this.props.onSelect(this.state.displayedData[r1]);
 
       // CHILD COMPONENT - Determine if action should be taken on the table
       // Only one column allows user to set the status
@@ -83,7 +98,7 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
       }
       const unique_selected = selected.filter((run, idx) => selected.indexOf(run) === idx);
       selectionSubject.next(unique_selected);
-  };
+    };
 
     return (
       <div>
@@ -105,12 +120,14 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
                   }
                 };
             }}
+            cell={customCells}
             columnSorting={true}
             manualColumnMove={true}
             readOnly={true}
             readOnlyCellClassName={'project-table-row'}
-            filters='true'
+            filters={true}
             dropdownMenu={['filter_by_value', 'filter_action_bar']}
+            fixedColumnsStart={0}
             selectionMode={'multiple'}
             outsideClickDeselects={true}
             afterSelection={afterSelection}

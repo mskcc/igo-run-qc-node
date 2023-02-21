@@ -132,6 +132,7 @@ export const orderSampleQcData = (qcSamples) => {
         sampleData.push(sample[Constants.RECIPE]);
         sampleData.push(sample[Constants.SUM_READS]);
         sampleData.push(sample.qc[Constants.READS_EXAMINED]);
+        sampleData.push(sample.qc[Constants.UNPAIRED_READS]);
         sampleData.push(sample.qc[Constants.UNMAPPED]);
         sampleData.push(sample[Constants.REQUESTED_READS]);
         sampleData.push(sample[Constants.TUMOR_OR_NORMAL]);

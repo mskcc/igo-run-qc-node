@@ -121,7 +121,7 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
                 };
             }}
             cell={customCells}
-            columnSorting={true}
+            multiColumnSorting={true}
             manualColumnMove={true}
             readOnly={true}
             readOnlyCellClassName={'project-table-row'}

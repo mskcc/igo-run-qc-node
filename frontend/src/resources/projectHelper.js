@@ -33,7 +33,7 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
     const meanTargetCoverageColumn = columnHeaders.indexOf('Mean Target Coverage');
     const percentOffBaitColumn = columnHeaders.indexOf('% Off Bait');
     const meanCoverageColumn = columnHeaders.indexOf('Sum Mean Target Coverage');
-    const coverageTargetColumn = columnHeaders.indexOf('Requested Coverage');
+    const coverageTargetColumn = columnHeaders.indexOf('Coverage Target');
     const percentMRNAColumn = columnHeaders.indexOf('% mRNA');
     const percentRibosomalColumn = columnHeaders.indexOf('% Ribosomal');
     const statsVersionColumn = columnHeaders.indexOf('Stats Version');
@@ -154,7 +154,8 @@ export const orderSampleQcData = (qcSamples) => {
         const percentOffBait = Number(sample.qc[Constants.PERCENT_OFF_BAIT] * 100).toFixed(2);
         sampleData.push(percentOffBait);
         sampleData.push(sample[Constants.SUM_MTC].toFixed(2));
-        sampleData.push(sample[Constants.COVERAGE_TARGET]);
+        const coverageTarget = sample[Constants.COVERAGE_TARGET] || '';
+        sampleData.push(coverageTarget);
         const percentmRNA = Number(sample.qc[Constants.PERCENT_MRNA] * 100).toFixed(2);
         sampleData.push(percentmRNA);
         const percentRibosomal = Number(sample.qc[Constants.PERCENT_RIBOS] * 100).toFixed(2);

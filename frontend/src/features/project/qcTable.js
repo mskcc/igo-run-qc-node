@@ -18,6 +18,7 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
     const unmappedReadsColumn = tableHeaders.indexOf('Unmapped Reads');
     const requestedReadsColumn = tableHeaders.indexOf('Requested Reads (Millions)');
     const sumReadsColumn = tableHeaders.indexOf('Sum Reads');
+    const unpairedReadsColumn = tableHeaders.indexOf('Unpaired Reads');
     // 10X fields
     const estNumofCellsColumn = tableHeaders.indexOf('Estimated # of Cells');
     const meanReadsPerCellColumn = tableHeaders.indexOf('Mean Reads Per Cell');
@@ -31,6 +32,7 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
         unmappedReadsColumn,
         requestedReadsColumn,
         sumReadsColumn,
+        unpairedReadsColumn,
         estNumofCellsColumn,
         meanReadsPerCellColumn,
         medianGenesColumn,

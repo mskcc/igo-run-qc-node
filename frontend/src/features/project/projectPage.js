@@ -219,7 +219,6 @@ export const ProjectPage = () => {
                 <FaDna />
               </a>
             </div>
-            <div onClick={handleWebSummaryClick} className='additional-actions'>Web Summaries</div>
             <div className={showWebSummaries ? 'actions-popup' : 'hidden'}>
               {showWebSummaries ? (
                 projectData.samples.map((sample, index) => {
@@ -234,6 +233,7 @@ export const ProjectPage = () => {
               : ''
               }
             </div>
+            <div onClick={handleWebSummaryClick} className={showWebSummaries ? 'additional-actions action-button-clicked' : 'additional-actions'}>Web Summaries</div>
             <div onClick={handleQualityCheckClick} className={`additional-actions ${qualityCheckStatus}`}>Quality Checks</div>
             <div onClick={handleColumnModalOpen} className='additional-actions'>Additional Columns</div>
           </div>

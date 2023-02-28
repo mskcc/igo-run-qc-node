@@ -141,6 +141,8 @@ export const orderSampleQcData = (qcSamples) => {
         const percentDuplication = Number(sample.qc[Constants.PERCENT_DUPLICATION] * 100).toFixed(2);
         sampleData.push(percentDuplication);
         sampleData.push(sample.qc[Constants.BAIT_SET]);
+        const percentOffBait = Number(sample.qc[Constants.PERCENT_OFF_BAIT] * 100).toFixed(2);
+        sampleData.push(percentOffBait);
         const percentTarget100x = Number(sample.qc[Constants.PERCENT_100X] * 100).toFixed(2);
         sampleData.push(percentTarget100x);
         const percentTarget30x = Number(sample.qc[Constants.PERCENT_30X] * 100).toFixed(2);
@@ -152,8 +154,6 @@ export const orderSampleQcData = (qcSamples) => {
             meanTargetCoverage = sample.qc[Constants.MEAN_TARGET_COVERAGE_WGS];
         }
         sampleData.push(meanTargetCoverage.toFixed(2));
-        const percentOffBait = Number(sample.qc[Constants.PERCENT_OFF_BAIT] * 100).toFixed(2);
-        sampleData.push(percentOffBait);
         sampleData.push(sample[Constants.SUM_MTC].toFixed(2));
         const coverageTarget = sample[Constants.COVERAGE_TARGET] || '';
         sampleData.push(coverageTarget);

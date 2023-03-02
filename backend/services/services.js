@@ -300,3 +300,42 @@ exports.requestRepool = (id, qc_status, recipe) => {
             return formatData(resp);
         });
 }
+
+exports.getRecentRunsData = async (days) => {
+    await new Promise((resolve, reject) => {
+        const fastQcFiles = `${DIR_PATH}*.html`;
+        const today = new Date();
+        glob(fastQcFiles, (error, files) => {
+            if (error) {
+                reject(error);
+            }
+            let recentRuns = [];
+            files.forEach((file) => {
+                let projectData = {};
+                let mtime;
+                let modifiedTimestamp = '';
+
+                const stats = await fs.promises.stat(file)    
+                mtime = new Date(stats.mtime);
+                const modifiedDate = mtime.toISOString();
+                //slice date and time out of modifiedDate string: 2022-10-21T14:05:30.074Z
+                const tempDateString = modifiedDate.replace('T', ' ');
+                modifiedTimestamp = tempDateString.substring(0, tempDateString.length - 8);
+
+                const timeDiff = today.getTime() - mtime.getTime();
+                const dayDiff = timeDiff / (1000*3600*24);
+
+                if (dayDiff <= days) {
+                    projectData.date = modifiedTimestamp;
+                    const fileName = file.split('.')[0];
+                    projectData.runName = fileName;
+                    projectData.path = `static/html/FASTQ/${file}`;
+                    projectData.runStats = `getInterOpsData?runId=${fileName}`;
+                    recentRuns.push(projectData);
+                }
+                
+            });
+            resolve(recentRuns);
+        });
+    });
+}

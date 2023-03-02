@@ -116,46 +116,19 @@ exports.getRecentDeliveries = [
 exports.getRecentRuns = [
     function(req, res) {
         const days = req.query.days ? req.query.days : 7;
-        const fastQcFiles = `${DIR_PATH}*.html`;
-        const today = new Date();
-        let recentRuns = [];
-        glob(fastQcFiles, (error, files) => {
-            if (error) {
-                return apiResponse.errorResponse(res, `Error retrieving files: ${error}`);
-            }
-            files.forEach((file) => {
-                let projectData = {};
-                let mtime;
-                let modifiedTimestamp = '';
-                fs.stat(file, (err, stats) => {
-                    if (err) {
-                        return apiResponse.errorResponse(res, `Error retrieving file stats: ${err}`);
-                    }
-                    mtime = new Date(stats.mtime);
-                    const modifiedDate = mtime.toISOString();
-                    //slice date and time out of modifiedDate string: 2022-10-21T14:05:30.074Z
-                    const tempDateString = modifiedDate.replace('T', ' ');
-                    modifiedTimestamp = tempDateString.substring(0, tempDateString.length - 8);
+        let recentRunsDataPromise = apiServices.getRecentRunsData(days);
+        Promise.all([recentRunsDataPromise])
+            .then((results) => {
+                let [recentRunResult] = results;
 
-                    const timeDiff = today.getTime() - mtime.getTime();
-                    const dayDiff = timeDiff / (1000*3600*24);
-
-                    if (dayDiff <= days) {
-                        projectData.date = modifiedTimestamp;
-                        const fileName = file.split('.')[0];
-                        projectData.runName = fileName;
-                        projectData.path = `static/html/FASTQ/${file}`;
-                        projectData.runStats = `getInterOpsData?runId=${fileName}`;
-                        recentRuns.push(projectData);
-                    }
-                });
-                
+                const responseObject = {
+                    recentRuns: recentRunResult
+                };
+                return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
+            })
+            .catch((reasons) => {
+                return apiResponse.errorResponse(res, `Could not retrieve recent run data: ${reasons}`);
             });
-            const responseObject = {
-                recentRuns
-            };
-            return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
-        });
     }
 ];
 

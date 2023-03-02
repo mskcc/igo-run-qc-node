@@ -17,12 +17,7 @@ import { downloadHtml } from '../utils/other-utils';
  * @returns {Promise<AxiosResponse<T>>}
  */
 export const getPicardRunExcel = run => {
-  return axios.get(`${config.NGS_STATS}/ngs-stats/get-picard-run-excel/${run}`, {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': '*'
-    }
-  });
+  return axios.get(`${config.NGS_STATS}/ngs-stats/get-picard-run-excel/${run}`);
 };
 
 /**

@@ -71,28 +71,6 @@ exports.getSequencingRequests = () => {
         });
 }
 
-exports.getRecentRuns = (numDays) => {
-    const url = `${LIMS_URL}/getRecentRuns?days=${numDays}`;
-    logger.info(`Sending request to ${url}`);
-    return axios
-        .get(url, {
-            auth: { ...LIMS_AUTH },
-            ...axiosConfig,
-        })
-        .then((resp) => {
-            // const data = resp.requests || [];
-            info(url);
-            return resp;
-        })
-        .catch((error) => {
-            errorlog(url, error);
-            throw error;
-        })
-        .then((resp) => {
-            return formatData(resp);
-        });
-}
-
 exports.getRequestProjects = () => {
     const url = `${LIMS_URL}/getRecentDeliveries?time=2&units=d`;
     return axios
@@ -308,12 +286,12 @@ exports.getRecentRunsData = (days) => {
     return new Promise(async (resolve, reject) => {
         const fastQcFiles = `${DIR_PATH}*.html`;
         const today = new Date();
-        await glob(fastQcFiles, (error, files) => {
+        await glob(fastQcFiles, async (error, files) => {
             if (error) {
                 reject(error);
             }
             let recentRuns = [];
-            files.forEach(async (file) => {
+            for (const file of files) {
                 let projectData = {};
                 let mtime;
                 let modifiedTimestamp = '';
@@ -337,7 +315,7 @@ exports.getRecentRunsData = (days) => {
                     recentRuns.push(projectData);
                 }
                 
-            });
+            };
             resolve(recentRuns);
         });
     });

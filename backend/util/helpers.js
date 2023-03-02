@@ -24,7 +24,8 @@ exports.addProjectProperties = (project) => {
                         projectObj.needsReview = true;
                     }
                     if (qc.run) {
-                        let trimmedRun = qc.run.substring(0, qc.run.length - 11);
+                        const splitString = qc.run.split('_');
+                        let trimmedRun = `${splitString[0]}_${splitString[1]}`;
                         const runs = projectObj.allRuns;
                         if (runs.length === 0) {
                             projectObj.allRuns = trimmedRun;
@@ -32,7 +33,10 @@ exports.addProjectProperties = (project) => {
                             projectObj.allRuns = projectObj.allRuns.concat(`, ${trimmedRun}`);
                         }
                     }
-                    const numericDate = qc.createDate
+                    let numericDate = projectObj.recentDate;
+                    if (qc.createDate > projectObj.recentDate) {
+                        numericDate = qc.createDate;
+                    }
                     const stringDate = new Date(numericDate).toISOString();
                     //slice date and time out of stringDate string: 2022-10-21T14:05:30.074Z
                     const tempDateString = stringDate.replace('T', ' ');

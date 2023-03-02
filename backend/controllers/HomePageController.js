@@ -128,7 +128,6 @@ exports.getRecentRuns = [
                 let mtime;
                 let modifiedTimestamp = '';
                 fs.stat(file, (err, stats) => {
-                    console.log(file);
                     if (err) {
                         return apiResponse.errorResponse(res, `Error retrieving file stats: ${err}`);
                     }
@@ -140,7 +139,8 @@ exports.getRecentRuns = [
 
                     const timeDiff = today.getTime() - mtime.getTime();
                     const dayDiff = timeDiff / (1000*3600*24);
-                    if (dayDiff < days) {
+
+                    if (dayDiff <= days) {
                         projectData.date = modifiedTimestamp;
                         const fileName = file.split('.')[0];
                         projectData.runName = fileName;
@@ -151,11 +151,11 @@ exports.getRecentRuns = [
                 });
                 
             });
+            const responseObject = {
+                recentRuns
+            };
+            return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
         });
-        const responseObject = {
-            recentRuns
-        };
-        return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
     }
 ];
 

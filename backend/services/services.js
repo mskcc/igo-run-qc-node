@@ -304,11 +304,11 @@ exports.requestRepool = (id, qc_status, recipe) => {
         });
 }
 
-exports.getRecentRunsData = async (days) => {
-    return new Promise((resolve, reject) => {
+exports.getRecentRunsData = (days) => {
+    return new Promise(async (resolve, reject) => {
         const fastQcFiles = `${DIR_PATH}*.html`;
         const today = new Date();
-        glob(fastQcFiles, (error, files) => {
+        await glob(fastQcFiles, (error, files) => {
             if (error) {
                 reject(error);
             }

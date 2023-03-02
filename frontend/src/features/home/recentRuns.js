@@ -23,9 +23,6 @@ export const RecentRuns = () => {
               })
               .catch((err)=> {
                   console.log(`Picard Stats not available: ${name}`);
-              })
-              .then((other) => {
-                runsWithStats.push(name);
               });
         }
         setRunsWithPicard(runsWithStats);

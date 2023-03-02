@@ -1,6 +1,9 @@
 const https = require('https');
 const axios = require('axios');
+const glob = require('glob');
+const fs = require('fs');
 const { logger } = require('../util/winston');
+const DIR_PATH = process.env.FASTQC_PATH;
 
 const LIMS_AUTH = {
     username: process.env.LIMS_USER,

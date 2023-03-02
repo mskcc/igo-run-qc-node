@@ -308,9 +308,9 @@ exports.getRecentRunsData = (days) => {
 
                 if (dayDiff <= days) {
                     projectData.date = modifiedTimestamp;
-                    const fileName = file.split('.')[0];
+                    const fileName = file.split('/')[7];
                     projectData.runName = fileName;
-                    projectData.path = `static/html/FASTQ/${file}`;
+                    projectData.path = `static/html/FASTQ/${fileName}`;
                     projectData.runStats = `getInterOpsData?runId=${fileName}`;
                     recentRuns.push(projectData);
                 }

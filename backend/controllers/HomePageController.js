@@ -128,6 +128,7 @@ exports.getRecentRuns = [
                 let mtime;
                 let modifiedTimestamp = '';
                 fs.stat(file, (err, stats) => {
+                    console.log(file);
                     if (err) {
                         return apiResponse.errorResponse(res, `Error retrieving file stats: ${err}`);
                     }

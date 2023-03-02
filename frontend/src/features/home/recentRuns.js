@@ -19,7 +19,6 @@ export const RecentRuns = () => {
         for( const name of runNames ) {
           await getPicardRunExcel(name)
               .then((resp) => {
-                console.log(name);
                   runsWithStats.push(name);
               })
               .catch((err)=> {
@@ -37,7 +36,7 @@ export const RecentRuns = () => {
           fetchPicardStats();
         }
       }
-    }, [runsWithPicard, recentRuns]);
+    });
 
     return (
         <div>

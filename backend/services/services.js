@@ -1,6 +1,9 @@
 const https = require('https');
 const axios = require('axios');
+const glob = require('glob');
+const fs = require('fs');
 const { logger } = require('../util/winston');
+const DIR_PATH = process.env.FASTQC_PATH;
 
 const LIMS_AUTH = {
     username: process.env.LIMS_USER,
@@ -48,28 +51,6 @@ exports.getRecentDeliveries = () => {
 
 exports.getSequencingRequests = () => {
     const url = `${LIMS_URL}/getSequencingRequests?days=30&delivered=false`;
-    logger.info(`Sending request to ${url}`);
-    return axios
-        .get(url, {
-            auth: { ...LIMS_AUTH },
-            ...axiosConfig,
-        })
-        .then((resp) => {
-            // const data = resp.requests || [];
-            info(url);
-            return resp;
-        })
-        .catch((error) => {
-            errorlog(url, error);
-            throw error;
-        })
-        .then((resp) => {
-            return formatData(resp);
-        });
-}
-
-exports.getRecentRuns = (numDays) => {
-    const url = `${LIMS_URL}/getRecentRuns?days=${numDays}`;
     logger.info(`Sending request to ${url}`);
     return axios
         .get(url, {
@@ -299,4 +280,43 @@ exports.requestRepool = (id, qc_status, recipe) => {
         .then((resp) => {
             return formatData(resp);
         });
+}
+
+exports.getRecentRunsData = (days) => {
+    return new Promise(async (resolve, reject) => {
+        const fastQcFiles = `${DIR_PATH}*.html`;
+        const today = new Date();
+        await glob(fastQcFiles, async (error, files) => {
+            if (error) {
+                reject(error);
+            }
+            let recentRuns = [];
+            for (const file of files) {
+                let projectData = {};
+                let mtime;
+                let modifiedTimestamp = '';
+
+                const stats = await fs.promises.stat(file)    
+                mtime = new Date(stats.mtime);
+                const modifiedDate = mtime.toISOString();
+                //slice date and time out of modifiedDate string: 2022-10-21T14:05:30.074Z
+                const tempDateString = modifiedDate.replace('T', ' ');
+                modifiedTimestamp = tempDateString.substring(0, tempDateString.length - 8);
+
+                const timeDiff = today.getTime() - mtime.getTime();
+                const dayDiff = timeDiff / (1000*3600*24);
+
+                if (dayDiff <= days) {
+                    projectData.date = modifiedTimestamp;
+                    const fileName = file.split('/')[7];
+                    projectData.runName = fileName;
+                    projectData.path = `static/html/FASTQ/${fileName}`;
+                    projectData.runStats = `getInterOpsData?runId=${fileName}`;
+                    recentRuns.push(projectData);
+                }
+                
+            };
+            resolve(recentRuns);
+        });
+    });
 }

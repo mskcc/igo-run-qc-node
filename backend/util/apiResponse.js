@@ -34,7 +34,6 @@ exports.errorResponse = function (res, msg) {
         status: 0,
         message: 'Error: ' + msg,
     };
-    console.log(msg);
     logger.log('error', msg);
 
     res.status(500).json(data);

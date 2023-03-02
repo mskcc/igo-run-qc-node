@@ -310,7 +310,7 @@ exports.getRecentRunsData = async (days) => {
                 reject(error);
             }
             let recentRuns = [];
-            files.forEach((file) => {
+            files.forEach(async (file) => {
                 let projectData = {};
                 let mtime;
                 let modifiedTimestamp = '';

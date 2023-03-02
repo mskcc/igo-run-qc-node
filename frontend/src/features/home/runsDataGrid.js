@@ -106,7 +106,7 @@ export const RunsDataGrid = ({runs, runsWithPicard}) => {
                 {renderRuns()}
             </table>;
         } else {
-            return <div><p className={'text-align-center'}>No Runs available</p></div>;
+            return <div><p className={'text-align-center'}>No Runs Available</p></div>;
         }
     };
 

@@ -305,7 +305,7 @@ exports.requestRepool = (id, qc_status, recipe) => {
 }
 
 exports.getRecentRunsData = async (days) => {
-    await new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         const fastQcFiles = `${DIR_PATH}*.html`;
         const today = new Date();
         glob(fastQcFiles, (error, files) => {

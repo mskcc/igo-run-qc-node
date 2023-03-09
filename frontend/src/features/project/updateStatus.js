@@ -81,11 +81,13 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe, handle
             
             const sample_fails = [];
             const sample_successes = [];
+            const updatedRecordIds = [];
             for (const selected of samplesSelected) {
                 await setRunStatus(selected.record, projectId, newStatus, recipe)
                     .then((resp) => {
                         if(resp.data && resp.data.statusResults && resp.data.statusResults.includes(newStatus)){
                             sample_successes.push(selected.sample);
+                            updatedRecordIds.push(selected.record);
                         } else {
                             sample_fails.push(selected.sample);
                         }
@@ -99,7 +101,7 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe, handle
             setFailedStatusChangeIds(sample_fails);
 
             // update parent component (qc table) with new status
-            handleGridUpdate(newStatus, sample_successes);
+            handleGridUpdate(newStatus, updatedRecordIds);
         }
     };
 

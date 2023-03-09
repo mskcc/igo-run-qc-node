@@ -69,8 +69,11 @@ export const downloadNgsStatsFile = (
       const payload = res['data'] || {};
       const data = payload['data'];
       const ngsData = data.data;
+      console.log(payload);
       if (data) {
         downloadHtml(ngsData, sample);
+      } else {
+        alert(`Data not available for ${sample}.`);
       }
       return ngsData;
     })

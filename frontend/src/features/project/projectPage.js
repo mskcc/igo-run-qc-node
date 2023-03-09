@@ -166,7 +166,7 @@ export const ProjectPage = () => {
       .then((data) => {
         if (!data) {
           // TODO add error UI messaging
-          alert(`Data not available for ${row.qc.sampleName}.`);
+          // alert(`Data not available for ${row.qc.sampleName}.`);
         }
       });
   };

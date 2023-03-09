@@ -105,7 +105,8 @@ exports.changeRunStatus = [
                 return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
             })
             .catch((reasons) => {
-                return apiResponse.errorResponse(res, `Error trying to update status: ${reasons}`);
+                let string = JSON.stringify(reasons);
+                return apiResponse.errorResponse(res, `Error trying to update status: ${string}`);
             });
     }
 ];

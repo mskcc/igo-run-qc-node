@@ -88,7 +88,7 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe }) => {
     /**
      * Sends request to submit status change
      */
-     const submitStatusChange = () => {
+     const submitStatusChange = async () => {
         if (newStatus && samplesSelected.length) {
             setIsLoading(true);
             setSuccessMessage('Loading...');
@@ -96,7 +96,7 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe }) => {
             const sample_fails = [];
             const sample_successes = [];
             for (const selected of samplesSelected) {
-                setRunStatus(selected.record, projectId, newStatus, recipe)
+                await setRunStatus(selected.record, projectId, newStatus, recipe)
                     .then((resp) => {
                         if(resp.data && resp.data.statusResults && resp.data.statusResults.includes(newStatus)){
                             sample_successes.push(selected.sample);

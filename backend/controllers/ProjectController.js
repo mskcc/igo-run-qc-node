@@ -99,6 +99,10 @@ exports.changeRunStatus = [
                 }
 
                 let [statusResults] = results;
+                console.log(statusResults);
+                if (statusResults.status_code !== 200) {
+                    console.log('ERROR');
+                }
                 const responseObject = {
                     statusResults
                 };

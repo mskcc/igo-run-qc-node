@@ -100,10 +100,8 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe }) => {
                     .then((resp) => {
                         if(resp.data && resp.data.statusResults && resp.data.statusResults.includes(newStatus)){
                             sample_successes.push(selected.sample);
-                            setSuccessStatusChangeIds(sample_successes);
                         } else {
                             sample_fails.push(selected.sample);
-                            setFailedStatusChangeIds(sample_fails);
                         }
                     })
                     .catch((err) => {
@@ -111,6 +109,8 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe }) => {
                     });
             }
             setIsLoading(false);
+            setSuccessStatusChangeIds(sample_successes);
+            setFailedStatusChangeIds(sample_fails);
         }
     };
 

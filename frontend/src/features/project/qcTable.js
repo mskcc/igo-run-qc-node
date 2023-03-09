@@ -13,6 +13,9 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
     const [selectionSubject] = useState(new BehaviorSubject([])); // Observable that can emit updates of user-selection
     const [tableRef] = useState(React.createRef());
 
+    // recordIdColumn needed for status update
+    let recordColumn = tableHeaders.indexOf('QC Record Id');
+
     // numeric columns - needed in order to sort table correctly
     const examinedReadsColumn = tableHeaders.indexOf('Examined Reads');
     const unmappedReadsColumn = tableHeaders.indexOf('Unmapped Reads');
@@ -76,6 +79,8 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
         const columnHeader = tableRef.current.hotInstance.getColHeader(i);
         if (columnHeader === 'QC Record Id') {
           recordIdColumn = i;
+          // just in case user moved this column (recordColumn used to update table after status change without reloading the whole table data)
+          recordColumn = i;
         }
         if (columnHeader === 'Sample') {
           sampleNameColumn = i;
@@ -102,9 +107,19 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
       selectionSubject.next(unique_selected);
     };
 
+    // Update data in the grid without having to reload page
+    const handleGridUpdate = (newStatus, recordIds) => {
+      for (let i = 0; i <= qcSamplesData.length; i++) {
+        const rowRecordId = tableRef.current.hotInstance.getDataAtCell(i, recordColumn);
+        if (recordIds.includes(rowRecordId)) {
+          tableRef.current.hotInstance.setDataAtCell(i, 0, newStatus);
+        }
+      }
+    };
+
     return (
       <div>
-        {showModal && <UpdateStatus handleModalClose={handleCloseModal} selectionSubject={selectionSubject} recipe={recipe}/>}
+        {showModal && <UpdateStatus handleModalClose={handleCloseModal} selectionSubject={selectionSubject} recipe={recipe} handleGridUpdate={handleGridUpdate} />}
         <HotTable
             ref={tableRef}
             data={qcSamplesData}

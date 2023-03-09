@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import { MdClose } from 'react-icons/md';
 import Select from 'react-dropdown-select';
-import { getProjectQC, setRunStatus } from '../../services/igo-qc-service';
-import { setProjectQCData } from './projectSlice';
+import { setRunStatus } from '../../services/igo-qc-service';
 
 const availableStatuses = [
     { 
@@ -41,8 +39,7 @@ const availableStatuses = [
     }
   ];
 
-export const UpdateStatus = ({selectionSubject, handleModalClose, recipe }) => {
-    const dispatch = useDispatch();
+export const UpdateStatus = ({selectionSubject, handleModalClose, recipe, handleGridUpdate }) => {
     const { projectId } = useParams();
     const [newStatus, setNewStatus] = useState('');
     const [samplesSelected, setSamplesSelected] = useState([]); // [ { 'record': '', 'sample': '' }, ...  ]
@@ -74,17 +71,6 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe }) => {
         }
     }, [failedStatusChangeSamples, successStatusChangeSamples]);
 
-    const loadNewProjectData = async () => {
-        const response = await getProjectQC(projectId);
-        if (response.status === 500) {
-            setErrorMessage(response.message);
-        } else {
-            setErrorMessage('');
-            const { projectQc } = response.data;
-            dispatch(setProjectQCData(projectQc, projectId));
-        }
-    };
-
     /**
      * Sends request to submit status change
      */
@@ -95,11 +81,13 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe }) => {
             
             const sample_fails = [];
             const sample_successes = [];
+            const updatedRecordIds = [];
             for (const selected of samplesSelected) {
                 await setRunStatus(selected.record, projectId, newStatus, recipe)
                     .then((resp) => {
                         if(resp.data && resp.data.statusResults && resp.data.statusResults.includes(newStatus)){
                             sample_successes.push(selected.sample);
+                            updatedRecordIds.push(selected.record);
                         } else {
                             sample_fails.push(selected.sample);
                         }
@@ -111,6 +99,9 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe }) => {
             setIsLoading(false);
             setSuccessStatusChangeIds(sample_successes);
             setFailedStatusChangeIds(sample_fails);
+
+            // update parent component (qc table) with new status
+            handleGridUpdate(newStatus, updatedRecordIds);
         }
     };
 

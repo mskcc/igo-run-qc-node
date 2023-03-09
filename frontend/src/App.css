@@ -561,7 +561,7 @@ a:link {
   padding:5px 5px 0px 5px;
 }
 .status-change {
-  width: 400px;
+  width: 450px;
   border-width: 2px;
   border-style: solid;
   border-color: #d5d4c7;
@@ -604,6 +604,10 @@ a:link {
 }
 .selected-title-text {
   margin-bottom: 4px;
+}
+.status-set-text {
+  margin-top: 10px;
+  max-width: 425px;
 }
 
 /* FINGERPRINTING */

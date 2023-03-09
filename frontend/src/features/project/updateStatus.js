@@ -49,6 +49,8 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [failedStatusChangeSamples, setFailedStatusChangeIds] = useState([]);
+    const [successStatusChangeSamples, setSuccessStatusChangeIds] = useState([]);
 
     // Subscribe to parent's updater for when user selects a sample. Should only happen once
     useEffect(() => {
@@ -58,6 +60,19 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe }) => {
             }
         });
     }, []);
+
+    useEffect(() => {
+        if (failedStatusChangeSamples.length > 0) {
+            setErrorMessage(`Failed Runs: ${failedStatusChangeSamples.join(', ')}`);
+        } else {
+            setErrorMessage('');
+        }
+        if (successStatusChangeSamples.length > 0) {
+            setSuccessMessage(`Successfully set Samples [${successStatusChangeSamples.join(', ')}] to ${newStatus}`);
+        } else {
+            setSuccessMessage('');
+        }
+    }, [failedStatusChangeSamples, successStatusChangeSamples]);
 
     const loadNewProjectData = async () => {
         const response = await getProjectQC(projectId);
@@ -73,36 +88,29 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe }) => {
     /**
      * Sends request to submit status change
      */
-     const submitStatusChange = () => {
+     const submitStatusChange = async () => {
         if (newStatus && samplesSelected.length) {
             setIsLoading(true);
-            const records = samplesSelected.map((record) => record['record']);
-            const samples = samplesSelected.map((record) => record['sample']).join(', ');
-            const selectedString = records.join(',');
-            setSuccessMessage(`Setting Samples [${samples}] to ${newStatus}`);
+            setSuccessMessage('Loading...');
             
-            setRunStatus(selectedString, projectId, newStatus, recipe)
-                .then((resp) => {
-                    if(resp.success){
-                        // Update project info to re-render project table
-                        loadNewProjectData(projectId);
-                        setIsLoading(false);
-                        setSuccessMessage(`Successfully set Samples [${samples}] to ${newStatus}`);
-                        clearSelection();
-                    } else {
-                        const status = resp.status || 'ERROR';
-                        const failedRuns = resp.failedRequests || '';
-                        setIsLoading(false);
-                        setErrorMessage(`${status}: Failed Runs: ${failedRuns}`);
-                        // TODO show error message
-                    }
-                })
-                .catch((err) => {
-                    setSuccessMessage('');
-                    setErrorMessage(`Failed to set Request. ${err}`);
-                });
-            setNewStatus('');
-            setSamplesSelected([]);
+            const sample_fails = [];
+            const sample_successes = [];
+            for (const selected of samplesSelected) {
+                await setRunStatus(selected.record, projectId, newStatus, recipe)
+                    .then((resp) => {
+                        if(resp.data && resp.data.statusResults && resp.data.statusResults.includes(newStatus)){
+                            sample_successes.push(selected.sample);
+                        } else {
+                            sample_fails.push(selected.sample);
+                        }
+                    })
+                    .catch((err) => {
+                        setErrorMessage(`Server Error: Failed to set status for ${selected.sample}. ${err}`);
+                    });
+            }
+            setIsLoading(false);
+            setSuccessStatusChangeIds(sample_successes);
+            setFailedStatusChangeIds(sample_fails);
         }
     };
 
@@ -140,8 +148,8 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe }) => {
                     <Select options={availableStatuses} onChange={(choice) => handleStatusChoice(choice)} />
                 </div>
                 {isLoading && <div className="dot-elastic"></div>}
-                <div className='text-align-center mskcc-dark-green overflow-wrap'>{successMessage}</div>
-                <div className={'text-align-center mskcc-red overflow-wrap'}>{errorMessage}</div>
+                <div className={successMessage ? 'text-align-center mskcc-dark-green overflow-wrap status-set-text' : 'hidden'}>{successMessage}</div>
+                <div className={errorMessage ? 'text-align-center mskcc-red overflow-wrap status-set-text' : 'hidden'}>{errorMessage}</div>
                 <button onClick={submitStatusChange} className='ok-button' disabled={newStatus === ''}>Update</button>
             </div>
         </div>

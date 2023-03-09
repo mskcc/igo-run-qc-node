@@ -49,6 +49,8 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [failedStatusChangeSamples, setFailedStatusChangeIds] = useState([]);
+    const [successStatusChangeSamples, setSuccessStatusChangeIds] = useState([]);
 
     // Subscribe to parent's updater for when user selects a sample. Should only happen once
     useEffect(() => {
@@ -76,33 +78,62 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe }) => {
      const submitStatusChange = () => {
         if (newStatus && samplesSelected.length) {
             setIsLoading(true);
-            const records = samplesSelected.map((record) => record['record']);
-            const samples = samplesSelected.map((record) => record['sample']).join(', ');
-            const selectedString = records.join(',');
-            setSuccessMessage(`Setting Samples [${samples}] to ${newStatus}`);
+            // const samples = samplesSelected.map((record) => record['sample']).join(', ');
+            // const selectedString = records.join(',');
+            setSuccessMessage('Loading...');
             
-            setRunStatus(selectedString, projectId, newStatus, recipe)
-                .then((resp) => {
-                    if(resp.success){
-                        // Update project info to re-render project table
-                        loadNewProjectData(projectId);
-                        setIsLoading(false);
-                        setSuccessMessage(`Successfully set Samples [${samples}] to ${newStatus}`);
-                        clearSelection();
-                    } else {
-                        const status = resp.status || 'ERROR';
-                        const failedRuns = resp.failedRequests || '';
-                        setIsLoading(false);
-                        setErrorMessage(`${status}: Failed Runs: ${failedRuns}`);
-                        // TODO show error message
-                    }
-                })
-                .catch((err) => {
-                    setSuccessMessage('');
-                    setErrorMessage(`Failed to set Request. ${err}`);
-                });
-            setNewStatus('');
-            setSamplesSelected([]);
+            const sample_fails = [];
+            const sample_successes = [];
+            for (const selected of samplesSelected) {
+                setRunStatus(selected.record, projectId, newStatus, recipe)
+                    .then((resp) => {
+                        if(resp.data && resp.data.statusResults && resp.data.statusResults.includes(newStatus)){
+                            sample_successes.push(selected.sample);
+                        } else {
+                            sample_fails.push(selected.sample);
+                        }
+                    })
+                    .catch((err) => {
+                        setErrorMessage(`Server Error: Failed to set status for ${selected.sample}. ${err}`);
+                    });
+            }
+            setFailedStatusChangeIds(sample_fails);
+            setSuccessStatusChangeIds(sample_successes);
+            // setRunStatus(selectedString, projectId, newStatus, recipe)
+            //     .then((resp) => {
+            //         if(resp.data && resp.data.statusResults && resp.data.statusResults.includes(newStatus)){
+            //             // Update project info to re-render project table
+            //             loadNewProjectData(projectId);
+            //             setIsLoading(false);
+            //             setSuccessMessage(`Successfully set Samples [${samples}] to ${newStatus}`);
+            //             clearSelection();
+            //         } else {
+            //             const status = 'ERROR';
+            //             const failedRuns = resp.data.failedRequests || '';
+            //             setIsLoading(false);
+            //             setErrorMessage(`${status}: Failed Runs: ${failedRuns}`);
+            //         }
+            //     })
+            //     .catch((err) => {
+            //         setSuccessMessage('');
+            //         setErrorMessage(`Failed to set Request. ${err}`);
+            //     });
+
+            setIsLoading(false);
+
+            if (sample_fails.length > 0) {
+                setErrorMessage(`Failed Runs: ${sample_fails.join(', ')}`);
+            } else {
+                setErrorMessage('');
+            }
+            if (sample_successes.length > 0) {
+                setSuccessMessage(`Successfully set Samples [${sample_successes.join(', ')}] to ${newStatus}`);
+            } else {
+                setSuccessMessage('');
+            }
+        
+            // setNewStatus('');
+            // setSamplesSelected([]);
         }
     };
 

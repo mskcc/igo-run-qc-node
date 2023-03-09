@@ -93,16 +93,12 @@ exports.changeRunStatus = [
         let updateRunStatusPromise = apiServices.setQCStatus(samples, newStatus, projectId, recipe);
         Promise.all([updateRunStatusPromise])
             .then((results) => {
-                console.log(results);
                 if(!results) {
                     return apiResponse.errorResponse(res, 'Could not update status.');
                 }
 
                 let [statusResults] = results;
-                console.log(statusResults);
-                if (statusResults.status_code !== 200) {
-                    console.log('ERROR');
-                }
+                
                 const responseObject = {
                     statusResults
                 };

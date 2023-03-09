@@ -86,11 +86,11 @@ exports.getCellRangerSample = [
 
 exports.changeRunStatus = [
     function(req, res) {
-        const samples = req.query.recordId;
+        const sample = req.query.recordId;
         const projectId = req.query.project;
         const newStatus = req.query.status;
         const recipe = req.query.recipe;
-        let updateRunStatusPromise = apiServices.setQCStatus(samples, newStatus, projectId, recipe);
+        let updateRunStatusPromise = apiServices.setQCStatus(sample, newStatus, projectId, recipe);
         Promise.all([updateRunStatusPromise])
             .then((results) => {
                 if(!results) {

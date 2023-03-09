@@ -37,10 +37,11 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
     const percentMRNAColumn = columnHeaders.indexOf('% mRNA');
     const percentRibosomalColumn = columnHeaders.indexOf('% Ribosomal');
     const statsVersionColumn = columnHeaders.indexOf('Stats Version');
+    const recordIdColumn = columnHeaders.indexOf('QC Record Id');
 
     switch(recipe) {
         case Constants.PED_PEG:
-            return [baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, statsVersionColumn, tumorNormalColumn];
+            return [recordIdColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, statsVersionColumn, tumorNormalColumn];
         case Constants.CUSTOM_CAPTURE:
         case Constants.HEMEPACT:
         case Constants.IMPACT505:
@@ -50,28 +51,28 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
         case Constants.M_IMPACT_2:
         case Constants.WHOLE_EXOME:
         case Constants.ENH_WHOLE_EXOME:
-            return [meanCoverageColumn, coverageTargetColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, tumorNormalColumn];
+            return [recordIdColumn, meanCoverageColumn, coverageTargetColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, tumorNormalColumn];
 
         case Constants.MSK_ACCESS:
-            return [percentTarget100Column, percentTarget30Column, meanCoverageColumn, coverageTargetColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, tumorNormalColumn];
+            return [recordIdColumn, percentTarget100Column, percentTarget30Column, meanCoverageColumn, coverageTargetColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, tumorNormalColumn];
 
         case Constants.HUMAN_WHOLE_GENOME:
         case Constants.MOUSE_WHOLE_GENOME:
-            return [baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, tumorNormalColumn];
+            return [recordIdColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, tumorNormalColumn];
 
         case Constants.S_WGS:
-            return [baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, tumorNormalColumn];
+            return [recordIdColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, tumorNormalColumn];
 
         case Constants.WHOLE_GENOME:
         case Constants.WHOLE_GENOME_B:
-            return [baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, meanCoverageColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, tumorNormalColumn];
+            return [recordIdColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, meanCoverageColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, tumorNormalColumn];
 
         case Constants.RNA_SEQ:
         case Constants.RNA_SEQ_POLYA:
         case Constants.RNA_SEQ_RIBO:
         case Constants.SMARTER_AMP_SEQ:
         case Constants.SINGLE_CELL_RNA:
-            return [percentDuplicationColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, coverageTargetColumn, meanTargetCoverageColumn, percentOffBaitColumn, statsVersionColumn, tumorNormalColumn];
+            return [recordIdColumn, percentDuplicationColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, coverageTargetColumn, meanTargetCoverageColumn, percentOffBaitColumn, statsVersionColumn, tumorNormalColumn];
 
         case Constants.AMPLICON:
         case Constants.ATAC_SEQ:
@@ -80,10 +81,10 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
         case Constants.INVESTIGATOR_PREP_LIB:
         case Constants.INVESTIGATOR_PREP_POOL:
         case Constants.SINGLE_CELL_CNV:
-            return [percentDuplicationColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, meanCoverageColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, tumorNormalColumn];
+            return [recordIdColumn, percentDuplicationColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, meanCoverageColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, tumorNormalColumn];
 
         case Constants.METHYL_SEQ:
-            return [examinedReadsColumn, unmappedReadsColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, meanCoverageColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, tumorNormalColumn];
+            return [recordIdColumn, examinedReadsColumn, unmappedReadsColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, meanCoverageColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, tumorNormalColumn];
 
         case Constants.ARCHER_HEME:
         case Constants.ARCHER_IMMUNO:
@@ -92,7 +93,7 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
         case Constants.MISSION_BIO_HEME:
         case Constants.MISSION_BIO_MYELOID:
         case Constants.MISSION_BIO_THS:
-            return [unmappedReadsColumn, percentAdaptersColumn, percentDuplicationColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, meanCoverageColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, tumorNormalColumn];
+            return [recordIdColumn, unmappedReadsColumn, percentAdaptersColumn, percentDuplicationColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, meanCoverageColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, tumorNormalColumn];
 
         case Constants.TENX_GENOMICS:
         case Constants.TENX_GENOMICS_ATAC:
@@ -110,7 +111,7 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
         case Constants.TENX_GENOMICS_MULTIOME_ATAC:
         case Constants.TENX_GENOMICS_MULTIOME_EXP:
         case Constants.TENX_GENOMICS_VISIUM:
-            return [examinedReadsColumn, unmappedReadsColumn, percentDuplicationColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, meanCoverageColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, tumorNormalColumn];
+            return [recordIdColumn, examinedReadsColumn, unmappedReadsColumn, percentDuplicationColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, meanCoverageColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, tumorNormalColumn];
 
         default:
             return [];
@@ -126,7 +127,7 @@ export const orderSampleQcData = (qcSamples) => {
         sampleData.push(sample.qc[Constants.QC_STATUS]);
         sampleData.push(sample[Constants.IGO_ID]);
         sampleData.push(sample.qc[Constants.SAMPLE_NAME]);
-        sampleData.push(sample[Constants.RECORD_ID]);
+        sampleData.push(sample.qc[Constants.RECORD_ID]);
         sampleData.push(sample[Constants.INITIAL_POOL]);
         sampleData.push(sample.qc[Constants.RUN]);
         sampleData.push(sample[Constants.RECIPE]);

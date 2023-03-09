@@ -61,6 +61,19 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe }) => {
         });
     }, []);
 
+    useEffect(() => {
+        if (failedStatusChangeSamples.length > 0) {
+            setErrorMessage(`Failed Runs: ${failedStatusChangeSamples.join(', ')}`);
+        } else {
+            setErrorMessage('');
+        }
+        if (successStatusChangeSamples.length > 0) {
+            setSuccessMessage(`Successfully set Samples [${successStatusChangeSamples.join(', ')}] to ${newStatus}`);
+        } else {
+            setSuccessMessage('');
+        }
+    }, [failedStatusChangeSamples, successStatusChangeSamples]);
+
     const loadNewProjectData = async () => {
         const response = await getProjectQC(projectId);
         if (response.status === 500) {
@@ -89,16 +102,18 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe }) => {
                     .then((resp) => {
                         if(resp.data && resp.data.statusResults && resp.data.statusResults.includes(newStatus)){
                             sample_successes.push(selected.sample);
+                            setSuccessStatusChangeIds(sample_successes);
                         } else {
                             sample_fails.push(selected.sample);
+                            setFailedStatusChangeIds(sample_fails);
                         }
                     })
                     .catch((err) => {
                         setErrorMessage(`Server Error: Failed to set status for ${selected.sample}. ${err}`);
                     });
             }
-            setFailedStatusChangeIds(sample_fails);
-            setSuccessStatusChangeIds(sample_successes);
+            // setFailedStatusChangeIds(sample_fails);
+            // setSuccessStatusChangeIds(sample_successes);
             // setRunStatus(selectedString, projectId, newStatus, recipe)
             //     .then((resp) => {
             //         if(resp.data && resp.data.statusResults && resp.data.statusResults.includes(newStatus)){
@@ -121,16 +136,7 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe }) => {
 
             setIsLoading(false);
 
-            if (sample_fails.length > 0) {
-                setErrorMessage(`Failed Runs: ${sample_fails.join(', ')}`);
-            } else {
-                setErrorMessage('');
-            }
-            if (sample_successes.length > 0) {
-                setSuccessMessage(`Successfully set Samples [${sample_successes.join(', ')}] to ${newStatus}`);
-            } else {
-                setSuccessMessage('');
-            }
+            
         
             // setNewStatus('');
             // setSamplesSelected([]);

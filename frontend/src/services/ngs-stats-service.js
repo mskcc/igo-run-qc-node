@@ -68,10 +68,11 @@ export const downloadNgsStatsFile = (
     .then(res => {
       const payload = res['data'] || {};
       const data = payload['data'];
-      const ngsData = data.data;
-      console.log(payload);
-      if (data) {
-        downloadHtml(ngsData, sample);
+      const ngsData = data.ngsDownloadData;
+      const downloadData = ngsData.data;
+      console.log(ngsData);
+      if (ngsData) {
+        downloadHtml(downloadData, sample);
       } else {
         alert(`Data not available for ${sample}.`);
       }

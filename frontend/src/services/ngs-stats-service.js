@@ -70,7 +70,6 @@ export const downloadNgsStatsFile = (
       const data = payload['data'];
       const ngsData = data.ngsDownloadData;
       const downloadData = ngsData.data;
-      console.log(ngsData);
       if (ngsData) {
         downloadHtml(downloadData, sample);
       } else {

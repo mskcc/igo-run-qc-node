@@ -208,7 +208,7 @@ export const getRecentRunsData = (numDays) => async dispatch => {
     'success':true
 };
   const { recentRuns } = response.data;
-  recentRuns.sort((a, b) => (a.date > b.date) ? 1 : -1);
+  recentRuns.sort((a, b) => (a.date < b.date) ? 1 : -1);
   dispatch(setRecentRunsData(recentRuns));
 };
 

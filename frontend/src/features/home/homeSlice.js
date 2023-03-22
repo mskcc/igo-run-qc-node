@@ -110,7 +110,7 @@ export const getRecentDeliveries = () => async dispatch => {
 export const getRecentRunsData = (numDays) => async dispatch => {
   const response = await getRecentRuns(numDays);
   const { recentRuns } = response.data;
-  if (recentRuns.length) {
+  if (recentRuns.length > 1) {
     recentRuns.sort((a, b) => (a.date < b.date) ? 1 : -1);
   }
   dispatch(setRecentRunsData(recentRuns));

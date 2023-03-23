@@ -15,7 +15,12 @@ import {
 import { QcTable } from './qcTable';
 import { AdditionalColumnsModal } from '../common/additionalColumnsModal';
 import { PED_PEG, TABLE_HEADERS, ADDITIONAL_10X_TABLE_HEADERS } from '../../resources/constants';
-import { mapColumnsToHideByRecipe, orderSampleQcData, getProjectType, orderDataWith10XColumns } from '../../resources/projectHelper';
+import {
+  mapColumnsToHideByRecipe,
+  orderSampleQcData,
+  getProjectType,
+  orderDataWith10XColumns
+} from '../../resources/projectHelper';
 import { downloadExcel } from '../../utils/other-utils';
 import config from '../../config';
 import { downloadNgsStatsFile, mapCellRangerRecipe, getCellRangerData } from '../../services/ngs-stats-service';
@@ -132,7 +137,7 @@ export const ProjectPage = () => {
         const columnsToHide = mapColumnsToHideByRecipe(recipe, tableHeaders);
         setDataColumnsToHide(columnsToHide);
       }
-
+      
       const sampleData = orderSampleQcData(data.samples);
       setOrderedSampleInfo(sampleData);
 
@@ -146,14 +151,12 @@ export const ProjectPage = () => {
   const handleColumnModalOpen = () => {
     setIsColumnModalOpen(true);
   };
-  const handleAddColumns = (columnNames) => {
+  const handleSetColumns = (columnNames) => {
     let columnIndicesToAdd = [];
-    let newColumnsToHide = [];
     columnNames.forEach(header => {
       columnIndicesToAdd.push(tableHeaders.indexOf(header));
     });
-    newColumnsToHide = dataColumnsToHide.filter(col => !columnIndicesToAdd.includes(col));
-    setDataColumnsToHide(newColumnsToHide);
+    setDataColumnsToHide(columnIndicesToAdd);
   };
 
   const handleWebSummaryClick = () => {
@@ -177,7 +180,7 @@ export const ProjectPage = () => {
 
   return (
     <Card>
-      <AdditionalColumnsModal isOpen={isColumnModalOpen} onModalClose={handleColumnModalClose} addColumns={handleAddColumns} hiddenColumns={dataColumnsToHide} />
+      <AdditionalColumnsModal isOpen={isColumnModalOpen} onModalClose={handleColumnModalClose} setColumns={handleSetColumns} allColumns={tableHeaders} hiddenColumns={dataColumnsToHide} />
       <div className='project-title'>
         <h2 className={'title text-align-center'}>Project {projectId} Details</h2>
       </div>
@@ -235,7 +238,7 @@ export const ProjectPage = () => {
             </div>
             <div onClick={handleWebSummaryClick} className={showWebSummaries ? 'additional-actions action-button-clicked' : 'additional-actions'}>Web Summaries</div>
             <div onClick={handleQualityCheckClick} className={`additional-actions ${qualityCheckStatus}`}>Quality Checks</div>
-            <div onClick={handleColumnModalOpen} className='additional-actions'>Additional Columns</div>
+            <div onClick={handleColumnModalOpen} className='additional-actions'>Set Columns</div>
           </div>
         </div>
         {cellRangerError && (

@@ -226,10 +226,10 @@ export const getColumnDataTypes = (currentHiddenColumns) => {
     return types;
 };
 
-export const getColumnNamesFromIndices = (indices) => {
+export const getColumnNamesFromIndices = (indices, allColumns) => {
     let columnNames = [];
     indices.forEach(index => {
-        columnNames.push(Constants.TABLE_HEADERS[index]);
+        columnNames.push(allColumns[index]);
     });
     return columnNames;
 };

@@ -43,8 +43,8 @@ export const TABLE_MANDATORY_COLUMNS = new Set([
   'QC Record Id'
 ]);
 // PROJECT COLUMNS
-export const TABLE_HEADERS = ['QC Status', 'IGO ID', 'Sample', 'QC Record Id', 'Initial Pool', 'Run', 'Recipe', 'Sum Reads', 'Examined Reads', 'Unpaired Reads', 'Unmapped Reads', 'Requested Reads (Millions)', 'Tumor/Normal', '% Adapters', '% Duplication', 'Bait Set', '% Off Bait', '% Target 100x', '% Target 30x', 'Mean Target Coverage', 'Sum Mean Target Coverage', 'Coverage Target', '% mRNA', '% Ribosomal', 'Stats Version'];
-export const ADDITIONAL_10X_TABLE_HEADERS = ['Estimated # of Cells', 'Fraction Reads in Cells', 'Mean Reads Per Cell', 'Median Genes Per Cell', 'Median UMI Counts Per Cell', '# of Reads', 'Q30 Bases in Barcode', 'Q30 Bases in Sample Index', 'Q30 Bases in UMI', 'Q30 Bases in RNA Read', 'Reads Mapped Antisense to Gene', 'Reads Mapped Confidently to Genome', 'Reads Mapped to Exonic Regions', 'Reads Mapped to Genome', 'Reads Mapped to Intergenic Regions', 'Reads Mapped to Intronic Regions', 'Reads Mapped to Transcriptome', 'Sequencing Saturation', 'Total Genes Detected', 'Valid Barcodes'];
+export const TABLE_HEADERS = ['QC Status', 'IGO ID', 'Sample', 'Sum Reads', 'Requested Reads (Millions)', 'Coverage Target', 'Sum Mean Target Coverage', '% mRNA', '% Ribosomal', 'QC Record Id', 'Initial Pool', 'Run', 'Recipe',  'Examined Reads', 'Unpaired Reads', 'Unmapped Reads', 'Tumor/Normal', '% Adapters', '% Duplication', 'Bait Set', '% Off Bait', '% Target 100x', '% Target 30x', 'Mean Target Coverage', 'Stats Version'];
+export const ADDITIONAL_10X_TABLE_HEADERS = ['Estimated # of Cells', 'Mean Reads Per Cell', 'Fraction Reads in Cells', 'Median Genes Per Cell', 'Median UMI Counts Per Cell', '# of Reads', 'Q30 Bases in Barcode', 'Q30 Bases in Sample Index', 'Q30 Bases in UMI', 'Q30 Bases in RNA Read', 'Reads Mapped Antisense to Gene', 'Reads Mapped Confidently to Genome', 'Reads Mapped to Exonic Regions', 'Reads Mapped to Genome', 'Reads Mapped to Intergenic Regions', 'Reads Mapped to Intronic Regions', 'Reads Mapped to Transcriptome', 'Sequencing Saturation', 'Total Genes Detected', 'Valid Barcodes'];
 
 export const NUMERIC_COLUMNS = ['Sum Reads', 'Examined Reads', 'Unmapped Reads', 'Requested Reads (Millions)'];
 
@@ -74,15 +74,21 @@ export const M_IMPACT_1 = 'M-IMPACT_V1';
 export const M_IMPACT_2 = 'M-IMPACT_V2';
 export const WHOLE_EXOME = 'WholeExomeSequencing';
 export const ENH_WHOLE_EXOME = 'EnhancedWholeExomeSeq';
+export const WHOLE_EXOME_KAPA ='WholeExome-KAPALib';
+export const WHOLE_EXOME_SEQ_KAPA ='WholeExomeSequencing-KAPALib';
 export const MSK_ACCESS = 'MSK-ACCESS_v1';
 export const HUMAN_WHOLE_GENOME = 'HumanWholeGenome';
 export const MOUSE_WHOLE_GENOME = 'MouseWholeGenome';
 export const S_WGS = 'ShallowWGS';
 export const WHOLE_GENOME = 'WholeGenomeSequencing';
+export const WHOLEGENOME = 'WholeGenome';
 export const WHOLE_GENOME_B = 'WholeGenomeBisulfiteSequencing';
 export const RNA_SEQ = 'RNASeq';
 export const RNA_SEQ_POLYA = 'RNASeq_PolyA';
 export const RNA_SEQ_RIBO = 'RNASeq_RiboDeplete';
+export const RNA_SEQ_SMARTER_AMP = 'RNASeq-SMARTerAmp';
+export const RNA_SEQ_TRU_SEQ_POLYA = 'RNASeq-TruSeqPolyA';
+export const RNA_SEQ_TRU_SEQ_RIBO = 'RNASeq-TruSeqRiboDeplete';
 export const SMARTER_AMP_SEQ = 'SMARTerAmpSeq';
 export const AMPLICON = 'AmpliconSeq';
 export const ATAC_SEQ = 'ATACSeq';
@@ -93,7 +99,8 @@ export const INVESTIGATOR_PREP_POOL = 'Investigator Prepared Pools';
 export const SINGLE_CELL_CNV = 'SingleCellCNV';
 export const SINGLE_CELL_RNA = 'SingleCellRNASeq';
 export const PED_PEG = 'PED-PEG';
-export const METHYL_SEQ = 'MethylCaptureSeq';
+export const METHYL_CAPTURE_SEQ = 'MethylCaptureSeq';
+export const METHYL_SEQ = 'MethylSeq';
 export const ARCHER_HEME = 'Archer-HemePanel';
 export const ARCHER_TUMOR = 'Archer-SolidTumorPanel';
 export const ARCHER_IMMUNO = 'Archer-Immunoverse';
@@ -117,6 +124,12 @@ export const TENX_GENOMICS_VISIUM = '10X_Genomics_Visium';
 export const TENX_GENOMICS_MULTIOME = '10X_Genomics_Multiome';
 export const TENX_GENOMICS_MULTIOME_ATAC = '10X_Genomics_Multiome_ATAC';
 export const TENX_GENOMICS_MULTIOME_EXP = '10X_Genomics_Multiome_GeneExpression';
+export const R_AND_D = 'R&D';
+export const CMO_CH = 'CMO-CH';
+export const IMPACT_HEME = 'IMPACT-Heme';
+export const RAPID_RCC = 'Rapid-RCC';
+export const TCR_SEQ = 'TCRSeq-IGO';
+export const DLP = 'DLP';
 
 // PROJECT DATA KEYS
 export const IGO_ID = 'baseId';

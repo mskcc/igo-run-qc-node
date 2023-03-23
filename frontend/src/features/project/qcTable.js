@@ -137,7 +137,6 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
                   }
                 };
             }}
-            collapsibleColumns={true}
             cell={customCells}
             multiColumnSorting={true}
             manualColumnMove={true}

@@ -49,7 +49,7 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
             return [initialPoolColumn, recordIdColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, tumorNormalColumn, genomeColumn];
 
         case Constants.INVESTIGATOR_PREP_LIB:
-            return [percentAdaptersColumn, percentDuplicationColumn, percentRibosomalColumn, examinedReadsColumn, unmappedReadsColumn, unpairedReadsColumn,  initialPoolColumn, recordIdColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, tumorNormalColumn, statsVersionColumn, genomeColumn];
+            return [percentMRNAColumn, meanCoverageColumn, percentAdaptersColumn, percentDuplicationColumn, percentRibosomalColumn, examinedReadsColumn, unmappedReadsColumn, unpairedReadsColumn,  initialPoolColumn, recordIdColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, tumorNormalColumn, statsVersionColumn, genomeColumn];
 
         case Constants.CUSTOM_CAPTURE:
         case Constants.WHOLE_EXOME:

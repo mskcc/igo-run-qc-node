@@ -4,6 +4,7 @@ import { registerAllModules } from 'handsontable/registry';
 import 'handsontable/dist/handsontable.full.min.css';
 import { UpdateStatus } from './updateStatus';
 import { BehaviorSubject } from 'rxjs';
+import { stopImmediatePropagation } from 'handsontable/helpers/dom';
 
 registerAllModules();
 
@@ -70,6 +71,7 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
       if (column !== 'QC Status' || r1 === -1) {
         return;
       }
+      stopImmediatePropagation();
       setShowModal(true);
       // get column info to properly set records
       let recordIdColumn;

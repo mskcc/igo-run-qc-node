@@ -70,6 +70,7 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
       if (column !== 'QC Status' || r1 === -1) {
         return;
       }
+      
       setShowModal(true);
       // get column info to properly set records
       let recordIdColumn;

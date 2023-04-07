@@ -14,7 +14,7 @@ import {
 } from './projectSlice';
 import { QcTable } from './qcTable';
 import { AdditionalColumnsModal } from '../common/additionalColumnsModal';
-import { PED_PEG, TABLE_HEADERS, ADDITIONAL_10X_TABLE_HEADERS } from '../../resources/constants';
+import { PED_PEG, TABLE_HEADERS, ADDITIONAL_10X_TABLE_HEADERS, INVESTIGATOR_PREP_LIB } from '../../resources/constants';
 import {
   mapColumnsToHideByRecipe,
   orderSampleQcData,
@@ -117,6 +117,9 @@ export const ProjectPage = () => {
       let recipe = data.samples[0].recipe;
       if (data.requestName === PED_PEG) {
           recipe = PED_PEG;
+      }
+      if (data.requestName === INVESTIGATOR_PREP_LIB) {
+        recipe = INVESTIGATOR_PREP_LIB;
       }
 
       //TODO make this nested if better

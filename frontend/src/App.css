@@ -637,3 +637,10 @@ a:link {
   padding: 0 10px;
   cursor: pointer;
 }
+
+.status-update-error {
+  color: red;
+  font-weight: 600;
+  padding-bottom: 10px;
+  text-align: center;
+}

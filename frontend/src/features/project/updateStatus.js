@@ -39,7 +39,7 @@ const availableStatuses = [
     }
   ];
 
-export const UpdateStatus = ({selectionSubject, handleModalClose, recipe, handleGridUpdate }) => {
+export const UpdateStatus = ({selectionSubject, handleModalClose, recipe, handleGridUpdate, handleGridUpdateError }) => {
     const { projectId } = useParams();
     const [newStatus, setNewStatus] = useState('');
     const [samplesSelected, setSamplesSelected] = useState([]); // [ { 'record': '', 'sample': '' }, ...  ]
@@ -100,7 +100,9 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe, handle
             setSuccessStatusChangeIds(sample_successes);
             setFailedStatusChangeIds(sample_fails);
 
-            // update parent component (qc table) with new status
+            // if error, send message to show on qc table page
+            handleGridUpdateError(sample_fails);
+            // update parent component (qc table) with new statuses
             handleGridUpdate(newStatus, updatedRecordIds);
         }
     };

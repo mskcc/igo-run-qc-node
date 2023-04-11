@@ -9,6 +9,7 @@ registerAllModules();
 
 export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) => {
     const [showModal, setShowModal] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(null);
     const [customCells, setCustomCells] = useState([]);
     const [selectionSubject] = useState(new BehaviorSubject([])); // Observable that can emit updates of user-selection
     const [tableRef] = useState(React.createRef());
@@ -66,11 +67,6 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
      * and lose any sorting that the user has done
      */
      const afterSelection = (r1, c1, r2, c2) => {
-      const column = tableRef.current.hotInstance.getColHeader(c1);
-      if (column !== 'QC Status' || r1 === -1) {
-        return;
-      }
-      
       setShowModal(true);
       // get column info to properly set records
       let recordIdColumn;
@@ -116,11 +112,21 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
           tableRef.current.hotInstance.setDataAtCell(i, 0, newStatus);
         }
       }
+      handleCloseModal();
+    };
+    // Show error message if getting error when updating status
+    const handleGridUpdateError = (samples) => {
+      if (samples.length) {
+        setErrorMessage(`${samples.toString()}`);
+      } else {
+        setErrorMessage(null);
+      }
     };
 
     return (
       <div>
-        {showModal && <UpdateStatus handleModalClose={handleCloseModal} selectionSubject={selectionSubject} recipe={recipe} handleGridUpdate={handleGridUpdate} />}
+        {showModal && <UpdateStatus handleModalClose={handleCloseModal} selectionSubject={selectionSubject} recipe={recipe} handleGridUpdate={handleGridUpdate} handleGridUpdateError={handleGridUpdateError} />}
+        {errorMessage && <div className='status-update-error'>Error updating statuses for the following samples:<br></br>{errorMessage}</div>}
         <HotTable
             ref={tableRef}
             data={qcSamplesData}

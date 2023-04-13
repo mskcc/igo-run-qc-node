@@ -67,6 +67,10 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
      * and lose any sorting that the user has done
      */
      const afterSelection = (r1, c1, r2, c2) => {
+      const column = tableRef.current.hotInstance.getColHeader(c1);
+      if (column !== 'QC Status') {
+        return;
+      }
       setShowModal(true);
       // get column info to properly set records
       let recordIdColumn;

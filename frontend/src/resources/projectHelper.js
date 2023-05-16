@@ -97,7 +97,6 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
         case Constants.CHIP_SEQ:
         case Constants.CRISPR:
         case Constants.TCR_SEQ:
-        case Constants.INVESTIGATOR_PREP_LIB:
         case Constants.INVESTIGATOR_PREP_POOL:
         case Constants.SINGLE_CELL_CNV:
             return [initialPoolColumn, recordIdColumn, percentDuplicationColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, meanCoverageColumn, percentMRNAColumn, percentRibosomalColumn, tumorNormalColumn, genomeColumn];
@@ -165,7 +164,8 @@ export const orderSampleQcData = (qcSamples) => {
         sampleData.push(sample[Constants.REQUESTED_READS]);
         const coverageTarget = sample[Constants.COVERAGE_TARGET] || '';
         sampleData.push(coverageTarget);
-        sampleData.push(sample[Constants.SUM_MTC].toFixed(2));
+        const sumMtc = sample[Constants.SUM_MTC] ? sample[Constants.SUM_MTC] : 0;
+        sampleData.push(sumMtc.toFixed(2));
         const percentmRNA = Number(sample.qc[Constants.PERCENT_MRNA] * 100).toFixed(2);
         sampleData.push(percentmRNA);
         const percentRibosomal = Number(sample.qc[Constants.PERCENT_RIBOS] * 100).toFixed(2);

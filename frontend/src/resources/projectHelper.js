@@ -56,7 +56,7 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
         case Constants.ENH_WHOLE_EXOME:
         case Constants.WHOLE_EXOME_KAPA:
         case Constants.WHOLE_EXOME_SEQ_KAPA:
-            return [initialPoolColumn, recordIdColumn, percentAdaptersColumn, meanCoverageColumn, coverageTargetColumn, percentMRNAColumn, percentRibosomalColumn, genomeColumn];
+            return [initialPoolColumn, recordIdColumn, percentAdaptersColumn, coverageTargetColumn, percentMRNAColumn, percentRibosomalColumn, genomeColumn];
 
         case Constants.HEMEPACT:
         case Constants.IMPACT505:
@@ -65,10 +65,10 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
         case Constants.M_IMPACT_1:
         case Constants.M_IMPACT_2:
         case Constants.IMPACT_HEME:
-            return [recordIdColumn, meanCoverageColumn, percentMRNAColumn, percentRibosomalColumn, tumorNormalColumn, genomeColumn];
+            return [recordIdColumn, percentMRNAColumn, percentRibosomalColumn, tumorNormalColumn, genomeColumn];
 
         case Constants.MSK_ACCESS:
-            return [recordIdColumn, percentTarget100Column, percentTarget30Column, meanCoverageColumn, coverageTargetColumn, percentMRNAColumn, percentRibosomalColumn, tumorNormalColumn, genomeColumn];
+            return [recordIdColumn, percentTarget100Column, percentTarget30Column, coverageTargetColumn, percentMRNAColumn, percentRibosomalColumn, tumorNormalColumn, genomeColumn];
 
         case Constants.HUMAN_WHOLE_GENOME:
         case Constants.MOUSE_WHOLE_GENOME:

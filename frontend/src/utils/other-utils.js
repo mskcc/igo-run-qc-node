@@ -36,8 +36,18 @@ const mapDataObjKeys = (data, keys) => {
 //  * @param fileName
 //  */
 export const downloadHtml = (data, fileName) => {
-  const fileType = 'text/html';
-  const fileExtension = '.html';
-  const blob = new Blob([data], { type: fileType });
-  FileSaver.saveAs(blob, fileName + fileExtension);
+  let a = document.createElement('a');
+  a.setAttribute(
+    'href',
+    'data:text/html;charset=utf-8,' + encodeURIComponent(data)
+  );
+  a.setAttribute('target', '_blank');
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  // const fileType = 'text/html';
+  // const fileExtension = '.html';
+  // const blob = new Blob([data], { type: fileType });
+  // FileSaver.saveAs(blob, fileName + fileExtension);
 };

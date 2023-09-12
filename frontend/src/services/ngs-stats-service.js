@@ -70,7 +70,7 @@ export const downloadNgsStatsFile = (
       const data = payload['data'];
       const ngsData = data.ngsDownloadData;
       const downloadData = ngsData.data;
-      if (ngsData) {
+      if (ngsData && downloadData) {
         downloadHtml(downloadData, sample);
       } else {
         alert(`Data not available for ${sample}.`);

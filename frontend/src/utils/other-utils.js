@@ -39,17 +39,6 @@ export const downloadHtml = (data, fileName) => {
   const blob = new Blob([data], {type: 'text/html'});
   const blobURL = URL.createObjectURL(blob);
   window.open(blobURL, '_blank');
-  // let a = document.createElement('a');
-  // a.setAttribute(
-  //   'href',
-  //   'data:text/html;charset=utf-8,' + encodeURIComponent(data)
-  // );
-  // a.setAttribute('target', '_blank');
-  // a.style.display = 'none';
-  // document.body.appendChild(a);
-  // a.click();
-  // document.body.removeChild(a);
-
 
 
   // const fileType = 'text/html';

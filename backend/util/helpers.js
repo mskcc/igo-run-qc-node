@@ -153,9 +153,8 @@ exports.enrichSampleInfo = (samples) => {
         const sampleQc = sample['qc'];
         const qcStatus = sampleQc['qcStatus'];
         if (qcStatus !== 'Failed' && qcStatus !== 'Failed-Reprocess') {
+            
             // set sumReads
-            // const readsToSum = sampleQc['readsExamined'] > 0 ? 'readsExamined' : 'unpairedReadsExamined';
-
             if (sampleReadsHash[sample.baseId]) {
                 // update hash
                 const newSum = sampleReadsHash[sample.baseId] + sampleQc['readsExamined'] + sampleQc['unpairedReadsExamined'];

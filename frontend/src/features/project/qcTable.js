@@ -30,6 +30,9 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
     const medianUMIColumn = tableHeaders.indexOf('Median UMI Counts Per Cell');
     const numOfReadsColumn = tableHeaders.indexOf('# of Reads');
     const totalGenesColumn = tableHeaders.indexOf('Total Genes Detected');
+    // target coverage columns (for css highlighting)
+    const coverageTargetColumn = tableHeaders.indexOf('Coverage Target');
+    const sumMeanTargetCoverageColumn = tableHeaders.indexOf('Sum Mean Target Coverage');
 
     const numericColumnIndexes = [
         examinedReadsColumn,
@@ -48,13 +51,38 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
     useEffect(() => {
       let cells = [];
       const numOfRows = qcSamplesData.length;
+
       for (let i = 0; i < numOfRows; i++) {
+        // qc status row css
         cells.push({
           row: i,
           col: 0,
           className: 'qc-status-row',
         });
+        
+        // sum reads row css
+        const reqNumReads = parseInt(tableRef.current.hotInstance.getDataAtCell(i, requestedReadsColumn)) * 1000000;
+        const sumReads = parseInt(tableRef.current.hotInstance.getDataAtCell(i, sumReadsColumn));
+        if (sumReads < reqNumReads) {
+          cells.push({
+            row: i,
+            col: sumReadsColumn,
+            className: 'red-highlight',
+          });
+        }
+
+        // sum mean target coverage css
+        const coverageTarget = parseInt(tableRef.current.hotInstance.getDataAtCell(i, coverageTargetColumn));
+        const sumMeanCoverageTarget = parseInt(tableRef.current.hotInstance.getDataAtCell(i, sumMeanTargetCoverageColumn));
+        if (sumMeanCoverageTarget < coverageTarget) {
+          cells.push({
+            row: i,
+            col: sumReadsColumn,
+            className: 'red-highlight',
+          });
+        }
       }
+
       setCustomCells(cells);
     }, [qcSamplesData]);
 

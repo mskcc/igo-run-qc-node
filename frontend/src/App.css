@@ -284,6 +284,10 @@ body {
 }
 .qc-status-row {
   background: linear-gradient(-135deg,#8fc7e8 10px,#fff 0);
+  font-weight: 700;
+}
+.red-highlight {
+  color: var(--mskcc-orange);
 }
 .run-info-button {
   width: 65px;

@@ -51,7 +51,7 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
     useEffect(() => {
       let cells = [];
       const numOfRows = qcSamplesData.length;
-
+      console.log(qcSamplesData);
       for (let i = 0; i < numOfRows; i++) {
         // qc status row css
         cells.push({

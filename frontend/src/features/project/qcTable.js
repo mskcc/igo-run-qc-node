@@ -51,7 +51,7 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
     useEffect(() => {
       let cells = [];
       const numOfRows = qcSamplesData.length;
-      console.log(qcSamplesData);
+
       for (let i = 0; i < numOfRows; i++) {
         // qc status row css
         cells.push({
@@ -62,7 +62,7 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
         
         // sum reads row css
         const reqNumReads = parseInt(tableRef.current.hotInstance.getDataAtCell(i, requestedReadsColumn)) * 1000000;
-        const sumReads = parseInt(tableRef.current.hotInstance.getDataAtCell(i, sumReadsColumn));
+        const sumReads = parseInt(tableRef.current.hotInstance.getDataAtCell(i, sumReadsColumn)) || qcSamplesData[i][3];
         if (sumReads < reqNumReads) {
           cells.push({
             row: i,
@@ -72,8 +72,8 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
         }
 
         // sum mean target coverage css
-        const coverageTarget = parseInt(tableRef.current.hotInstance.getDataAtCell(i, coverageTargetColumn));
-        const sumMeanCoverageTarget = parseInt(tableRef.current.hotInstance.getDataAtCell(i, sumMeanTargetCoverageColumn));
+        const coverageTarget = parseInt(tableRef.current.hotInstance.getDataAtCell(i, coverageTargetColumn)) || qcSamplesData[i][5];
+        const sumMeanCoverageTarget = parseFloat(tableRef.current.hotInstance.getDataAtCell(i, sumMeanTargetCoverageColumn)) || parseFloat(qcSamplesData[i][6]);
         if (sumMeanCoverageTarget < coverageTarget) {
           cells.push({
             row: i,

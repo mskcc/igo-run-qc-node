@@ -77,7 +77,7 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
         if (sumMeanCoverageTarget < coverageTarget) {
           cells.push({
             row: i,
-            col: sumReadsColumn,
+            col: sumMeanCoverageTarget,
             className: 'red-highlight',
           });
         }

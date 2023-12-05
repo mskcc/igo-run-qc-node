@@ -63,8 +63,6 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
         // sum reads row css
         const reqNumReads = parseInt(tableRef.current.hotInstance.getDataAtCell(i, requestedReadsColumn)) * 1000000;
         const sumReads = parseInt(tableRef.current.hotInstance.getDataAtCell(i, sumReadsColumn)) || qcSamplesData[i][3];
-        console.log(reqNumReads);
-        console.log(sumReads);
         if (sumReads < reqNumReads) {
           cells.push({
             row: i,
@@ -76,12 +74,10 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
         // sum mean target coverage css
         const coverageTarget = parseInt(tableRef.current.hotInstance.getDataAtCell(i, coverageTargetColumn)) || qcSamplesData[i][5];
         const sumMeanCoverageTarget = parseInt(tableRef.current.hotInstance.getDataAtCell(i, sumMeanTargetCoverageColumn)) || parseInt(qcSamplesData[i][6]);
-        console.log(coverageTarget);
-        console.log(sumMeanCoverageTarget);
         if (sumMeanCoverageTarget < coverageTarget) {
           cells.push({
             row: i,
-            col: sumMeanCoverageTarget,
+            col: sumMeanTargetCoverageColumn,
             className: 'red-highlight',
           });
         }

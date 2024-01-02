@@ -1,5 +1,8 @@
 export const CELL_RANGER_APPLICATION_COUNT = 'Expression'; // CASES: '10X_Genomics-Expression+VDJ', '10X_Genomics_GeneExpression-5'
-export const CELL_RANGER_APPLICATION_VDJ = 'VDJ'; // TODO
+export const CELL_RANGER_APPLICATION_VDJ = 'VDJ';
+export const CELL_RANGER_APPLICATION_MULTI = 'Multiome';
+export const CELL_RANGER_APPLICATION_FEATURE_BARCODE = 'FeatureBarcoding';
+export const CELL_RANGER_APPLICATION_VISIUM = 'Visium';
 
 // MODAL STATUS MESSAGES
 export const MODAL_ERROR = 'MODAL_ERROR';
@@ -43,7 +46,7 @@ export const TABLE_MANDATORY_COLUMNS = new Set([
   'QC Record Id'
 ]);
 // PROJECT COLUMNS
-export const TABLE_HEADERS = ['QC Status', 'IGO ID', 'Sample', 'Sum Reads', 'Requested Reads (Millions)', 'Coverage Target', 'Sum Mean Target Coverage', '% mRNA', '% Ribosomal', 'QC Record Id', 'Initial Pool', 'Run', 'Recipe',  'Examined Reads', 'Unpaired Reads', 'Unmapped Reads', 'Tumor/Normal', '% Adapters', '% Duplication', 'Bait Set', '% Off Bait', '% Target 100x', '% Target 30x', 'Mean Target Coverage', 'Genome', 'Stats Version'];
+export const TABLE_HEADERS = ['QC Status', 'IGO ID', 'Sample', 'Sum Reads', 'Requested Reads (Millions)', 'Coverage Target', 'Sum Mean Target Coverage', '% mRNA', '% Ribosomal', 'QC Record Id', 'Initial Pool', 'Run', 'Recipe',  'Examined Reads', 'Unpaired Reads', 'Unmapped Reads', 'Tumor/Normal', '% Adapters', '% Duplication', 'Bait Set', '% Off Bait', '% Target 100x', '% Target 30x', 'Mean Target Coverage', 'Median Coverage', 'Genome', 'Stats Version'];
 export const ADDITIONAL_10X_TABLE_HEADERS = ['Estimated # of Cells', 'Mean Reads Per Cell', 'Fraction Reads in Cells', 'Median Genes Per Cell', 'Median UMI Counts Per Cell', '# of Reads', 'Q30 Bases in Barcode', 'Q30 Bases in Sample Index', 'Q30 Bases in UMI', 'Q30 Bases in RNA Read', 'Reads Mapped Antisense to Gene', 'Reads Mapped Confidently to Genome', 'Reads Mapped to Exonic Regions', 'Reads Mapped to Genome', 'Reads Mapped to Intergenic Regions', 'Reads Mapped to Intronic Regions', 'Reads Mapped to Transcriptome', 'Sequencing Saturation', 'Total Genes Detected', 'Valid Barcodes'];
 
 export const NUMERIC_COLUMNS = ['Sum Reads', 'Examined Reads', 'Unmapped Reads', 'Requested Reads (Millions)'];
@@ -160,6 +163,7 @@ export const QUANT_IT = 'quantIt';
 export const QUANT_UNITS = 'quantUnits';
 export const PERCENT_RIBOS = 'percentRibosomalBases';
 export const PERCENT_MRNA = 'percentMrnaBases';
+export const MEDIAN_TARGET_COVERAGE = 'median_COVERAGE';
 export const MEAN_TARGET_COVERAGE_WGS = 'mean_COVERAGE';
 export const MEAN_TARGET_COVERAGE_HS = 'meanTargetCoverage';
 export const PERCENT_30X = 'percentTarget30x';

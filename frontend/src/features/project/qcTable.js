@@ -61,26 +61,26 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
         });
         
         // sum reads row css
-        const reqNumReads = parseInt(tableRef.current.hotInstance.getDataAtCell(i, requestedReadsColumn)) * 1000000;
-        const sumReads = parseInt(tableRef.current.hotInstance.getDataAtCell(i, sumReadsColumn)) || qcSamplesData[i][3];
-        if (sumReads < reqNumReads) {
-          cells.push({
-            row: i,
-            col: sumReadsColumn,
-            className: 'red-highlight',
-          });
-        }
+        // const reqNumReads = parseInt(tableRef.current.hotInstance.getDataAtCell(i, requestedReadsColumn)) * 1000000;
+        // const sumReads = parseInt(tableRef.current.hotInstance.getDataAtCell(i, sumReadsColumn)) || qcSamplesData[i][3];
+        // if (sumReads < reqNumReads) {
+        //   cells.push({
+        //     row: i,
+        //     col: sumReadsColumn,
+        //     className: 'red-highlight',
+        //   });
+        // }
 
         // sum mean target coverage css
-        const coverageTarget = parseInt(tableRef.current.hotInstance.getDataAtCell(i, coverageTargetColumn)) || qcSamplesData[i][5];
-        const sumMeanCoverageTarget = parseInt(tableRef.current.hotInstance.getDataAtCell(i, sumMeanTargetCoverageColumn)) || parseInt(qcSamplesData[i][6]);
-        if (sumMeanCoverageTarget < coverageTarget) {
-          cells.push({
-            row: i,
-            col: sumMeanTargetCoverageColumn,
-            className: 'red-highlight',
-          });
-        }
+        // const coverageTarget = parseInt(tableRef.current.hotInstance.getDataAtCell(i, coverageTargetColumn)) || qcSamplesData[i][5];
+        // const sumMeanCoverageTarget = parseInt(tableRef.current.hotInstance.getDataAtCell(i, sumMeanTargetCoverageColumn)) || parseInt(qcSamplesData[i][6]);
+        // if (sumMeanCoverageTarget < coverageTarget) {
+        //   cells.push({
+        //     row: i,
+        //     col: sumMeanTargetCoverageColumn,
+        //     className: 'red-highlight',
+        //   });
+        // }
       }
 
       setCustomCells(cells);

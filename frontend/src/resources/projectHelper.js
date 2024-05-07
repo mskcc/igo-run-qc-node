@@ -54,9 +54,10 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
             return [percentMRNAColumn, meanCoverageColumn, percentAdaptersColumn, percentDuplicationColumn, percentRibosomalColumn, examinedReadsColumn, unmappedReadsColumn, unpairedReadsColumn,  initialPoolColumn, recordIdColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, medianCoverageColumn, coverageTargetColumn, percentOffBaitColumn, tumorNormalColumn, statsVersionColumn, genomeColumn];
 
         case Constants.CUSTOM_CAPTURE:
-        case Constants.WHOLE_EXOME:
+        case Constants.WES_HUMN:
+        case Constants.WES_MOUSE:
         case Constants.ENH_WHOLE_EXOME:
-        case Constants.WHOLE_EXOME_KAPA:
+        case Constants.WHOLE_EXOME:
         case Constants.WHOLE_EXOME_SEQ_KAPA:
             return [initialPoolColumn, recordIdColumn, percentAdaptersColumn, coverageTargetColumn, percentMRNAColumn, percentRibosomalColumn, genomeColumn, medianCoverageColumn];
 
@@ -90,17 +91,24 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
         case Constants.RNA_SEQ_SMARTER_AMP:
         case Constants.RNA_SEQ_TRU_SEQ_POLYA:
         case Constants.RNA_SEQ_TRU_SEQ_RIBO:
-        case Constants.SMARTER_AMP_SEQ:
+        case Constants.RNA_SMARTER:
+        case Constants.RNA_SMARTER_CELLS:
         case Constants.SINGLE_CELL_RNA:
             return [initialPoolColumn, recordIdColumn, percentDuplicationColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, coverageTargetColumn, meanTargetCoverageColumn, medianCoverageColumn, percentOffBaitColumn, tumorNormalColumn, genomeColumn];
 
-        case Constants.AMPLICON:
-        case Constants.ATAC_SEQ:
-        case Constants.CHIP_SEQ:
+        case Constants.DNA_AMPLICON:
+        case Constants.USER_AMPLICON:
+        case Constants.ATAC:
+        case Constants.USER_ATAC:
+        case Constants.DNA_CHIP:
+        case Constants.DNA_CUTRUN:
+        case Constants.USER_CHIP:
+        case Constants.USER_CUTRUN:
         case Constants.CRISPR:
         case Constants.TCR_SEQ:
         case Constants.INVESTIGATOR_PREP_POOL:
-        case Constants.SINGLE_CELL_CNV:
+        case Constants.SINGLE_CELL_CNV_DNA:
+        case Constants.SINGLE_CELL_CNV_USER:
             return [initialPoolColumn, recordIdColumn, percentDuplicationColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, medianCoverageColumn, coverageTargetColumn, percentOffBaitColumn, meanCoverageColumn, percentMRNAColumn, percentRibosomalColumn, tumorNormalColumn, genomeColumn];
 
         case Constants.METHYL_SEQ:
@@ -118,14 +126,17 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
 
         case Constants.TENX_GENOMICS:
         case Constants.TENX_GENOMICS_ATAC:
-        case Constants.TENX_GENOMICS_VDJ:
+        case Constants.TENX_GENOMICS_BCR:
+        case Constants.TENX_GENOMICS_TCR:
         case Constants.TENX_GENOMICS_WGS:
         case Constants.TENX_GENOMICS_CNV:
         case Constants.TENX_GENOMICS_GENE_EXP:
         case Constants.TENX_GENOMICS_GENE_EXP_3:
         case Constants.TENX_GENOMICS_GENE_EXP_5:
         case Constants.TENX_GENOMICS_GENE_EXP_VDJ:
-        case Constants.TENX_GENOMICS_MULTIOME:
+        case Constants.SC_CHROMIUM_ATAC:
+        case Constants.SC_CHROMIUM_GEX:
+        case Constants.SC_CHROMIUM_MULTIOME:
         case Constants.TENX_GENOMICS_MULTIOME_ATAC:
         case Constants.TENX_GENOMICS_MULTIOME_EXP:
         case Constants.TENX_GENOMICS_VISIUM:

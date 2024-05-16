@@ -136,13 +136,13 @@ export const TENX_GENOMICS_VISIUM = 'ST_Visium';
 export const SC_CHROMIUM_ATAC = 'SC_Chromium-ATAC';
 export const SC_CHROMIUM_GEX = 'SC_Chromium-GEX-3';
 export const SC_CHROMIUM_MULTIOME = 'SC_Chromium-Multiome';
-export const TENX_GENOMICS_MULTIOME_ATAC = '10X_Genomics_Multiome_ATAC';
-export const TENX_GENOMICS_MULTIOME_EXP = '10X_Genomics_Multiome_GeneExpression';
-export const R_AND_D = 'R&D';
+export const TENX_GENOMICS_MULTIOME_ATAC = 'SC_Chromium-Multiome-ATAC';
+export const TENX_GENOMICS_MULTIOME_EXP = 'SC_Chromium-Multiome-GEX';
+export const R_AND_D = 'R&D_Other';
 export const CMO_CH = 'HC_CMOCH';
-export const IMPACT_HEME = 'HybridCapture';
+export const IMPACT_HEME = 'HybridCapture'; // Request name
 export const RAPID_RCC = 'Rapid-RCC';
-export const TCR_SEQ = 'TCRSeq';
+export const TCR_SEQ = 'TCR_IGO';
 export const DLP = 'SC_DLP';
 
 // PROJECT DATA KEYS

@@ -135,7 +135,6 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
         case Constants.TENX_GENOMICS_GENE_EXP_5:
         case Constants.TENX_GENOMICS_GENE_EXP_VDJ:
         case Constants.SC_CHROMIUM_ATAC:
-        case Constants.SC_CHROMIUM_GEX:
         case Constants.SC_CHROMIUM_MULTIOME:
         case Constants.TENX_GENOMICS_MULTIOME_ATAC:
         case Constants.TENX_GENOMICS_MULTIOME_EXP:

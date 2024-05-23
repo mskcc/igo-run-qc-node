@@ -67,7 +67,7 @@ export const RunsDataGrid = ({runs, runsWithPicard}) => {
                     <p>{run.date}</p>
                 </td>
                 <td className='project-field field-header text-align-center light-blue-border' key={`${name}-lane-summary`} target='_blank'>
-                    <a href={`/seq-qc/${run.path}`} target='_blank'>
+                    <a href={`/${run.path}`} target='_blank'>
                         <button className='table-btn run-info-button em5'>
                             <AiFillFileText />
                         </button>

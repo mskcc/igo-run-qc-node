@@ -165,7 +165,7 @@ exports.enrichSampleInfo = (samples) => {
             }
 
             // set meantargetcoverage
-            const targetCoverage = sample['recipe'] === 'HumanWholeGenome' ? 'mean_COVERAGE' : 'meanTargetCoverage';
+            const targetCoverage = sample['recipe'] === 'WGS_Deep' ? 'mean_COVERAGE' : 'meanTargetCoverage';
             if (sampleMTCHash[sample.baseId]) {
                 const newSum = sampleMTCHash[sample.baseId] + sampleQc[targetCoverage];
                 sampleMTCHash[sample.baseId] = newSum;

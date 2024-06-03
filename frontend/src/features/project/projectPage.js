@@ -123,7 +123,7 @@ export const ProjectPage = () => {
       }
 
       //TODO make this nested if better
-      if (recipe.includes('10X')) {
+      if (recipe.includes('SC_Chromium')) {
         const recipes = getProjectType(data.samples);
         setRecipeTypes(recipes);
         if (mapCellRangerRecipe(recipes)) {

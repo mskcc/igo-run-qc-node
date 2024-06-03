@@ -1,5 +1,5 @@
 export const CELL_RANGER_APPLICATION_COUNT = 'GEX'; // CASES: '10X_Genomics-Expression+VDJ', '10X_Genomics_GeneExpression-5'
-export const CELL_RANGER_APPLICATION_VDJ = 'SC_Chromium';
+export const CELL_RANGER_APPLICATION_VDJ = 'CR'; //CASES: 'SC_Chromium-TCR', 'SC_Chromium-BCR'
 export const CELL_RANGER_APPLICATION_MULTI = 'Multiome';
 export const CELL_RANGER_APPLICATION_FEATURE_BARCODE = 'FeatureBarcoding';
 export const CELL_RANGER_APPLICATION_VISIUM = 'Visium';

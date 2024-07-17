@@ -8,6 +8,7 @@ import { getFlagIcon } from '../common/flagIcon';
 const TEXT_FIELDS = {
     'pi': 'PI',
     'requestType': 'Type',
+    'recipe': 'Recipe',
     [LIMS_REQUEST_ID]: 'Request Id',
     'allRuns': 'Recent Runs',
     'date': 'Date of Latest Stats',

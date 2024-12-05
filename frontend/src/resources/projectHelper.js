@@ -157,7 +157,10 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
 
         case Constants.DLP:
             return [recordIdColumn, initialPoolColumn, tumorNormalColumn, sumReadsColumn, percentAdaptersColumn, baitSetColumn, coverageTargetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, meanCoverageColumn, medianCoverageColumn, percentOffBaitColumn, percentMRNAColumn, percentRibosomalColumn, genomeColumn];
-        
+            
+        case Constants.NANOPORE:
+            return[];
+            
         default:
             return [];
     }
@@ -201,6 +204,13 @@ export const orderSampleQcData = (qcSamples) => {
         sampleData.push(percentTarget100x);
         const percentTarget30x = Number(sample.qc[Constants.PERCENT_30X] * 100).toFixed(2);
         sampleData.push(percentTarget30x);
+        sampleData.push(sample.qc[Constants.FLOWCELL]);
+        sampleData.push(sample.qc[Constants.N50]);
+        sampleData.push(sample.qc[Constants.POSITION]);
+        sampleData.push(sample.qc[Constants.READS_NANOPORE]);
+        sampleData.push(sample.qc[Constants.BASES]);
+        sampleData.push(sample.qc[Constants.MEDIAN_READ_LENGTH]);
+        sampleData.push(sample.qc[Constants.ESTIMATED_COVERAGE]);
         let meanTargetCoverage = 0;
         if (sample.qc[Constants.MEAN_TARGET_COVERAGE_HS] !== 0) {
             meanTargetCoverage = sample.qc[Constants.MEAN_TARGET_COVERAGE_HS];

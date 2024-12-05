@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Card } from '../common/card';
 import { useParams, useHistory } from 'react-router-dom';
@@ -41,6 +42,7 @@ export const ProjectPage = () => {
   const [qualityCheckStatus, setQualityCheckStatus] = useState('button-disabled');
   const [recipeTypes, setRecipeTypes] = useState('');
   const [is10xProject, setIs10xProject] = useState(false);
+//const [isNanoporeProject,setisNanoporeProject]=useState(false);
 
   const selectProjectData = useSelector(state =>
     selectProjectDataById(state, projectId)
@@ -58,6 +60,12 @@ export const ProjectPage = () => {
         setErrorMessage('');
         const { projectQc } = response.data;
         dispatch(setProjectQCData(projectQc, projectId));
+
+        // For ONT /Nanopore 
+        if(projectQc.samplesONT){
+          handleProjectDetails(projectQc.samplesONT);
+        }
+
       }
       setIsLoading(false);
     };

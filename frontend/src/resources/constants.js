@@ -48,7 +48,7 @@ export const TABLE_MANDATORY_COLUMNS = new Set([
 // PROJECT COLUMNS
 export const TABLE_HEADERS = ['QC Status', 'IGO ID', 'Sample', 'Sum Reads', 'Requested Reads (Millions)', 'Coverage Target', 'Sum Mean Target Coverage', '% mRNA', '% Ribosomal', 'QC Record Id', 'Initial Pool', 'Run', 'Recipe',  'Examined Reads', 'Unpaired Reads', 'Unmapped Reads', 'Tumor/Normal', '% Adapters', '% Duplication', 'Bait Set', '% Off Bait', '% Target 100x', '% Target 30x', 'Mean Target Coverage', 'Median Coverage', 'Genome', 'Stats Version'];
 export const ADDITIONAL_10X_TABLE_HEADERS = ['Estimated # of Cells', 'Mean Reads Per Cell', 'Fraction Reads in Cells', 'Median Genes Per Cell', 'Median UMI Counts Per Cell', '# of Reads', 'Q30 Bases in Barcode', 'Q30 Bases in Sample Index', 'Q30 Bases in UMI', 'Q30 Bases in RNA Read', 'Reads Mapped Antisense to Gene', 'Reads Mapped Confidently to Genome', 'Reads Mapped to Exonic Regions', 'Reads Mapped to Genome', 'Reads Mapped to Intergenic Regions', 'Reads Mapped to Intronic Regions', 'Reads Mapped to Transcriptome', 'Sequencing Saturation', 'Total Genes Detected', 'Valid Barcodes'];
-
+export const NANOPORE_HEADERS =['Reads','Bases','N50','Median Read Length','Flowcell','Estimated Coverage'];
 export const NUMERIC_COLUMNS = ['Sum Reads', 'Examined Reads', 'Unmapped Reads', 'Requested Reads (Millions)'];
 
 // PAGE STATE
@@ -134,6 +134,8 @@ export const TENX_GENOMICS_GENE_EXP_5 = 'SC_Chromium-GEX-5';
 export const TENX_GENOMICS_GENE_EXP_3 = 'SC_Chromium-GEX-3';
 export const TENX_GENOMICS_VISIUM = 'ST_Visium';
 export const SC_CHROMIUM_ATAC = 'SC_Chromium-ATAC';
+export const NANOPORE='Nanopore'; // Adding Nanopore recipe 
+
 //export const SC_CHROMIUM_GEX = 'SC_Chromium-GEX-3';
 export const SC_CHROMIUM_MULTIOME = 'SC_Chromium-Multiome';
 export const TENX_GENOMICS_MULTIOME_ATAC = 'SC_Chromium-Multiome-ATAC';
@@ -205,3 +207,15 @@ export const READS_MAPPED_TO_TRANSCRIPTOME = 'ReadsMappedToTranscriptome';
 export const SEQUENCING_SATURATION = 'SequencingSaturation';
 export const TOTAL_GENES_DETECTED = 'TotalGenesDetected';
 export const VALID_BARCODES = 'ValidBarcodes';
+
+
+
+
+//Nanopore Data Sets 
+export const  READS_NANOPORE= 'Reads';
+export const  BASES= 'Bases';
+export const  N50 = 'N50';
+export const  MEDIAN_READ_LENGTH= 'Meadian Read Length';
+export const FLOWCELL='Flowcell';
+export const  POSITION= 'Position';
+export const  ESTIMATED_COVERAGE= ' Estimated_Cov';

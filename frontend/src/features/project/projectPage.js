@@ -1,3 +1,6 @@
+/* eslint-disable no-undef */
+/* eslint-disable quotes */
+/* eslint-disable no-use-before-define */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Card } from '../common/card';
@@ -15,12 +18,13 @@ import {
 } from './projectSlice';
 import { QcTable } from './qcTable';
 import { AdditionalColumnsModal } from '../common/additionalColumnsModal';
-import { PED_PEG, TABLE_HEADERS, ADDITIONAL_10X_TABLE_HEADERS, INVESTIGATOR_PREP_LIB } from '../../resources/constants';
+import { PED_PEG, TABLE_HEADERS, ADDITIONAL_10X_TABLE_HEADERS, INVESTIGATOR_PREP_LIB, NANOPORE_HEADERS } from '../../resources/constants';
 import {
   mapColumnsToHideByRecipe,
   orderSampleQcData,
   getProjectType,
-  orderDataWith10XColumns
+  orderDataWith10XColumns,
+  orderONTData
 } from '../../resources/projectHelper';
 import { downloadExcel } from '../../utils/other-utils';
 import config from '../../config';
@@ -60,11 +64,6 @@ export const ProjectPage = () => {
         setErrorMessage('');
         const { projectQc } = response.data;
         dispatch(setProjectQCData(projectQc, projectId));
-
-        // For ONT /Nanopore 
-        if(projectQc.samplesONT){
-          handleProjectDetails(projectQc.samplesONT);
-        }
 
       }
       setIsLoading(false);
@@ -121,7 +120,14 @@ export const ProjectPage = () => {
   }, [projectId, selectCrosscheckMetricsData, dispatch]);
 
   const handleProjectDetails = (data) => {
-    if (data.samples && data.samples.length > 0) {
+    if(data.samplesONT&&data.samplesONT.length>0){
+      console.log("Detected Nanopore data in samplesONT:",data.samplesONT);
+      setTableHeaders(NANOPORE_HEADERS);
+     const sampleData =orderONTData(data.samplesONT);
+     console.log("Processed Nanopore data in samplesONT:",orderONTData);
+     setOrderedSampleInfo(sampleData);
+    }
+    else if (data.samples && data.samples.length > 0) {
       let recipe = data.samples[0].recipe;
       if (data.requestName === PED_PEG) {
           recipe = PED_PEG;

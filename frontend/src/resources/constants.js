@@ -48,7 +48,7 @@ export const TABLE_MANDATORY_COLUMNS = new Set([
 // PROJECT COLUMNS
 export const TABLE_HEADERS = ['QC Status', 'IGO ID', 'Sample', 'Sum Reads', 'Requested Reads (Millions)', 'Coverage Target', 'Sum Mean Target Coverage', '% mRNA', '% Ribosomal', 'QC Record Id', 'Initial Pool', 'Run', 'Recipe',  'Examined Reads', 'Unpaired Reads', 'Unmapped Reads', 'Tumor/Normal', '% Adapters', '% Duplication', 'Bait Set', '% Off Bait', '% Target 100x', '% Target 30x', 'Mean Target Coverage', 'Median Coverage', 'Genome', 'Stats Version'];
 export const ADDITIONAL_10X_TABLE_HEADERS = ['Estimated # of Cells', 'Mean Reads Per Cell', 'Fraction Reads in Cells', 'Median Genes Per Cell', 'Median UMI Counts Per Cell', '# of Reads', 'Q30 Bases in Barcode', 'Q30 Bases in Sample Index', 'Q30 Bases in UMI', 'Q30 Bases in RNA Read', 'Reads Mapped Antisense to Gene', 'Reads Mapped Confidently to Genome', 'Reads Mapped to Exonic Regions', 'Reads Mapped to Genome', 'Reads Mapped to Intergenic Regions', 'Reads Mapped to Intronic Regions', 'Reads Mapped to Transcriptome', 'Sequencing Saturation', 'Total Genes Detected', 'Valid Barcodes'];
-export const NANOPORE_HEADERS =['Reads','Bases','N50','Median Read Length','Flowcell','Estimated Coverage'];
+export const NANOPORE_HEADERS =['QC Status', 'IGO ID', 'Sample','Reads','Bases','N50','Median Read Length','Flowcell','Estimated Coverage'];
 export const NUMERIC_COLUMNS = ['Sum Reads', 'Examined Reads', 'Unmapped Reads', 'Requested Reads (Millions)'];
 
 // PAGE STATE

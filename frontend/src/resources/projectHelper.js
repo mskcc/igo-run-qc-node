@@ -231,16 +231,16 @@ export const orderSampleQcData = (qcSamples) => {
 
     qcSamples.forEach(sampleONT=>{
         let sampleData=[];
-        sampleData.push([Constants.QC_STATUS]);
-        sampleData.push([Constants.IGO_ID]);
-        sampleData.push([Constants.SAMPLE_NAME]);
-        sampleData.push([Constants.READS_NANOPORE]);
-        sampleData.push([Constants.BASES]);
-        sampleData.push([Constants.N50]);
-        sampleData.push([Constants.MEDIAN_READ_LENGTH]);
-        sampleData.push(sampleONT[Constants.FLOWCELL]);
-        sampleData.push([Constants.POSITION]);
-        sampleData.push([Constants.ESTIMATED_COVERAGE]);
+        sampleData.push(sampleONT.qcStatus);
+        sampleData.push(sampleONT.igoId);
+    //    sampleData.push(sampleONT[Constants.SAMPLE_NAME]);
+        sampleData.push(sampleONT.reads);
+        sampleData.push(sampleONT.bases);
+        sampleData.push(sampleONT.n50);
+        sampleData.push(sampleONT.medianReadLength);
+        sampleData.push(sampleONT.flowcell);
+        sampleData.push(sampleONT.sequencerPosition);
+        sampleData.push(sampleONT.estimatedCoverage);
         tableData.push(sampleData);
     });
     console.log("Final ordered Table for Nanopore:",tableData);

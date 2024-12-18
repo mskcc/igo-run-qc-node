@@ -240,7 +240,7 @@ export const orderSampleQcData = (qcSamples) => {
         sampleData.push(sampleONT.medianReadLength);
         sampleData.push(sampleONT.flowcell);
         sampleData.push(sampleONT.sequencerPosition);
-        sampleData.push(sampleONT.estimatedCoverage);
+        sampleData.push((sampleONT.estimatedCoverage).toFixed(2));
         tableData.push(sampleData);
     });
     console.log("Final ordered Table for Nanopore:",tableData);

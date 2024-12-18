@@ -14,7 +14,7 @@ import {
   setProjectQCData,
   selectProjectDataById,
   setProjectCrosscheckMetrics,
-  selectProjectCrosscheckMetricsById
+  selectProjectCrosscheckMetricsById,
 } from './projectSlice';
 import { QcTable } from './qcTable';
 import { AdditionalColumnsModal } from '../common/additionalColumnsModal';
@@ -129,6 +129,7 @@ export const ProjectPage = () => {
     }
     else if (data.samples && data.samples.length > 0) {
       let recipe = data.samples[0].recipe;
+      console.log("Detected data in sample:",data.samples);
       if (data.requestName === PED_PEG) {
           recipe = PED_PEG;
       }
@@ -192,6 +193,9 @@ export const ProjectPage = () => {
   };
 
   const handleQualityCheckClick = () => {
+    if(projectData.samplesONT && projectData.samplesONT.length>0){
+      return;
+    }
     history.push(`/projects/fingerprinting/${projectId}`);
   };
 

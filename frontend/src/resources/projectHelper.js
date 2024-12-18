@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 import { PROJECT_FLAGS,  LIMS_REQUEST_ID, CROSSCHECK_METRICS_FLAG } from './constants';
 import * as Constants from './constants';
 
@@ -157,7 +158,10 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
 
         case Constants.DLP:
             return [recordIdColumn, initialPoolColumn, tumorNormalColumn, sumReadsColumn, percentAdaptersColumn, baitSetColumn, coverageTargetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, meanCoverageColumn, medianCoverageColumn, percentOffBaitColumn, percentMRNAColumn, percentRibosomalColumn, genomeColumn];
-        
+            
+        case Constants.NANOPORE:
+            return[];
+            
         default:
             return [];
     }
@@ -216,6 +220,30 @@ export const orderSampleQcData = (qcSamples) => {
         tableData.push(sampleData);
     });
 
+    return tableData;
+};
+
+
+// Show ONT Data Table 
+
+ export const orderONTData=(qcSamples)=>{
+    let tableData =[];
+
+    qcSamples.forEach(sampleONT=>{
+        let sampleData=[];
+        sampleData.push(sampleONT.qcStatus);
+        sampleData.push(sampleONT.igoId);
+    //    sampleData.push(sampleONT[Constants.SAMPLE_NAME]);
+        sampleData.push(sampleONT.reads);
+        sampleData.push(sampleONT.bases);
+        sampleData.push(sampleONT.n50);
+        sampleData.push(sampleONT.medianReadLength);
+        sampleData.push(sampleONT.flowcell);
+        sampleData.push(sampleONT.sequencerPosition);
+        sampleData.push((sampleONT.estimatedCoverage).toFixed(2));
+        tableData.push(sampleData);
+    });
+    console.log("Final ordered Table for Nanopore:",tableData);
     return tableData;
 };
 

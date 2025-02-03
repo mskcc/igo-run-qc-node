@@ -212,12 +212,13 @@ exports.ngsStatsDownload = (ngsType, sample, projectId, run, download = true) =>
         });
 }
 
-exports.setQCStatus = (id, qc_status, projectId, recipe) => {
+exports.setQCStatus = (id, qc_status, projectId, recipe, qcType) => {
     const payload = {
         'record': id,
         'status': qc_status,
         'project': projectId,
-        'recipe': recipe
+        'recipe': recipe,
+        'qcType': qcType
     }
     const url = `${LIMS_URL}/setQcStatus`;
     return axios

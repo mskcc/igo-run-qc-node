@@ -108,8 +108,8 @@ export function getInterOpsData(runId) {
     });
 };
 
-export const setRunStatus = (run, project, status, recipe) => {
-    return axios.get(`${config.NODE_API_ROOT}/project/changeRunStatus?recordId=${run}&project=${project}&status=${status}&recipe=${recipe}`)
+export const setRunStatus = (run, project, status, recipe, qcType) => {
+    return axios.get(`${config.NODE_API_ROOT}/project/changeRunStatus?recordId=${run}&project=${project}&status=${status}&recipe=${recipe}&qcType=${qcType}`)
     .then(resp => {
       return parseResp(resp);
     })

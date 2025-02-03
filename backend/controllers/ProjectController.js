@@ -90,7 +90,8 @@ exports.changeRunStatus = [
         const projectId = req.query.project;
         const newStatus = req.query.status;
         const recipe = req.query.recipe;
-        let updateRunStatusPromise = apiServices.setQCStatus(sample, newStatus, projectId, recipe);
+        const qcType = req.query.qcType;
+        let updateRunStatusPromise = apiServices.setQCStatus(sample, newStatus, projectId, recipe, qcType);
         Promise.all([updateRunStatusPromise])
             .then((results) => {
                 if(!results) {

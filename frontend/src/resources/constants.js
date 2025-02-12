@@ -135,6 +135,12 @@ export const TENX_GENOMICS_GENE_EXP_3 = 'SC_Chromium-GEX-3';
 export const TENX_GENOMICS_VISIUM = 'ST_Visium';
 export const SC_CHROMIUM_ATAC = 'SC_Chromium-ATAC';
 export const NANOPORE='Nanopore'; // Adding Nanopore recipe 
+export const GLP_WES = 'GLP_WES'; // Adding GLP WES 
+export const GLP_RNA = 'GLP_RNA';// adding GLP RNA 
+export const METHYL_SEQ_WGS = 'Methyl_WGS';
+export const SAILcDNA = 'SAILCDNA';// Request Name 
+export const ATAC_SEQ = 'ATACSeq'; // Request Name 
+export const DNA_LIBRARY_PREP = 'DNALibraryPrep'; // Request Name 
 
 //export const SC_CHROMIUM_GEX = 'SC_Chromium-GEX-3';
 export const SC_CHROMIUM_MULTIOME = 'SC_Chromium-Multiome';
@@ -146,6 +152,9 @@ export const IMPACT_HEME = 'HybridCapture'; // Request name
 export const RAPID_RCC = 'Rapid-RCC';
 export const TCR_SEQ = 'TCR_IGO';
 export const DLP = 'SC_DLP';
+export const SINGLE_CELL_SMART_SEQ = 'SC_SmartSeq';
+export const SPATIAL_TRANSCRIPTOMICS = 'SpatialTranscriptomics'; // Request name
+
 
 // PROJECT DATA KEYS
 export const IGO_ID = 'baseId';

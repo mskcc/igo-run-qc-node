@@ -41,6 +41,7 @@ const availableStatuses = [
 
 export const UpdateStatus = ({selectionSubject, handleModalClose, recipe, handleGridUpdate, handleGridUpdateError }) => {
     const { projectId } = useParams();
+    const { qcType } = useParams();
     const [newStatus, setNewStatus] = useState('');
     const [samplesSelected, setSamplesSelected] = useState([]); // [ { 'record': '', 'sample': '' }, ...  ]
     const [errorMessage, setErrorMessage] = useState('');

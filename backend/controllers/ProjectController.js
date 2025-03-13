@@ -11,6 +11,7 @@ const { enrichSampleInfo, enrichProjectQC } = require('../util/helpers');
 exports.projectQc = [
     function(req, res) {
         const projectId = req.params.projectId;
+        const recipe = req.params.recipe;
         let projectQcPromise = apiServices.getProjectQc(projectId);
         Promise.all([projectQcPromise])
             .then((results) => {

@@ -91,6 +91,12 @@ exports.changeRunStatus = [
         const newStatus = req.query.status;
         const recipe = req.query.recipe;
         const qcType = req.query.qcType;
+        if (recipe.toLowerCase().includes('nanopore')) {
+            qcType = 'Ont';
+        }
+        else {
+            qcType = 'Seq'; 
+        }
         let updateRunStatusPromise = apiServices.setQCStatus(sample, newStatus, projectId, recipe, qcType);
         Promise.all([updateRunStatusPromise])
             .then((results) => {

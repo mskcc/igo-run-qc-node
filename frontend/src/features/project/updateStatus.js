@@ -39,7 +39,7 @@ const availableStatuses = [
     }
   ];
 
-export const UpdateStatus = ({selectionSubject, handleModalClose, recipe, handleGridUpdate, handleGridUpdateError }) => {
+export const UpdateStatus = ({selectionSubject, handleModalClose, handleGridUpdate, handleGridUpdateError }) => {
     const { projectId } = useParams();
     const { recipe } = useParams();
     const { qcType } = useParams();

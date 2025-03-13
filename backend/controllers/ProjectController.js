@@ -90,7 +90,7 @@ exports.changeRunStatus = [
         const projectId = req.query.project;
         const newStatus = req.query.status;
         const recipe = req.query.recipe;
-        const qcType = req.query.qcType;
+        let qcType = req.query.qcType;
         if (recipe.toLowerCase().includes('nanopore')) {
             qcType = 'Ont';
         }

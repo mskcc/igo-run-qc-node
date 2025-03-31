@@ -92,11 +92,12 @@ exports.changeRunStatus = [
         const projectId = req.query.project;
         const newStatus = req.query.status;
         const recipe = req.query.recipe;
+        const requestName = req.query.requestName;
         let qcType;
 
         // Logic to decide qcType based on the recipe
-        if (recipe && typeof recipe === 'string') {
-            if (recipe.toLowerCase().includes('nanopore')) {
+        if (requestName && typeof requestName === 'string') {
+            if (requestName.toLowerCase().includes('nanopore')) {
                 qcType = 'Ont';
             } else {
                 qcType = 'Seq';
@@ -104,7 +105,7 @@ exports.changeRunStatus = [
         } else {
             qcType = qcType || 'Seq';
         }
-
+        console.log("qcType = ", qcType);
         // Call the API service to update the QC status with the fetched recipe
         let updateRunStatusPromise = apiServices.setQCStatus(sample, newStatus, projectId, recipe, qcType);
 

@@ -144,6 +144,12 @@ export const IMPACT_HEME = 'HybridCapture'; // Request name
 export const RAPID_RCC = 'Rapid-RCC';
 export const TCR_SEQ = 'TCR_IGO';
 export const DLP = 'SC_DLP';
+export const NANOPORE_AS = 'Nanopore_AS';
+export const NANOPORE_CDNA = 'Nanopore_cDNA';
+export const NANOPORE_CHROMIUM = 'Nanopore_Chromium';
+export const NANOPORE_LONG_DNA = 'Nanopore_Long-DNA';
+export const NANOPORE_RNA = 'Nanopore_RNA';
+export const NANOPORE_SHORT_DNA = 'Nanopore_Short-DNA';
 
 // PROJECT DATA KEYS
 export const IGO_ID = 'baseId';

@@ -83,7 +83,7 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, handleGridUpda
             const sample_successes = [];
             const updatedRecordIds = [];
             for (const selected of samplesSelected) {
-                await setRunStatus(selected.record, projectId, newStatus, recipe, qcType)
+                await setRunStatus(selected.record, projectId, newStatus, recipe, requestName, qcType)
                     .then((resp) => {
                         if(resp.data && resp.data.statusResults && resp.data.statusResults.includes(newStatus)){
                             sample_successes.push(selected.sample);

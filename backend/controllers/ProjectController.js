@@ -92,12 +92,12 @@ exports.changeRunStatus = [
         const projectId = req.query.project;
         const newStatus = req.query.status;
         const recipe = req.query.recipe;
-        const requestName = req.query.requestName;
+        //const requestName = req.query.requestName;
         let qcType;
 
         // Logic to decide qcType based on the recipe
-        if (requestName && typeof requestName === 'string') {
-            if (requestName.toLowerCase().includes('nanopore')) {
+        if (recipe && typeof recipe === 'string') {
+            if (recipe.toLowerCase().includes('nanopore')) {
                 qcType = 'Ont';
             } else {
                 qcType = 'Seq';

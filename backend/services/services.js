@@ -218,6 +218,7 @@ exports.setQCStatus = (id, qc_status, projectId, recipe, qcType) => {
         'status': qc_status,
         'project': projectId,
         'recipe': recipe,
+        // 'requestName': requestName,
         'qcType': qcType
     }
     const url = `${LIMS_URL}/setQcStatus`;

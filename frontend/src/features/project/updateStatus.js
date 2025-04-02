@@ -48,6 +48,7 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe, handle
     const [isLoading, setIsLoading] = useState(false);
     const [failedStatusChangeSamples, setFailedStatusChangeIds] = useState([]);
     const [successStatusChangeSamples, setSuccessStatusChangeIds] = useState([]);
+    const [qcType, setQcType] = useState('');
     //const [recipeTypes, setRecipeTypes] = useState('');
 
     // Subscribe to parent's updater for when user selects a sample. Should only happen once
@@ -87,7 +88,9 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe, handle
                 // const recipes = getProjectType(selected);
                 // setRecipeTypes(recipes);
                 recipe = selected.recipe;
-                await setRunStatus(selected.record, projectId, newStatus, recipe, qcType)
+                console.log("Set recipe from sample to: ", recipe);
+                console.log("Recordis is: ", selected.record);
+                await setRunStatus(selected.record, projectId, newStatus, recipe)
                     .then((resp) => {
                         if(resp.data && resp.data.statusResults && resp.data.statusResults.includes(newStatus)){
                             sample_successes.push(selected.sample);

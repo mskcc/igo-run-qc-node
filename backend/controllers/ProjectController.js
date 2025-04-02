@@ -91,9 +91,9 @@ exports.changeRunStatus = [
         const sample = req.query.recordId;
         const projectId = req.query.project;
         const newStatus = req.query.status;
-        const recipe = req.query.recipe;
-        //const requestName = req.query.requestName;
-        let qcType;
+        setRecipeTypes(recipes);
+        const requestName = req.query.requestName;
+        const qcType = req.query.qcType;
 
         // Logic to decide qcType based on the recipe
         if (recipe && typeof recipe === 'string') {
@@ -107,7 +107,7 @@ exports.changeRunStatus = [
         }
         console.log("qcType = ", qcType);
         // Call the API service to update the QC status with the fetched recipe
-        let updateRunStatusPromise = apiServices.setQCStatus(sample, newStatus, projectId, recipe, qcType);
+        let updateRunStatusPromise = apiServices.setQCStatus(sample, newStatus, projectId, recipe, requestName, qcType);
 
         Promise.all([updateRunStatusPromise])
             .then((results) => {

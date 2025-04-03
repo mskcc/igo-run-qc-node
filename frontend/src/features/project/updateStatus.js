@@ -48,6 +48,8 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe, handle
     const [isLoading, setIsLoading] = useState(false);
     const [failedStatusChangeSamples, setFailedStatusChangeIds] = useState([]);
     const [successStatusChangeSamples, setSuccessStatusChangeIds] = useState([]);
+    const [qcType, setQcType] = useState('');
+    //const [recipeTypes, setRecipeTypes] = useState('');
 
     // Subscribe to parent's updater for when user selects a sample. Should only happen once
     useEffect(() => {
@@ -83,7 +85,11 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe, handle
             const sample_successes = [];
             const updatedRecordIds = [];
             for (const selected of samplesSelected) {
-                await setRunStatus(selected.record, projectId, newStatus, recipe)
+                // const recipes = getProjectType(selected);
+                // setRecipeTypes(recipes);
+                console.log("Set recipe from sample to: ", selected.recipe);
+                console.log("RecordId is: ", selected.record);
+                await setRunStatus(selected.record, projectId, newStatus, selected.recipe)
                     .then((resp) => {
                         if(resp.data && resp.data.statusResults && resp.data.statusResults.includes(newStatus)){
                             sample_successes.push(selected.sample);

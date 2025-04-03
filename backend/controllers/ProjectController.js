@@ -1,6 +1,8 @@
+const axios = require('axios'); 
 const apiResponse = require('../util/apiResponse');
 const apiServices = require('../services/services');
 const { enrichSampleInfo, enrichProjectQC } = require('../util/helpers');
+
 
 /**
  * returns 
@@ -85,12 +87,28 @@ exports.getCellRangerSample = [
 ];
 
 exports.changeRunStatus = [
-    function(req, res) {
+    async function(req, res) {
         const sample = req.query.recordId;
         const projectId = req.query.project;
         const newStatus = req.query.status;
-        const recipe = req.query.recipe;
-        let updateRunStatusPromise = apiServices.setQCStatus(sample, newStatus, projectId, recipe);
+        setRecipeTypes(recipes);
+        const requestName = req.query.requestName;
+        const qcType = req.query.qcType;
+
+        // Logic to decide qcType based on the recipe
+        if (recipe && typeof recipe === 'string') {
+            if (recipe.toLowerCase().includes('nanopore')) {
+                qcType = 'Ont';
+            } else {
+                qcType = 'Seq';
+            }
+        } else {
+            qcType = qcType || 'Seq';
+        }
+        console.log("qcType = ", qcType);
+        // Call the API service to update the QC status with the fetched recipe
+        let updateRunStatusPromise = apiServices.setQCStatus(sample, newStatus, projectId, recipe, requestName, qcType);
+
         Promise.all([updateRunStatusPromise])
             .then((results) => {
                 if(!results) {
@@ -107,6 +125,6 @@ exports.changeRunStatus = [
             .catch((reasons) => {
                 let string = JSON.stringify(reasons);
                 return apiResponse.errorResponse(res, `Error trying to update status: ${string}`);
-            });
+        });
     }
 ];

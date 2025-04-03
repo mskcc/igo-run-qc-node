@@ -277,6 +277,7 @@ export const orderSampleQcData = (qcSamples) => {
         let sampleData=[];
         sampleData.push(sampleONT.qcStatus);
         sampleData.push(sampleONT.igoId);
+        sampleData.push(sample.qc[Constants.RECORD_ID]);
     //    sampleData.push(sampleONT[Constants.SAMPLE_NAME]);
         sampleData.push(sampleONT.reads);
         sampleData.push(sampleONT.bases);

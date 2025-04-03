@@ -87,10 +87,9 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe, handle
             for (const selected of samplesSelected) {
                 // const recipes = getProjectType(selected);
                 // setRecipeTypes(recipes);
-                recipe = selected.recipe;
-                console.log("Set recipe from sample to: ", recipe);
-                console.log("Recordis is: ", selected.record);
-                await setRunStatus(selected.record, projectId, newStatus, recipe)
+                console.log("Set recipe from sample to: ", selected.recipe);
+                console.log("RecordId is: ", selected.record);
+                await setRunStatus(selected.record, projectId, newStatus, selected.recipe)
                     .then((resp) => {
                         if(resp.data && resp.data.statusResults && resp.data.statusResults.includes(newStatus)){
                             sample_successes.push(selected.sample);

@@ -1,3 +1,7 @@
+/* eslint-disable no-undef */
+/* eslint-disable quotes */
+/* eslint-disable no-use-before-define */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Card } from '../common/card';
 import { useParams, useHistory } from 'react-router-dom';
@@ -10,16 +14,17 @@ import {
   setProjectQCData,
   selectProjectDataById,
   setProjectCrosscheckMetrics,
-  selectProjectCrosscheckMetricsById
+  selectProjectCrosscheckMetricsById,
 } from './projectSlice';
 import { QcTable } from './qcTable';
 import { AdditionalColumnsModal } from '../common/additionalColumnsModal';
-import { PED_PEG, TABLE_HEADERS, ADDITIONAL_10X_TABLE_HEADERS, INVESTIGATOR_PREP_LIB } from '../../resources/constants';
+import { PED_PEG, TABLE_HEADERS, ADDITIONAL_10X_TABLE_HEADERS, INVESTIGATOR_PREP_LIB, NANOPORE_HEADERS } from '../../resources/constants';
 import {
   mapColumnsToHideByRecipe,
   orderSampleQcData,
   getProjectType,
-  orderDataWith10XColumns
+  orderDataWith10XColumns,
+  orderONTData
 } from '../../resources/projectHelper';
 import { downloadExcel } from '../../utils/other-utils';
 import config from '../../config';
@@ -41,6 +46,7 @@ export const ProjectPage = () => {
   const [qualityCheckStatus, setQualityCheckStatus] = useState('button-disabled');
   const [recipeTypes, setRecipeTypes] = useState('');
   const [is10xProject, setIs10xProject] = useState(false);
+//const [isNanoporeProject,setisNanoporeProject]=useState(false);
 
   const selectProjectData = useSelector(state =>
     selectProjectDataById(state, projectId)
@@ -58,6 +64,7 @@ export const ProjectPage = () => {
         setErrorMessage('');
         const { projectQc } = response.data;
         dispatch(setProjectQCData(projectQc, projectId));
+
       }
       setIsLoading(false);
     };
@@ -113,8 +120,16 @@ export const ProjectPage = () => {
   }, [projectId, selectCrosscheckMetricsData, dispatch]);
 
   const handleProjectDetails = (data) => {
-    if (data.samples && data.samples.length > 0) {
+    if(data.samplesONT&&data.samplesONT.length>0){
+      console.log("Detected Nanopore data in samplesONT:",data.samplesONT);
+      setTableHeaders(NANOPORE_HEADERS);
+     const sampleData =orderONTData(data.samplesONT);
+     console.log("Processed Nanopore data in samplesONT:",orderONTData);
+     setOrderedSampleInfo(sampleData);
+    }
+    else if (data.samples && data.samples.length > 0) {
       let recipe = data.samples[0].recipe;
+      console.log("Detected data in sample:",data.samples);
       if (data.requestName === PED_PEG) {
           recipe = PED_PEG;
       }
@@ -178,6 +193,9 @@ export const ProjectPage = () => {
   };
 
   const handleQualityCheckClick = () => {
+    if(projectData.samplesONT && projectData.samplesONT.length>0){
+      return;
+    }
     history.push(`/projects/fingerprinting/${projectId}`);
   };
 

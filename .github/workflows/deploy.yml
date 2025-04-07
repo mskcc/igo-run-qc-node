@@ -1,0 +1,79 @@
+name: CI/CD Pipeline for IGO Run QC
+on:
+  workflow_dispatch:  # Manual trigger only
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - production
+jobs:
+  deploy-to-dev:
+    name: Deploy to DEV (`dlviigoapps1`)
+    runs-on: self-hosted
+    if: github.event.inputs.environment == 'dev'
+    environment: dev
+    steps:
+      - name: Deploy to DEV
+        run: |
+          echo "🚀 Deploying to DEV on dlviigoapps1..."
+          cd /srv/prep/deployments/igo-run-qc-node
+          git pull
+          cd frontend/
+          npm run build
+          cp -rT build/ ../backend/public/
+          cd ..
+          cp -rT backend/ /srv/www/runQC/
+          echo "🔁 Checking if app exists in PM2..."
+          if pm2 list | grep -q "runQC"; then
+            echo "App exists, restarting..."
+            pm2 restart runQC
+          else
+            echo "App doesn't exist, starting..."
+            cd /srv/www/runQC/
+            pm2 start index.js --name runQC
+          fi
+          sleep 5
+          if ! pm2 show runQC | grep -q "status.*online"; then
+            echo "❌ PM2 process 'runQC' failed to start!"
+            pm2 logs runQC --lines 50
+            exit 1
+          fi
+          echo "✅ Deployment completed successfully"
+  deploy-to-prod:
+    name: Deploy to PROD (`plviigoweb1`)
+    runs-on: self-hosted
+    if: github.event.inputs.environment == 'production'
+    environment: production
+    steps:
+      - name: Deploy to PROD
+        run: |
+          echo "🚀 Deploying to PROD on plviigoweb1..."
+          cd /prep/deployments/igo-run-qc-node
+          git pull
+          # Make sure we're on master branch
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          if [[ "$CURRENT_BRANCH" != "master" ]]; then
+            echo "❌ You can only deploy 'master' branch to PROD."
+            exit 1
+          fi
+          cd frontend/
+          npm run build
+          # Ensure public directory exists
+          dzdo mkdir -p ../backend/public/
+          dzdo cp -rT build/ ../backend/public/
+          cd ..
+          dzdo cp -rT backend/ /srv/www/runqc/
+          dzdo chmod -R 775 /srv/www/runqc/public/
+          echo "🔁 Restarting PM2 in PROD..."
+          dzdo pm2 restart runqc
+          sleep 5
+          if ! dzdo pm2 show runqc | grep -q "status.*online"; then
+            echo "❌ PM2 process 'runqc' failed to start in PROD!"
+            dzdo pm2 logs runqc --lines 50
+            exit 1
+          fi
+          echo "✅ Deployment completed successfully".

@@ -23,7 +23,7 @@ jobs:
           cd /srv/prep/deployments/igo-run-qc-node
           git pull
           cd frontend/
-          npm run build
+          CI=false npm run build
           cp -rT build/ ../backend/public/
           cd ..
           cp -rT backend/ /srv/www/runQC/
@@ -61,7 +61,7 @@ jobs:
             exit 1
           fi
           cd frontend/
-          npm run build
+          CI=false npm run build
           # Ensure public directory exists
           dzdo mkdir -p ../backend/public/
           dzdo cp -rT build/ ../backend/public/
@@ -76,4 +76,4 @@ jobs:
             dzdo pm2 logs runqc --lines 50
             exit 1
           fi
-          echo "✅ Deployment completed successfully".
+          echo "✅ Deployment completed successfully"

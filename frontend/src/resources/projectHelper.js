@@ -277,8 +277,7 @@ export const orderSampleQcData = (qcSamples) => {
         let sampleData=[];
         sampleData.push(sampleONT.qcStatus);
         sampleData.push(sampleONT.igoId);
-        sampleData.push(sample.qc[Constants.RECORD_ID]);
-    //    sampleData.push(sampleONT[Constants.SAMPLE_NAME]);
+        sampleData.push(sampleONT[Constants.RECORD_ID]);
         sampleData.push(sampleONT.reads);
         sampleData.push(sampleONT.bases);
         sampleData.push(sampleONT.n50);
@@ -286,6 +285,9 @@ export const orderSampleQcData = (qcSamples) => {
         sampleData.push(sampleONT.flowcell);
         sampleData.push(sampleONT.sequencerPosition);
         sampleData.push((sampleONT.estimatedCoverage).toFixed(2));
+	sampleData.push(sampleONT[Constants.SAMPLE_NAME]);
+	sampleData.push(sampleONT[Constants.RECIPE]);
+	console.log("Pushed ONT recipe = ", sampleONT[Constants.RECIPE]);
         tableData.push(sampleData);
     });
     console.log("Final ordered Table for Nanopore:",tableData);

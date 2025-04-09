@@ -103,6 +103,7 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
       // get column info to properly set records
       let recordIdColumn;
       let sampleNameColumn;
+      let recipeColumn;
       const row = tableRef.current.hotInstance.getDataAtRow([r1]);
       for (let i = 0; i < row.length; i++) {
         const columnHeader = tableRef.current.hotInstance.getColHeader(i);
@@ -113,6 +114,9 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
         }
         if (columnHeader === 'Sample') {
           sampleNameColumn = i;
+        }
+	if (columnHeader === 'Recipe') {
+          recipeColumn = i;
         }
       }
 
@@ -128,7 +132,8 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
       for(let i = min; i<=max; i++){
           const entry = {
               'record': tableRef.current.hotInstance.getDataAtCell(i, recordIdColumn),
-              'sample': tableRef.current.hotInstance.getDataAtCell(i, sampleNameColumn)
+              'sample': tableRef.current.hotInstance.getDataAtCell(i, sampleNameColumn),
+	      'recipe': tableRef.current.hotInstance.getDataAtCell(i, recipeColumn)
           };
           selected.push(entry);
       }

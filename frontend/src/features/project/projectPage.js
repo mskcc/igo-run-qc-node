@@ -18,7 +18,7 @@ import {
 } from './projectSlice';
 import { QcTable } from './qcTable';
 import { AdditionalColumnsModal } from '../common/additionalColumnsModal';
-import { PED_PEG, TABLE_HEADERS, ADDITIONAL_10X_TABLE_HEADERS, INVESTIGATOR_PREP_LIB, NANOPORE_HEADERS } from '../../resources/constants';
+import { PED_PEG, NANOPORE, TABLE_HEADERS, ADDITIONAL_10X_TABLE_HEADERS, INVESTIGATOR_PREP_LIB, NANOPORE_HEADERS } from '../../resources/constants';
 import {
   mapColumnsToHideByRecipe,
   orderSampleQcData,
@@ -46,7 +46,6 @@ export const ProjectPage = () => {
   const [qualityCheckStatus, setQualityCheckStatus] = useState('button-disabled');
   const [recipeTypes, setRecipeTypes] = useState('');
   const [is10xProject, setIs10xProject] = useState(false);
-//const [isNanoporeProject,setisNanoporeProject]=useState(false);
 
   const selectProjectData = useSelector(state =>
     selectProjectDataById(state, projectId)
@@ -121,7 +120,14 @@ export const ProjectPage = () => {
 
   const handleProjectDetails = (data) => {
     if(data.samplesONT&&data.samplesONT.length>0){
+      let recipe = data.samplesONT[0].recipe;
+      console.log("ont recipe before assignment is: ", recipe);
+      console.log("ONT sample recipe is: ", recipe, " ONT sample record ID is: ", data.samplesONT[0].recordId);
       console.log("Detected Nanopore data in samplesONT:",data.samplesONT);
+      console.log("data.requestName = ", data.requestName);
+      if (data.requestName === NANOPORE) {
+          recipe = NANOPORE;
+      }
       setTableHeaders(NANOPORE_HEADERS);
      const sampleData =orderONTData(data.samplesONT);
      console.log("Processed Nanopore data in samplesONT:",orderONTData);

@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { MdClose } from 'react-icons/md';
 import Select from 'react-dropdown-select';
 import { setRunStatus } from '../../services/igo-qc-service';
+import { getProjectType } from '../../resources/projectHelper';
 
 const availableStatuses = [
     { 
@@ -39,17 +40,17 @@ const availableStatuses = [
     }
   ];
 
-export const UpdateStatus = ({selectionSubject, handleModalClose, recipe, handleGridUpdate, handleGridUpdateError }) => {
+export const UpdateStatus = ({selectionSubject, handleModalClose, handleGridUpdate, handleGridUpdateError }) => {
     const { projectId } = useParams();
     const [newStatus, setNewStatus] = useState('');
-    const [samplesSelected, setSamplesSelected] = useState([]); // [ { 'record': '', 'sample': '' }, ...  ]
+    const [samplesSelected, setSamplesSelected] = useState([]); // [ { 'record': '', 'sample': '', 'recipe': ''}, ...  ]
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [failedStatusChangeSamples, setFailedStatusChangeIds] = useState([]);
     const [successStatusChangeSamples, setSuccessStatusChangeIds] = useState([]);
     const [qcType, setQcType] = useState('');
-    //const [recipeTypes, setRecipeTypes] = useState('');
+    const [recipeTypes, setRecipeTypes] = useState('');
 
     // Subscribe to parent's updater for when user selects a sample. Should only happen once
     useEffect(() => {
@@ -85,11 +86,10 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe, handle
             const sample_successes = [];
             const updatedRecordIds = [];
             for (const selected of samplesSelected) {
-                // const recipes = getProjectType(selected);s
-                // setRecipeTypes(recipes);
-                console.log("Set recipe from sample to: ", selected.recipe);
-                console.log("RecordId is: ", selected.record);
-                await setRunStatus(selected.record, projectId, newStatus, selected.recipe)
+		console.log("selected sample info: ", selected);
+		console.log("selected sample recipe: ", selected.recipe);
+		if (selected.recipe.toLowerCase().includes('nanopore')) {
+                    await setRunStatus(selected.record, projectId, newStatus, selected.recipe, 'Ont')
                     .then((resp) => {
                         if(resp.data && resp.data.statusResults && resp.data.statusResults.includes(newStatus)){
                             sample_successes.push(selected.sample);
@@ -101,6 +101,21 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, recipe, handle
                     .catch((err) => {
                         setErrorMessage(`Server Error: Failed to set status for ${selected.sample}. ${err}`);
                     });
+                }
+                else {
+                    await setRunStatus(selected.record, projectId, newStatus, selected.recipe, 'Seq')
+                    .then((resp) => {
+                        if(resp.data && resp.data.statusResults && resp.data.statusResults.includes(newStatus)){
+                            sample_successes.push(selected.sample);
+                            updatedRecordIds.push(selected.record);
+                        } else {
+                            sample_fails.push(selected.sample);
+                        }
+                    })
+                    .catch((err) => {
+                        setErrorMessage(`Server Error: Failed to set status for ${selected.sample}. ${err}`);
+                    });
+                }
             }
             setIsLoading(false);
             setSuccessStatusChangeIds(sample_successes);

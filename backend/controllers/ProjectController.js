@@ -91,7 +91,11 @@ exports.changeRunStatus = [
         const sample = req.query.recordId;
         const projectId = req.query.project;
         const newStatus = req.query.status;
-        //setRecipeTypes(recipes);
+        const recipe = req.query.recipe;
+	console.log("inside changeRunStatus| sample = ", sample);
+	console.log("inside changeRunStatus| projectId = ", projectId);
+	console.log("inside changeRunStatus| recipe = ", recipe);
+	//setRecipeTypes(recipes);
         //const qcType = req.query.qcType;
 
         // Logic to decide qcType based on the recipe

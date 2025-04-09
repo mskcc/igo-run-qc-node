@@ -21,7 +21,8 @@ jobs:
         run: |
           echo "🚀 Deploying to DEV on dlviigoapps1..."
           cd /srv/prep/deployments/igo-run-qc-node
-          git pull
+          git checkout main
+          git pull origin main
           cd frontend/
           CI=false npm run build
           cp -rT build/ ../backend/public/

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { HotTable } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
@@ -130,6 +131,10 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
       const [min, max] = r1 < r2 ? [r1,r2] : [r2, r1];
       const selected = [];
       for(let i = min; i<=max; i++){
+        if(i<0)
+        {
+            continue;
+        }
           const entry = {
               'record': tableRef.current.hotInstance.getDataAtCell(i, recordIdColumn),
               'sample': tableRef.current.hotInstance.getDataAtCell(i, sampleNameColumn),

@@ -274,6 +274,11 @@ export const orderSampleQcData = (qcSamples) => {
     let tableData =[];
 
     qcSamples.forEach(sampleONT=>{
+        if (sampleONT.igoId && 
+            (sampleONT.igoId.toLowerCase().includes('unclassified') || 
+             sampleONT.igoId.toLowerCase().includes('barcode'))) {
+            return;
+        }
         let sampleData=[];
         sampleData.push(sampleONT.qcStatus);
         sampleData.push(sampleONT.igoId);

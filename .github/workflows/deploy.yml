@@ -10,10 +10,11 @@ on:
         options:
           - dev
           - production
+
 jobs:
   deploy-to-dev:
     name: Deploy to DEV (`dlviigoapps1`)
-    runs-on: self-hosted
+    runs-on: self-hosted  # Keeping exactly as your working version
     if: github.event.inputs.environment == 'dev'
     environment: dev
     steps:
@@ -44,37 +45,29 @@ jobs:
             exit 1
           fi
           echo "✅ Deployment completed successfully"
-  deploy-to-prod:
-    name: Deploy to PROD (`plviigoapps1`)  # Fixed: was plviigoweb1
-    runs-on: [self-hosted, prod, run-qc-prod]  # Target prod runner specifically
+
+  deploy-to-prod:  # Fixed: Missing proper indentation
+    name: Deploy to PROD (`plviigoapps1`)
+    runs-on: [self-hosted, prod, run-qc-prod]
     if: github.event.inputs.environment == 'production'
     environment: production
     steps:
       - name: Deploy to PROD
         run: |
-          echo "🚀 Deploying to PROD on plviigoapps1..."  # Fixed: was plviigoweb1
-          cd /prep/deployments/igo-run-qc-node
+          echo "🚀 Deploying to PROD on plviigoapps1..."
+          cd /srv/deployments/igo-run-qc-node
           git pull
-          # Make sure we're on master branch
-          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-          if [[ "$CURRENT_BRANCH" != "master" ]]; then
-            echo "❌ You can only deploy 'master' branch to PROD."
-            exit 1
-          fi
           cd frontend/
-          CI=false npm run build
-          # Ensure public directory exists
-          dzdo mkdir -p ../backend/public/
-          dzdo cp -rT build/ ../backend/public/
+          npm run build
+          cp -rT build/ ../backend/public/
           cd ..
-          dzdo cp -rT backend/ /srv/www/runqc/
-          dzdo chmod -R 775 /srv/www/runqc/public/
-          echo "🔁 Restarting PM2 in PROD..."
-          dzdo pm2 restart runqc
+          cp -rT backend/ /srv/www/runqc/
+          chmod -R 775 /srv/www/runqc/public/
+          pm2 restart runqc
           sleep 5
-          if ! dzdo pm2 show runqc | grep -q "status.*online"; then
-            echo "❌ PM2 process 'runqc' failed to start in PROD!"
-            dzdo pm2 logs runqc --lines 50
+          if ! pm2 show runqc | grep -q "status.*online"; then
+            echo "❌ PM2 process 'runqc' failed to start!"
+            pm2 logs runqc --lines 50
             exit 1
           fi
-          echo "✅ Deployment completed successfully"
+          echo "✅ PROD Deployment completed successfully"

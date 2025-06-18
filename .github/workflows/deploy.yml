@@ -45,14 +45,14 @@ jobs:
           fi
           echo "✅ Deployment completed successfully"
   deploy-to-prod:
-    name: Deploy to PROD (`plviigoweb1`)
-    runs-on: self-hosted
+    name: Deploy to PROD (`plviigoapps1`)  # Fixed: was plviigoweb1
+    runs-on: [self-hosted, prod, run-qc-prod]  # Target prod runner specifically
     if: github.event.inputs.environment == 'production'
     environment: production
     steps:
       - name: Deploy to PROD
         run: |
-          echo "🚀 Deploying to PROD on plviigoweb1..."
+          echo "🚀 Deploying to PROD on plviigoapps1..."  # Fixed: was plviigoweb1
           cd /prep/deployments/igo-run-qc-node
           git pull
           # Make sure we're on master branch

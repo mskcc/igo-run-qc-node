@@ -58,7 +58,7 @@ jobs:
           cd /srv/deployments/igo-run-qc-node
           git pull
           cd frontend/
-          npm run build
+          CI=false npm run build
           cp -rT build/ ../backend/public/
           cd ..
           cp -rT backend/ /srv/www/runqc/

@@ -14,7 +14,7 @@ on:
 jobs:
   deploy-to-dev:
     name: Deploy to DEV (`dlviigoapps1`)
-    runs-on: self-hosted  # Keeping exactly as your working version
+    runs-on: self-hosted
     if: github.event.inputs.environment == 'dev'
     environment: dev
     steps:
@@ -29,6 +29,7 @@ jobs:
           cp -rT build/ ../backend/public/
           cd ..
           cp -rT backend/ /srv/www/runQC/
+          chmod -R 775 /srv/www/runQC/public/
           echo "🔁 Checking if app exists in PM2..."
           if pm2 list | grep -q "runQC"; then
             echo "App exists, restarting..."
@@ -46,7 +47,7 @@ jobs:
           fi
           echo "✅ Deployment completed successfully"
 
-  deploy-to-prod:  # Fixed: Missing proper indentation
+  deploy-to-prod:
     name: Deploy to PROD (`plviigoapps1`)
     runs-on: [self-hosted, prod, run-qc-prod]
     if: github.event.inputs.environment == 'production'

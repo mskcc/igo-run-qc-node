@@ -185,7 +185,7 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
             return [examinedReadsColumn, unmappedReadsColumn, requestedReadsColumn, tumorNormalColumn, percentAdaptersColumn, percentDuplicationColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, medianCoverageColumn, percentOffBaitColumn, meanCoverageColumn, coverageTargetColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, recordIdColumn, initialPoolColumn, genomeColumn  ];
             
         case Constants.NANOPORE:
-            return[examinedReadsColumn, unmappedReadsColumn, unpairedReadsColumn, sumReadsColumn, tumorNormalColumn, percentAdaptersColumn, percentDuplicationColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, medianCoverageColumn, percentOffBaitColumn, meanCoverageColumn,  percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, recordIdColumn, initialPoolColumn, genomeColumn];
+            return[examinedReadsColumn, unmappedReadsColumn, unpairedReadsColumn, sumReadsColumn, tumorNormalColumn, percentAdaptersColumn, percentDuplicationColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, medianCoverageColumn, percentOffBaitColumn, meanCoverageColumn,  percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, recordIdColumn, initialPoolColumn, genomeColumn];
            
             case Constants.GLP_RNA: 
             return[tumorNormalColumn, percentAdaptersColumn, percentDuplicationColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, medianCoverageColumn, percentOffBaitColumn, meanCoverageColumn, coverageTargetColumn, statsVersionColumn, recordIdColumn, initialPoolColumn, genomeColumn];
@@ -270,16 +270,52 @@ export const orderSampleQcData = (qcSamples) => {
 
 // Show ONT Data Table 
 
- export const orderONTData=(qcSamples)=>{
+export const orderONTData=(qcSamples)=>{
     let tableData =[];
 
-    qcSamples.forEach(sampleONT=>{
-        if (sampleONT.igoId && 
-            (sampleONT.igoId.toLowerCase().includes('unclassified') || 
-            sampleONT.igoId.toLowerCase().includes('barcode') ||
-             sampleONT.igoId.toLowerCase().includes('rerun'))) {
-            return;
+    // First, filter out samples with any alphabetical characters in igoId
+    const filteredSamples = qcSamples.filter(sampleONT => {
+        if (!sampleONT.igoId) return false;
+        
+        // Split by underscore and check each part after the first two (request_sample)
+        const parts = sampleONT.igoId.split('_');
+        if (parts.length < 3) return true; // Keep if format is too short to have alphabetical parts
+        
+        // Check parts after the first two for any alphabetical characters
+        for (let i = 2; i < parts.length; i++) {
+            if (/[a-zA-Z]/.test(parts[i])) {
+                return false; // Skip if any part contains letters
+            }
         }
+        return true; // Keep if all parts after first two are numeric
+    });
+
+    // Create a map to group samples by base ID and calculate mean coverage
+    const baseIdGroups = {};
+    
+    filteredSamples.forEach(sampleONT => {
+        // Extract base ID (e.g., "17199_25" from "17199_25_1_1_1_1_1")
+        const baseId = sampleONT.igoId.split('_').slice(0, 2).join('_');
+        
+        if (!baseIdGroups[baseId]) {
+            baseIdGroups[baseId] = [];
+        }
+        baseIdGroups[baseId].push(sampleONT);
+    });
+
+    // Calculate mean target coverage for each group
+    const meanCoverageMap = {};
+    Object.keys(baseIdGroups).forEach(baseId => {
+        const samples = baseIdGroups[baseId];
+        const totalCoverage = samples.reduce((sum, sample) => sum + sample.estimatedCoverage, 0);
+        const meanCoverage = totalCoverage / samples.length;
+        meanCoverageMap[baseId] = meanCoverage;
+    });
+
+    filteredSamples.forEach(sampleONT=>{
+        const baseId = sampleONT.igoId.split('_').slice(0, 2).join('_');
+        const meanTargetCoverage = meanCoverageMap[baseId];
+        
         let sampleData=[];
         sampleData.push(sampleONT.qcStatus);
         sampleData.push(sampleONT.igoId);
@@ -291,14 +327,19 @@ export const orderSampleQcData = (qcSamples) => {
         sampleData.push(sampleONT.flowcell);
         sampleData.push(sampleONT.sequencerPosition);
         sampleData.push((sampleONT.estimatedCoverage).toFixed(2));
-	sampleData.push(sampleONT[Constants.SAMPLE_NAME]);
-	sampleData.push(sampleONT[Constants.RECIPE]);
-	console.log("Pushed ONT recipe = ", sampleONT[Constants.RECIPE]);
+        sampleData.push(sampleONT[Constants.SAMPLE_NAME]);
+        sampleData.push(sampleONT[Constants.RECIPE]);
+        console.log("Pushed ONT recipe = ", sampleONT[Constants.RECIPE]);
+        sampleData.push(meanTargetCoverage.toFixed(2)); // Add mean target coverage
         tableData.push(sampleData);
     });
     console.log("Final ordered Table for Nanopore:",tableData);
     return tableData;
 };
+
+
+
+
 
 //TODO maybe reshape how we fill the grid with data because this nested loop is poop
 export const orderDataWith10XColumns = (originalSampleData, tenXData) => {

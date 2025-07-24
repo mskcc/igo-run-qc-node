@@ -6,7 +6,9 @@ import { handleError } from '../utils/service-utils';
 import config from '../config.js';
 import {
   CELL_RANGER_APPLICATION_COUNT,
-  CELL_RANGER_APPLICATION_VDJ
+  CELL_RANGER_APPLICATION_VDJ,
+   CELL_RANGER_APPLICATION_MULTI,
+  CELL_RANGER_APPLICATION_VISIUM
 } from '../resources/constants';
 import { downloadHtml } from '../utils/other-utils';
 
@@ -93,9 +95,24 @@ export const mapCellRangerRecipe = recipe => {
   } else if (recipe.includes(CELL_RANGER_APPLICATION_VDJ)) {
     return 'vdj';
   }
+  // Multiome/ATAC recipes  
+  else if (recipe.includes(CELL_RANGER_APPLICATION_MULTI) ||
+           recipe.includes('Multiome') ||
+           recipe.includes('ATAC') ||
+           recipe.includes('ARC')) {
+    return 'multiome';
+  }
+  
+  // Visium/Spatial recipes
+  else if (recipe.includes(CELL_RANGER_APPLICATION_VISIUM) ||
+           recipe.includes('ST_') ||
+           recipe.includes('Visium') ||
+           recipe.includes('SPATIAL')) {
+    return 'visium';
+  }
+  
   return null;
 };
-
 /**
  * PROCESSING FUNCTION: All cases in 'getNgsStatsData' should have a corresponding function below
  *

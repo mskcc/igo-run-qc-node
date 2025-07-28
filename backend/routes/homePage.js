@@ -8,5 +8,7 @@ router.get('/getRecentRuns', homePageController.getRecentRuns);
 router.get('/getCrosscheckMetrics', homePageController.getCrosscheckMetrics);
 router.get('/getInterOpsData', homePageController.getInterOpsData);
 router.get('/ngsStatsDownload', homePageController.ngsStatsDownload);
+router.get('/searchProjectsByPI', homePageController.searchProjectsByPI);
+router.get('/searchProjectsByRecipe', homePageController.searchProjectsByRecipe);
 
 module.exports = router;

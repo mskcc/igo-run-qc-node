@@ -145,6 +145,42 @@ export function getRecentRuns(numDays) {
       throw new Error('Unable to fetch Recent Runs: ' + error);
     });
 }
+
+
+
+/**
+ * Search projects by PI name
+ * @param {string} piName - The PI name to search for
+ * @returns {Promise} Promise containing search results
+ */
+export function searchProjectsByPI(piName) {
+  return axios
+    .get(`${config.NODE_API_ROOT}/homePage/searchProjectsByPI?piName=${encodeURIComponent(piName)}`)
+    .then(resp => {
+      return parseResp(resp);
+    })
+    .catch(error => {
+      console.log('Unable to search projects by PI: ' + error);
+      return formatError(error);
+    });
+}
+
+/**
+ * Search projects by Recipe
+ * @param {string} recipe - The recipe to search for
+ * @returns {Promise} Promise containing search results
+ */
+export function searchProjectsByRecipe(recipe) {
+  return axios
+    .get(`${config.NODE_API_ROOT}/homePage/searchProjectsByRecipe?recipe=${encodeURIComponent(recipe)}`)
+    .then(resp => {
+      return parseResp(resp);
+    })
+    .catch(error => {
+      console.log('Unable to search projects by Recipe: ' + error);
+      return formatError(error);
+    });
+}
 // export function saveConfig(type, value){
 //     return axios.post(config.IGO_QC + '/saveConfig', { type, value })
 //         .then(resp => {return parseResp(resp) })

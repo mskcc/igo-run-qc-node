@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import SearchResultsPage from './features/search/searchResultsPage';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Header from './features/header';
 import { HomePage } from './features/home/homePage';
@@ -24,6 +25,9 @@ function App() {
             <Route exact path='/getInterOpsData'>
               <InterOpsDataPage />
             </Route>
+            <Route exact path='/search'>
+  <SearchResultsPage />
+</Route>
             <Route exact path='/projects/fingerprinting/:projectId'>
               <FingerprintingTable />
             </Route>

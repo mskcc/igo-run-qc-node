@@ -10,7 +10,6 @@ export const SearchResultsTable = memo(({
     hasError,
     onRetry
 }) => {
-    // Utility function for date formatting - memoized for performance
     const formatDate = useCallback((dateStr) => {
         if (!dateStr || dateStr === 'No QC data') return '';
         try {
@@ -27,7 +26,6 @@ export const SearchResultsTable = memo(({
         }
     }, []);
 
-    // Table headers
     const renderHeaders = () => (
         <thead>
             <tr className="fill-width">
@@ -42,7 +40,6 @@ export const SearchResultsTable = memo(({
         </thead>
     );
 
-    // Skeleton loading rows
     const renderSkeletonRows = () => (
         <tbody>
             {[...Array(resultsPerPage)].map((_, i) => (
@@ -76,7 +73,6 @@ export const SearchResultsTable = memo(({
         </tbody>
     );
 
-    // Real result rows
     const renderResultRows = () => (
         <tbody>
             {results.map((result, index) => (
@@ -137,7 +133,6 @@ export const SearchResultsTable = memo(({
         </tbody>
     );
 
-    // Error display
     const renderError = () => (
         <tbody>
             <tr>
@@ -165,7 +160,6 @@ export const SearchResultsTable = memo(({
         </tbody>
     );
 
-    // Loading indicator
     const renderLoadingIndicator = () => (
         isLoading && (
             <div className="text-align-center" style={{ marginTop: '15px', color: '#666', fontSize: '14px' }}>

@@ -153,25 +153,13 @@ export function getRecentRuns(numDays) {
 
 
 
-export function searchQc(searchTerm, limit = 5, offset = 0) {
-  const startTime = performance.now();
-  console.log(`🔍 [${new Date().toISOString()}] Starting search for: "${searchTerm}"`);
-  
+export function searchQc(searchTerm, limit = 100, offset = 0) {
   return axios
     .get(`${config.NODE_API_ROOT}/search/searchQc?search=${searchTerm}&limit=${limit}&offset=${offset}`)
     .then(resp => {
-      const endTime = performance.now();
-      const duration = (endTime - startTime).toFixed(2);
-      console.log(`✅ [${new Date().toISOString()}] Search API completed in ${duration}ms`);
-      console.log(`📊 Response size: ${JSON.stringify(resp.data).length} characters`);
-      
       return parseResp(resp);
     })
     .catch(error => {
-      const endTime = performance.now();
-      const duration = (endTime - startTime).toFixed(2);
-      console.error(`❌ [${new Date().toISOString()}] Search API failed after ${duration}ms:`, error.message);
-      
       return formatError(error);
     });
 }

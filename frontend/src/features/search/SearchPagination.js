@@ -7,7 +7,6 @@ export const SearchPagination = ({
     resultsPerPage,
     onPageChange
 }) => {
-    // Calculate pagination data
     const totalPages = Math.ceil(totalResults / resultsPerPage);
     const startResult = totalResults > 0 ? (currentPage - 1) * resultsPerPage + 1 : 0;
     const endResult = Math.min(currentPage * resultsPerPage, totalResults);

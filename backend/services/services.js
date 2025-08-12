@@ -324,46 +324,26 @@ exports.getRecentRunsData = (days) => {
 }
 
 
-exports.searchQc = (searchTerm, limit = 50, offset = 0) => {
-    // Input validation
-    if (!searchTerm || typeof searchTerm !== 'string' || searchTerm.trim().length === 0) {
-        throw new Error('Search term is required');
-    }
-    
-    const validatedLimit = Math.min(Math.max(parseInt(limit) || 50, 1), 500);
+exports.searchQc = (searchTerm, limit = 100, offset = 0) => {
+    const validatedLimit = Math.min(Math.max(parseInt(limit) || 50, 1), 800);
     const validatedOffset = Math.max(parseInt(offset) || 0, 0);
-    
-    const url = `${LIMS_URL}/searchQc?search=${encodeURIComponent(searchTerm.trim())}&limit=${validatedLimit}&offset=${validatedOffset}`;
-    console.log(`Sending search request to: ${url}`);
+    const url = `${LIMS_URL}/searchQc?search=${encodeURIComponent(searchTerm)}&limit=${validatedLimit}&offset=${validatedOffset}`;
     logger.info(`Sending request to ${url}`);
-    
     return axios
         .get(url, {
             auth: { ...LIMS_AUTH },
             ...axiosConfig,
-            timeout: 30000,  // 30 second timeout for long searches
         })
         .then((resp) => {
-            console.log(`Successfully received search response from: ${url}`);
             info(url);
             return resp;
         })
         .catch((error) => {
-            console.error(`Search request failed for: ${url}`, error.message);
             errorlog(url, error);
-            
-            // Better error messages
-            if (error.code === 'ECONNABORTED') {
-                throw new Error('Search request timed out. Please try again.');
-            } else if (error.response?.status === 400) {
-                throw new Error('Invalid search parameters.');
-            } else if (error.response?.status === 500) {
-                throw new Error('Server error during search. Please try again.');
-            } else {
-                throw error;
-            }
+            throw error;
         })
         .then((resp) => {
             return formatData(resp);
         });
 };
+

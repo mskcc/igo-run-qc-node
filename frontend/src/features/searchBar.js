@@ -10,26 +10,24 @@ export const SearchBar = () => {
         const query = e.target.value || '';
         setProjectSearch(query);
     };
-    
+
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
             handleSubmit();
         }
     };
-    
+
     const handleSubmit = () => {
         const query = projectSearch.trim();
         if (!query) return;
 
-        // Numbers or numbers_letters = Project ID → Navigate to project page
         if (/^\d+(_[A-Z]+)?$/i.test(query)) {
             history.push(`/projects/${query.toUpperCase()}`);
         } else {
-            // Everything else = Search query → Navigate to search results
             history.push(`/search/${encodeURIComponent(query)}`);
         }
-        
-        setProjectSearch(''); 
+
+        setProjectSearch('');
     };
 
     return (

@@ -145,44 +145,33 @@ export function getRecentRuns(numDays) {
       throw new Error('Unable to fetch Recent Runs: ' + error);
     });
 }
-
-
-
-/**
- * Search projects by PI name
- * @param {string} piName - The PI name to search for
- * @returns {Promise} Promise containing search results
- */
-export function searchProjectsByPI(piName) {
-  return axios
-    .get(`${config.NODE_API_ROOT}/homePage/searchProjectsByPI?piName=${encodeURIComponent(piName)}`)
-    .then(resp => {
-      return parseResp(resp);
-    })
-    .catch(error => {
-      console.log('Unable to search projects by PI: ' + error);
-      return formatError(error);
-    });
-}
-
-/**
- * Search projects by Recipe
- * @param {string} recipe - The recipe to search for
- * @returns {Promise} Promise containing search results
- */
-export function searchProjectsByRecipe(recipe) {
-  return axios
-    .get(`${config.NODE_API_ROOT}/homePage/searchProjectsByRecipe?recipe=${encodeURIComponent(recipe)}`)
-    .then(resp => {
-      return parseResp(resp);
-    })
-    .catch(error => {
-      console.log('Unable to search projects by Recipe: ' + error);
-      return formatError(error);
-    });
-}
 // export function saveConfig(type, value){
 //     return axios.post(config.IGO_QC + '/saveConfig', { type, value })
 //         .then(resp => {return parseResp(resp) })
 //         .catch(error => {throw new Error('Failed to log in: ' + error) });
 // }
+
+
+
+export function searchQc(searchTerm, limit = 5, offset = 0) {
+  const startTime = performance.now();
+  console.log(`🔍 [${new Date().toISOString()}] Starting search for: "${searchTerm}"`);
+  
+  return axios
+    .get(`${config.NODE_API_ROOT}/search/searchQc?search=${searchTerm}&limit=${limit}&offset=${offset}`)
+    .then(resp => {
+      const endTime = performance.now();
+      const duration = (endTime - startTime).toFixed(2);
+      console.log(`✅ [${new Date().toISOString()}] Search API completed in ${duration}ms`);
+      console.log(`📊 Response size: ${JSON.stringify(resp.data).length} characters`);
+      
+      return parseResp(resp);
+    })
+    .catch(error => {
+      const endTime = performance.now();
+      const duration = (endTime - startTime).toFixed(2);
+      console.error(`❌ [${new Date().toISOString()}] Search API failed after ${duration}ms:`, error.message);
+      
+      return formatError(error);
+    });
+}

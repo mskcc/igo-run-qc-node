@@ -1,131 +1,139 @@
-// features/search/searchResultsPage.js - Optimized for faster display
-
-import React, { useEffect, useState, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useParams, useHistory, useLocation } from 'react-router-dom';
 import { Card } from '../common/card';
-import DataGrid from '../home/dataGrid';
-import { searchProjectsByPI, searchProjectsByRecipe } from '../../services/igo-qc-service';
+import { searchQc } from '../../services/igo-qc-service';
+import SearchResultsTable from './SearchResultsTable';
+import SearchPagination from './SearchPagination';
 
 export const SearchResultsPage = () => {
+    const { searchTerm } = useParams();
+    const history = useHistory();
     const location = useLocation();
-    const [searchResults, setSearchResults] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
-    const [searchQuery, setSearchQuery] = useState('');
-    const [searchType, setSearchType] = useState('');
+    
+    // State management
+    const [results, setResults] = useState([]);
+    const [totalResults, setTotalResults] = useState(0);
+    const [isLoading, setIsLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hasError, setHasError] = useState(false);
+    const [showSkeletonRows, setShowSkeletonRows] = useState(true);
+    
+    const resultsPerPage = 100;  // Match backend's optimized performance
 
-    // Memoize URL params parsing for better performance
-    const { piQuery, recipeQuery } = useMemo(() => {
-        const urlParams = new URLSearchParams(location.search);
-        return {
-            piQuery: urlParams.get('pi'),
-            recipeQuery: urlParams.get('recipe')
-        };
-    }, [location.search]);
+    // Handle project navigation - memoized for performance
+    const handleProjectClick = useCallback((requestId) => {
+        console.log(`🔄 [${new Date().toISOString()}] Navigating to project: ${requestId}`);
+        history.push(`/projects/${requestId}`);
+    }, [history]);
 
-    useEffect(() => {
-        // Immediately set the search type and query for faster UI feedback
-        if (piQuery) {
-            setSearchQuery(piQuery);
-            setSearchType('PI');
-            setIsLoading(true);
-            // Set optimistic loading state immediately
-            setSearchResults(null);
-            setErrorMessage('');
-            
-            // Then fetch results
-            fetchSearchResults(piQuery, 'pi');
-        } else if (recipeQuery) {
-            setSearchQuery(recipeQuery);
-            setSearchType('Recipe');
-            setIsLoading(true);
-            // Set optimistic loading state immediately
-            setSearchResults(null);
-            setErrorMessage('');
-            
-            // Then fetch results
-            fetchSearchResults(recipeQuery, 'recipe');
+    // Handle pagination - memoized for performance
+    const handlePageChange = useCallback((newPage) => {
+        const pageChangeStart = performance.now();
+        console.log(`📄 [${new Date().toISOString()}] Changing to page ${newPage}`);
+        
+        const params = new URLSearchParams();
+        if (newPage > 1) {
+            params.set('page', newPage.toString());
         }
-    }, [piQuery, recipeQuery]);
+        
+        const newUrl = newPage > 1 ? `/search/${searchTerm}?${params.toString()}` : `/search/${searchTerm}`;
+        history.push(newUrl);
+        
+        const pageChangeTime = (performance.now() - pageChangeStart).toFixed(2);
+        console.log(`📄 [${new Date().toISOString()}] Page change navigation completed in ${pageChangeTime}ms`);
+    }, [history, searchTerm]);
 
-    const fetchSearchResults = async (query, type) => {
+    // Handle retry on error - memoized for performance
+    const handleRetry = useCallback(() => {
+        fetchPageResults(currentPage, performance.now());
+    }, [currentPage]);
+
+    // Fetch results for a specific page
+    const fetchPageResults = async (page, componentStartTime) => {
+        setIsLoading(true);
+        setHasError(false);
+        setShowSkeletonRows(true);
+        
         try {
-            let response;
+            const offset = (page - 1) * resultsPerPage;
+            console.log(`📡 [${new Date().toISOString()}] Loading page ${page} (${resultsPerPage} results per page, offset: ${offset})`);
             
-            // Use Promise with timeout for faster perceived performance
-            const searchPromise = type === 'pi' 
-                ? searchProjectsByPI(query)
-                : searchProjectsByRecipe(query);
-
-            response = await searchPromise;
-                        
-            if (response?.data?.projects) {
-                setSearchResults(response.data.projects);
-            } else {
-                setSearchResults([]);
+            const response = await searchQc(searchTerm, resultsPerPage, offset);
+            
+            if (response.data && response.data.searchResults) {
+                setShowSkeletonRows(false);
+                setResults(response.data.searchResults.results || []);
+                setTotalResults(response.data.searchResults.total || 0);
+                
+                const totalTime = (performance.now() - componentStartTime).toFixed(2);
+                console.log(`🏁 [${new Date().toISOString()}] Page ${page} loaded in ${totalTime}ms`);
+                console.log(`✅ Loaded ${response.data.searchResults.results?.length || 0} results of ${response.data.searchResults.total || 0} total`);
             }
         } catch (error) {
-            console.error('Search error:', error);
-            setErrorMessage('Failed to search projects. Please try again.');
-            setSearchResults([]);
-        } finally {
-            setIsLoading(false);
+            console.error(`❌ [${new Date().toISOString()}] Page ${page} failed:`, error);
+            setHasError(true);
+            setShowSkeletonRows(false);
         }
+        
+        setIsLoading(false);
     };
 
-    // Memoize the results title for better performance
-    const resultsTitle = useMemo(() => {
-        if (isLoading) return `Searching for ${searchType} "${searchQuery}"...`;
-        if (!searchResults) return 'Searching...';
+    // Initialize page from URL and fetch results
+    useEffect(() => {
+        const componentStartTime = performance.now();
+        console.log(`🚀 [${new Date().toISOString()}] SearchResultsPage component mounted for "${searchTerm}"`);
         
-        const count = searchResults.length;
-        const plural = count === 1 ? '' : 's';
+        const params = new URLSearchParams(location.search);
+        const page = parseInt(params.get('page')) || 1;
+        setCurrentPage(page);
         
-        return `Search Results for ${searchType} "${searchQuery}" (${count} project${plural} found)`;
-    }, [searchResults, searchQuery, searchType, isLoading]);
+        setShowSkeletonRows(true);
+        setResults([]);
+        
+        fetchPageResults(page, componentStartTime);
+    }, [searchTerm, location.search]);
 
-    const renderSearchResults = () => {
+    // Generate subtitle based on current state
+    const getSubtitle = () => {
         if (isLoading) {
-            return (
-                <div style={{ textAlign: 'center', padding: '20px' }}>
-                    <div className="dot-elastic"></div>
-                    <p style={{ marginTop: '10px', color: '#666' }}>
-                        Searching for {searchType} "{searchQuery}"...
-                    </p>
-                </div>
-            );
+            return `Searching for "${searchTerm}"...`;
         }
-
-        if (errorMessage) {
-            return (
-                <div className="text-align-center error-message">
-                    {errorMessage}
-                </div>
-            );
+        if (hasError) {
+            return `Search failed for "${searchTerm}"`;
         }
-
-        if (searchResults && searchResults.length === 0) {
-            return (
-                <div className="text-align-center">
-                    <p>No projects found for {searchType}: <strong>{searchQuery}</strong></p>
-                    <p>Try checking the spelling or search for a different {searchType}.</p>
-                </div>
-            );
+        if (totalResults === 0 && !isLoading) {
+            return `No results found for "${searchTerm}"`;
         }
-
-        // Use React.memo equivalent for DataGrid if needed
-        return <DataGrid projects={searchResults} />;
+        
+        const startResult = totalResults > 0 ? (currentPage - 1) * resultsPerPage + 1 : 0;
+        const endResult = Math.min(currentPage * resultsPerPage, totalResults);
+        return `Results for "${searchTerm}" (${startResult}-${endResult} of ${totalResults} projects)`;
     };
 
     return (
-        <div>
-            <Card>
-                <h2 className={'title'}>{resultsTitle}</h2>
-                <div className={'data-container'}>
-                    {renderSearchResults()}
-                </div>
-            </Card>
-        </div>
+        <Card>
+            <h2 className="title">Search Results</h2>
+            <h3 className="sub-title">{getSubtitle()}</h3>
+            
+            <SearchResultsTable
+                results={results}
+                showSkeletonRows={showSkeletonRows}
+                resultsPerPage={resultsPerPage}
+                onProjectClick={handleProjectClick}
+                isLoading={isLoading}
+                hasError={hasError}
+                onRetry={handleRetry}
+            />
+
+            {!isLoading && !hasError && (
+                <SearchPagination
+                    currentPage={currentPage}
+                    totalResults={totalResults}
+                    resultsPerPage={resultsPerPage}
+                    onPageChange={handlePageChange}
+                />
+            )}
+        </Card>
     );
 };
 

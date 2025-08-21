@@ -322,3 +322,28 @@ exports.getRecentRunsData = (days) => {
         });
     });
 }
+
+
+exports.searchQc = (searchTerm, limit = 100, offset = 0) => {
+    const validatedLimit = Math.min(Math.max(parseInt(limit) || 50, 1), 800);
+    const validatedOffset = Math.max(parseInt(offset) || 0, 0);
+    const url = `${LIMS_URL}/searchQc?search=${encodeURIComponent(searchTerm)}&limit=${validatedLimit}&offset=${validatedOffset}`;
+    logger.info(`Sending request to ${url}`);
+    return axios
+        .get(url, {
+            auth: { ...LIMS_AUTH },
+            ...axiosConfig,
+        })
+        .then((resp) => {
+            info(url);
+            return resp;
+        })
+        .catch((error) => {
+            errorlog(url, error);
+            throw error;
+        })
+        .then((resp) => {
+            return formatData(resp);
+        });
+};
+

@@ -150,3 +150,16 @@ export function getRecentRuns(numDays) {
 //         .then(resp => {return parseResp(resp) })
 //         .catch(error => {throw new Error('Failed to log in: ' + error) });
 // }
+
+
+
+export function searchQc(searchTerm, limit = 100, offset = 0) {
+  return axios
+    .get(`${config.NODE_API_ROOT}/search/searchQc?search=${searchTerm}&limit=${limit}&offset=${offset}`)
+    .then(resp => {
+      return parseResp(resp);
+    })
+    .catch(error => {
+      return formatError(error);
+    });
+}

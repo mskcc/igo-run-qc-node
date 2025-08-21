@@ -46,6 +46,7 @@ export const ProjectPage = () => {
   const [qualityCheckStatus, setQualityCheckStatus] = useState('button-disabled');
   const [recipeTypes, setRecipeTypes] = useState('');
   const [is10xProject, setIs10xProject] = useState(false);
+  const [userHasModifiedColumns, setUserHasModifiedColumns] = useState(false);
 
   const selectProjectData = useSelector(state =>
     selectProjectDataById(state, projectId)
@@ -175,13 +176,16 @@ export const ProjectPage = () => {
   const handleColumnModalOpen = () => {
     setIsColumnModalOpen(true);
   };
-  const handleSetColumns = (columnNames) => {
+ const handleSetColumns = (columnNames) => {
     let columnIndicesToAdd = [];
     columnNames.forEach(header => {
-      columnIndicesToAdd.push(tableHeaders.indexOf(header));
+        columnIndicesToAdd.push(tableHeaders.indexOf(header));
     });
     setDataColumnsToHide(columnIndicesToAdd);
-  };
+    
+    setUserHasModifiedColumns(true);
+    console.log(`🎛️ User modified columns: hiding ${columnIndicesToAdd.length} columns`);
+};
 
   const handleWebSummaryClick = () => {
     setShowWebSummaries(!showWebSummaries);
@@ -242,9 +246,18 @@ export const ProjectPage = () => {
           </div>
           <div className='project-actions'>
             <div className='download-stats-container'>
-              <div onClick={() => downloadExcel(orderedSampleInfo, tableHeaders, projectId)} className={'em5 download-stats'} role='button' aria-label='Excel Download' aria-hidden='false'>
+                      <div 
+                onClick={() => downloadExcel(orderedSampleInfo, tableHeaders, projectId, dataColumnsToHide, userHasModifiedColumns)} 
+                className={'em5 download-stats'} 
+                role='button' 
+                aria-label='Excel Download' 
+                title={userHasModifiedColumns 
+                    ? `Download Excel with ${tableHeaders.length - dataColumnsToHide.length} selected columns` 
+                    : `Download complete Excel with all ${tableHeaders.length} columns`
+                }
+            >
                 <SiMicrosoftexcel />
-              </div>
+            </div>
               <a href={`${config.NGS_STATS}/ngs-stats/get-picard-project-excel/${projectId}`} target='_blank' className={'em5 download-stats'} title='Full Picard Stats' rel='noreferrer'>
                 <FaDna />
               </a>

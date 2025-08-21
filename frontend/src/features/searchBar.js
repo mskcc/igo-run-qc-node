@@ -8,15 +8,26 @@ export const SearchBar = () => {
 
     const handleOnChange = (e) => {
         const query = e.target.value || '';
-        setProjectSearch(query.toUpperCase().trim());
+        setProjectSearch(query);
     };
+
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
             handleSubmit();
         }
     };
+
     const handleSubmit = () => {
-        history.push(`/projects/${projectSearch}`);
+        const query = projectSearch.trim();
+        if (!query) return;
+
+        if (/^\d+(_[A-Z]+)?$/i.test(query)) {
+            history.push(`/projects/${query.toUpperCase()}`);
+        } else {
+            history.push(`/search/${encodeURIComponent(query)}`);
+        }
+
+        setProjectSearch('');
     };
 
     return (
@@ -26,10 +37,11 @@ export const SearchBar = () => {
                 name='ProjectInput'
                 value={projectSearch}
                 type='text'
+                placeholder="Search projects, PI name, Recent Runs..."
                 onKeyDown={handleKeyDown}
                 onChange={handleOnChange}>
             </input>
-            <button onClick={handleSubmit}>
+            <button onClick={handleSubmit} disabled={!projectSearch.trim()}>
                 <FaSearch />
             </button>
         </div>

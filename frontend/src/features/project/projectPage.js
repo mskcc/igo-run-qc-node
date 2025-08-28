@@ -57,6 +57,14 @@ export const ProjectPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+        setOrderedSampleInfo([]);
+        setTableHeaders(TABLE_HEADERS);
+        setDataColumnsToHide([]);
+        setIs10xProject(false);
+        setRecipeTypes('');
+        setCellRangerError('');
+        setUserHasModifiedColumns(false);
+
       const response = await getProjectQC(projectId);
       if (response.status === 500) {
         setErrorMessage(response.message);
@@ -120,6 +128,11 @@ export const ProjectPage = () => {
   }, [projectId, selectCrosscheckMetricsData, dispatch]);
 
   const handleProjectDetails = (data) => {
+      setOrderedSampleInfo([]);
+      setTableHeaders(TABLE_HEADERS);
+      setDataColumnsToHide([]);
+      setIs10xProject(false);
+      setRecipeTypes('');
     if(data.samplesONT&&data.samplesONT.length>0){
       let recipe = data.samplesONT[0].recipe;
       console.log("ont recipe before assignment is: ", recipe);
@@ -263,7 +276,7 @@ export const ProjectPage = () => {
               </a>
             </div>
             <div className={showWebSummaries ? 'actions-popup' : 'hidden'}>
-              {showWebSummaries ? (
+              {showWebSummaries && projectData.samples ? (
                 projectData.samples.map((sample, index) => {
                   const summaryName = `${sample.qc.sampleName}_IGO_${sample.baseId}`;
                   return <div key={index}>

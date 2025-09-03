@@ -324,11 +324,19 @@ exports.getRecentRunsData = (days) => {
 }
 
 
-exports.searchQc = (searchTerm, limit = 100, offset = 0) => {
+exports.searchQc = (searchTerm, searchField, limit = 100, offset = 0) => {
     const validatedLimit = Math.min(Math.max(parseInt(limit) || 50, 1), 800);
     const validatedOffset = Math.max(parseInt(offset) || 0, 0);
-    const url = `${LIMS_URL}/searchQc?search=${encodeURIComponent(searchTerm)}&limit=${validatedLimit}&offset=${validatedOffset}`;
+    
+    // Validate searchField parameter
+    const validSearchFields = ['Request Id','PI Name', 'Recipe', 'Type', 'Recent Run'];
+    if (!validSearchFields.includes(searchField)) {
+        throw new Error(`Invalid searchField. Must be one of: ${validSearchFields.join(', ')}`);
+    }
+    
+    const url = `${LIMS_URL}/searchQc?search=${encodeURIComponent(searchTerm)}&searchField=${encodeURIComponent(searchField)}&limit=${validatedLimit}&offset=${validatedOffset}`;
     logger.info(`Sending request to ${url}`);
+    
     return axios
         .get(url, {
             auth: { ...LIMS_AUTH },
@@ -346,4 +354,3 @@ exports.searchQc = (searchTerm, limit = 100, offset = 0) => {
             return formatData(resp);
         });
 };
-

@@ -152,14 +152,45 @@ export function getRecentRuns(numDays) {
 // }
 
 
+export function searchQc(searchTerm, searchField = 'Request Id', limit = 100, offset = 0) {
+  
+  const fieldMapping = {
+    'Request ID': 'Request Id', // Frontend display -> Backend expected
+    'PI Name': 'PI Name',
+    'Recipe': 'Recipe', 
+    'Type': 'Type',
+    'Recent Run': 'Recent Run'
+  };
 
-export function searchQc(searchTerm, limit = 100, offset = 0) {
+
+  const backendSearchField = fieldMapping[searchField] || searchField;
+  
+  // Build URL with all parameters
+  const params = new URLSearchParams({
+    search: searchTerm,
+    limit: limit.toString(),
+    offset: offset.toString(),
+    searchField: backendSearchField
+  });
+  
+  const url = `${config.NODE_API_ROOT}/search/searchQc?${params.toString()}`;
+  
+  console.log('Search request:', { 
+    frontend: searchField, 
+    backend: backendSearchField, 
+    term: searchTerm 
+  });
+  
   return axios
-    .get(`${config.NODE_API_ROOT}/search/searchQc?search=${searchTerm}&limit=${limit}&offset=${offset}`)
-    .then(resp => {
+    .get(url)
+    .then(resp => { 
       return parseResp(resp);
     })
     .catch(error => {
+      console.error('Search QC error:', error);
+      if (error.response) {
+        console.error('Error response:', error.response.data);
+      }
       return formatError(error);
     });
 }

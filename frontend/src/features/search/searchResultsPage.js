@@ -16,6 +16,7 @@ export const SearchResultsPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [hasError, setHasError] = useState(false);
     const [showSkeletonRows, setShowSkeletonRows] = useState(true);
+    const [searchField, setSearchField] = useState('All Fields');
     
     const resultsPerPage = 100;
 
@@ -24,72 +25,128 @@ export const SearchResultsPage = () => {
     }, [history]);
 
     const handlePageChange = useCallback((newPage) => {
-        const params = new URLSearchParams();
+        const params = new URLSearchParams(location.search);
+        
         if (newPage > 1) {
             params.set('page', newPage.toString());
+        } else {
+            params.delete('page');
         }
         
-        const newUrl = newPage > 1 ? `/search/${searchTerm}?${params.toString()}` : `/search/${searchTerm}`;
+        // Preserve the searchField parameter
+        if (searchField && searchField !== 'All Fields') {
+            params.set('field', searchField);
+        }
+        
+        const queryString = params.toString();
+        const newUrl = queryString ? `/search/${searchTerm}?${queryString}` : `/search/${searchTerm}`;
+        
         history.push(newUrl);
-    }, [history, searchTerm]);
+    }, [history, searchTerm, location.search, searchField]);
 
-    const handleRetry = useCallback(() => {
-        fetchPageResults(currentPage);
-    }, [currentPage]);
-
-    const fetchPageResults = async (page) => {
+    const fetchPageResults = useCallback(async (page, field) => {
+       
+        
         setIsLoading(true);
         setHasError(false);
         setShowSkeletonRows(true);
         
         try {
             const offset = (page - 1) * resultsPerPage;
-            const response = await searchQc(searchTerm, resultsPerPage, offset);
+          
             
-            if (response.data && response.data.searchResults) {
-                setShowSkeletonRows(false);
-                setResults(response.data.searchResults.results || []);
-                setTotalResults(response.data.searchResults.total || 0);
+            const response = await searchQc(searchTerm, field, resultsPerPage, offset);
+           
+            
+            
+            let searchData = null;
+            
+            if (response && response.data && response.data.searchResults) {
+               
+                searchData = response.data.searchResults;
+            } else if (response && response.searchResults) {
+                
+                searchData = response.searchResults;
+            } else if (response && response.results) {
+              
+                searchData = response;
+            } else if (response && response.data && response.data.results) {
+              
+                searchData = response.data;
+            } else {
+               
+                console.warn('Response keys:', Object.keys(response || {}));
+                searchData = response;
             }
-        } catch (error) {
+            
+          
+            
+            if (searchData && searchData.results) {
+               
+              
+                setShowSkeletonRows(false);
+                setResults(searchData.results || []);
+                setTotalResults(searchData.total || 0);
+            } else {
+               
+                setResults([]);
+                setTotalResults(0);
+                setShowSkeletonRows(false);
+            }
+        } catch (error) { 
             setHasError(true);
             setShowSkeletonRows(false);
         }
         
         setIsLoading(false);
-    };
+    }, [searchTerm, resultsPerPage]);
+
+    const handleRetry = useCallback(() => {
+        fetchPageResults(currentPage, searchField);
+    }, [fetchPageResults, currentPage, searchField]);
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const page = parseInt(params.get('page')) || 1;
+        
+       
+        const field = params.get('field') || params.get('searchField') || 'All Fields';
+        
+       
+        
         setCurrentPage(page);
+        setSearchField(field);
         
         setShowSkeletonRows(true);
         setResults([]);
         
-        fetchPageResults(page);
-    }, [searchTerm, location.search]);
+       
+        fetchPageResults(page, field);
+    }, [searchTerm, location.search, fetchPageResults]);
 
     const getSubtitle = () => {
+        const fieldDisplay = searchField !== 'All Fields' ? ` in ${searchField}` : '';
+        
         if (isLoading) {
-            return `Searching for "${searchTerm}"...`;
+            return `Searching for "${searchTerm}"${fieldDisplay}...`;
         }
         if (hasError) {
-            return `Search failed for "${searchTerm}"`;
+            return `Search failed for "${searchTerm}"${fieldDisplay}`;
         }
         if (totalResults === 0 && !isLoading) {
-            return `No results found for "${searchTerm}"`;
+            return `No results found for "${searchTerm}"${fieldDisplay}`;
         }
         
         const startResult = totalResults > 0 ? (currentPage - 1) * resultsPerPage + 1 : 0;
         const endResult = Math.min(currentPage * resultsPerPage, totalResults);
-        return `Results for "${searchTerm}" (${startResult}-${endResult} of ${totalResults} projects)`;
+        return `Results for "${searchTerm}"${fieldDisplay} (${startResult}-${endResult} of ${totalResults} projects)`;
     };
 
     return (
         <Card>
             <h2 className="title">Search Results</h2>
             <h3 className="sub-title">{getSubtitle()}</h3>
+            
             
             <SearchResultsTable
                 results={results}

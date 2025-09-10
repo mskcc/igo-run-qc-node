@@ -29,13 +29,11 @@ container.add(logLabel, {
     ],
 });
 
-// nicely log to console for dev
-if (process.env.NODE_ENV === 'production') {
-    container.get(logLabel).add(
-        new winston.transports.Console({
-            format: consoleConfig,
-        })
-    );
-}
+// Show console logs for development (not just production)
+container.get(logLabel).add(
+    new winston.transports.Console({
+        format: consoleConfig,
+    })
+);
 
 exports.logger = container.get(logLabel);

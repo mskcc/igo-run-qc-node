@@ -1,20 +1,28 @@
 const jwtInCookie = require('jwt-in-cookie');
 const winston = require('./winston');
 const apiResponse = require('./apiResponse');
+const UserModel = require('../models/UserModel');
 
-exports.authenticate = function (req, res, next) {
+exports.authenticate = async function (req, res, next) {
     try {
         let user = jwtInCookie.validateJwtToken(req);
         
-        // Check if groups field is missing from JWT token
-        if (user.groups === undefined || user.groups === null) {
-            winston.logger.error(`JWT token for user ${user.username} is missing groups data`);
+        const fullUser = await UserModel.findOne({ username: user.username });
+        
+        if (!fullUser) {
+            winston.logger.error(`User ${user.username} not found in database`);
+            return apiResponse.unauthorizedResponse(res, 'User not found - please log in again');
+        }
+        
+        // Check if groups field is missing from database
+        if (!fullUser.groups) {
+            winston.logger.error(`User ${user.username} has missing groups data in database`);
             return apiResponse.unauthorizedResponse(res, 'Session error: Missing group data - please log in again');
         }
         
-        // Check if user is BOTH a lab member AND in the MohibullahLab group
-        const isInLabGroup = user.groups.includes('CN=GRP_SKI_MohibullahLab');
-        const hasLabAccess = user.isLabMember && isInLabGroup;
+        // Check if user is BOTH a lab member AND in the MohibullahLab group (using database data)
+        const isInLabGroup = fullUser.groups.includes('CN=GRP_SKI_MohibullahLab');
+        const hasLabAccess = fullUser.isLabMember && isInLabGroup;
         
         // Only allow users with BOTH lab member status AND lab group membership
         if (!hasLabAccess) {
@@ -22,7 +30,7 @@ exports.authenticate = function (req, res, next) {
             return apiResponse.unauthorizedResponse(res, 'Access denied: Lab member and group membership required');
         }
         
-        user.role = determineRole(user);
+        user.role = determineRole(fullUser); // Pass database user data
         res.user = user;
         
         winston.logger.info(`Authentication successful for user: ${user.username}`);

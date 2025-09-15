@@ -4,7 +4,18 @@ const path = require('path');
 const express = require("express");
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const mongoose = require('mongoose'); 
 
+
+mongoose.connect(process.env.MONGODB_URL_LOGIN);
+
+mongoose.connection.on('connected', () => {
+    console.log('Connected to MongoDB');
+});
+
+mongoose.connection.on('error', (err) => {
+    console.error('MongoDB connection error:', err);
+});
 const apiRouter = require('./routes/api');
 
 

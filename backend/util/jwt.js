@@ -20,17 +20,20 @@ exports.authenticate = async function (req, res, next) {
             return apiResponse.unauthorizedResponse(res, 'Session error: Missing group data - please log in again');
         }
         
+        // Debug what we actually get from database
+        winston.logger.info(`DEBUG: User data - isLabMember: ${fullUser.isLabMember}, groups exist: ${!!fullUser.groups}`);
+        
         // Check if user is BOTH a lab member AND in the MohibullahLab group (using database data)
         const isInLabGroup = fullUser.groups.includes('CN=GRP_SKI_MohibullahLab');
         const hasLabAccess = fullUser.isLabMember && isInLabGroup;
         
         // Only allow users with BOTH lab member status AND lab group membership
         if (!hasLabAccess) {
-            winston.logger.warn(`Access denied for user ${user.username} - missing lab requirements`);
+            winston.logger.warn(`Access denied for user ${user.username} - isLabMember: ${fullUser.isLabMember}, inLabGroup: ${isInLabGroup}`);
             return apiResponse.unauthorizedResponse(res, 'Access denied: Lab member and group membership required');
         }
         
-        user.role = determineRole(fullUser); // Pass database user data
+        user.role = 'lab_member';
         res.user = user;
         
         winston.logger.info(`Authentication successful for user: ${user.username}`);
@@ -39,18 +42,4 @@ exports.authenticate = async function (req, res, next) {
         return apiResponse.unauthorizedResponse(res, 'Invalid session');
     }
     next();
-};
-
-const determineRole = (user) => {
-    if (!user.groups) {
-        throw new Error('User groups data missing');
-    }
-    
-    const isInLabGroup = user.groups.includes('CN=GRP_SKI_MohibullahLab');
-    
-    if (user.isLabMember && isInLabGroup) {
-        return 'lab_member';
-    }
-    
-    throw new Error('User does not meet lab member requirements');
 };

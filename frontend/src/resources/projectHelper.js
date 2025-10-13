@@ -353,7 +353,7 @@ export const orderDataWith10XColumns = (originalSampleData, tenXData) => {
 
         // ensure we're pushing data to corresponding sample
         tenXData.forEach((sample) => {
-            if (sample.id.includes(sampleId)) {
+            if (sample.id.endsWith(sampleId)) {
                 sampleData.push(sample[Constants.EST_NUMBER_OF_CELLS]);
                 sampleData.push(sample[Constants.MEAN_READS_PER_CELL]);
                 sampleData.push(sample[Constants.FRACTION_READS_IN_CELLS]);

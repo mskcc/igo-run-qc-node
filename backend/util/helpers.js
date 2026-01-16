@@ -57,12 +57,16 @@ exports.addProjectProperties = (project) => {
         }
     }
     
-    // Nanopore projects are  WITHOUT basicQcs - mark as needing review
+    // Nanopore projects are WITHOUT basicQcs - mark as needing review
     // Set placeholder values so columns still appear in the frontend grid
     // (Frontend hides columns if no project has a truthy value for that field)
     if (isNanopore && !hasBasicQcs) {
         projectObj.ready = true;
         projectObj.needsReview = true;
+        // Placeholder values ensure columns appear even when only Nanopore projects exist
+        projectObj.allRuns = ' ';           // Single space - truthy but displays empty
+        projectObj.date = ' ';              // Single space - truthy but displays empty
+        projectObj.project_flags = {};      // Empty object - shows "No data" icon
     }
     
     // Process samplesONT (if they exist from getProjectQc API)

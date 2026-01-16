@@ -1,22 +1,30 @@
-const e = require('express');
-
-
-// Adds properties to project object to display in the table
 exports.addProjectProperties = (project) => {
     let projectObj = Object.assign({}, project);
-    const samples = projectObj.samples;
+    const samples = projectObj.samples || [];
+    const samplesONT = projectObj.samplesONT || [];
+    
+    let hasBasicQcs = false;
+    
     projectObj.needsReview = false;
     projectObj.ready = false;
     projectObj.allRuns = '';
     projectObj.recentDate = 0;
 
+    // Check if this is a Nanopore project - check requestType OR sample recipes
+    const isNanopore = projectObj.requestType === 'Nanopore' || 
+                       samples.some(s => s.recipe && s.recipe.toLowerCase().includes('nanopore'));
+            
+
+    // Process regular samples with basicQcs
     if (samples.length > 0) {
         // Only one sample needs to have a non-empty 'basicQcs' field for the project to be considered ready
         for (let i = 0; i < samples.length; i++) {
             let sample = samples[i];
+            // Regular samples have basicQcs array
             if (sample.basicQcs && sample.basicQcs.length > 0) {
+                hasBasicQcs = true;
                 projectObj.ready = true;
-
+                
                 // Based on the basicQcs::qcStatus of each sample. Only one sample in the project needs to be under-review to be un-reviewed
                 for(let j = 0; j < sample.basicQcs.length; j++) {
                     let qc = sample.basicQcs[j];
@@ -32,7 +40,7 @@ exports.addProjectProperties = (project) => {
                         } else if (!runs.includes(trimmedRun)) {
                             projectObj.allRuns = projectObj.allRuns.concat(`, ${trimmedRun}`);
                         }
-                    }
+                    }          
                     let numericDate = projectObj.recentDate;
                     if (qc.createDate > projectObj.recentDate) {
                         numericDate = qc.createDate;
@@ -48,8 +56,38 @@ exports.addProjectProperties = (project) => {
             }
         }
     }
+    
+    // Nanopore projects are  WITHOUT basicQcs - mark as needing review
+    // Set placeholder values so columns still appear in the frontend grid
+    // (Frontend hides columns if no project has a truthy value for that field)
+    if (isNanopore && !hasBasicQcs) {
+        projectObj.ready = true;
+        projectObj.needsReview = true;
+    }
+    
+    // Process samplesONT (if they exist from getProjectQc API)
+    if (samplesONT.length > 0) {
+        projectObj.ready = true;
+        for (let i = 0; i < samplesONT.length; i++) {
+            let sampleONT = samplesONT[i];
+            if (sampleONT.qcStatus === 'Under-Review') {
+                projectObj.needsReview = true;
+            }
+        }
+        // Set placeholder values for ONT projects so columns appear
+        if (!projectObj.allRuns) projectObj.allRuns = ' ';
+        if (!projectObj.date) projectObj.date = ' ';
+        if (!projectObj.project_flags) projectObj.project_flags = {};
+    }
+    
+    // Ensure projects that need review are marked as ready
+    if (projectObj.needsReview) {
+        projectObj.ready = true;
+    }
+    
     return projectObj;
 };
+
 
 // based on old version - not currently used
 // exports.getProjectInfo = (projectQc, projectStatusList) => {

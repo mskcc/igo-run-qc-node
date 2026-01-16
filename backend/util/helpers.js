@@ -10,8 +10,9 @@ exports.addProjectProperties = (project) => {
     projectObj.allRuns = '';
     projectObj.recentDate = 0;
 
-    // Check if this is a Nanopore project - check requestType OR sample recipes
+    // Check if this is a Nanopore project - check requestType OR project recipe OR sample recipes
     const isNanopore = projectObj.requestType === 'Nanopore' || 
+                       (projectObj.recipe && projectObj.recipe.toLowerCase().includes('nanopore')) ||
                        samples.some(s => s.recipe && s.recipe.toLowerCase().includes('nanopore'));
             
 
@@ -57,31 +58,32 @@ exports.addProjectProperties = (project) => {
         }
     }
     
-    // Nanopore projects are WITHOUT basicQcs - mark as needing review
-    // Set placeholder values so columns still appear in the frontend grid
-    // (Frontend hides columns if no project has a truthy value for that field)
+    // Nanopore/ONT projects - check samplesONT for QC status
+    // samplesONT is fetched separately via getProjectQc API in HomePageController
     if (isNanopore && !hasBasicQcs) {
         projectObj.ready = true;
-        projectObj.needsReview = true;
-        // Placeholder values ensure columns appear even when only Nanopore projects exist
+        
+        // Set placeholder values so columns appear in frontend grid
         projectObj.allRuns = ' ';           // Single space - truthy but displays empty
         projectObj.date = ' ';              // Single space - truthy but displays empty
         projectObj.project_flags = {};      // Empty object - shows "No data" icon
-    }
-    
-    // Process samplesONT (if they exist from getProjectQc API)
-    if (samplesONT.length > 0) {
-        projectObj.ready = true;
-        for (let i = 0; i < samplesONT.length; i++) {
-            let sampleONT = samplesONT[i];
-            if (sampleONT.qcStatus === 'Under-Review') {
-                projectObj.needsReview = true;
+        
+        if (samplesONT.length > 0) {
+            // Check actual QC status from samplesONT
+            // Only mark as needsReview if at least one sample is "Under-Review"
+            for (let i = 0; i < samplesONT.length; i++) {
+                let sampleONT = samplesONT[i];
+                if (sampleONT.qcStatus === 'Under-Review') {
+                    projectObj.needsReview = true;
+                    break; // Found one, no need to continue
+                }
             }
+            // If no samples are Under-Review, needsReview stays false
+            // and project goes to "Requires Further Sequencing"
         }
-        // Set placeholder values for ONT projects so columns appear
-        if (!projectObj.allRuns) projectObj.allRuns = ' ';
-        if (!projectObj.date) projectObj.date = ' ';
-        if (!projectObj.project_flags) projectObj.project_flags = {};
+        // If no samplesONT data available AND samples array is empty,
+        // don't mark as needsReview - there's nothing to review
+        // Project will go to "Requires Further Sequencing"
     }
     
     // Ensure projects that need review are marked as ready

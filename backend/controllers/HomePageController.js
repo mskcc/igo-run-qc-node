@@ -12,6 +12,16 @@ const logger = loggers.get('logger');
         'requestsPending':  []
     }
  */
+// Helper function to check if a project is Nanopore
+const isNanoporeProject = (project) => {
+    if (project.requestType === 'Nanopore') return true;
+    if (project.recipe && project.recipe.toLowerCase().includes('nanopore')) return true;
+    if (!project.samples || project.samples.length === 0) return false;
+    return project.samples.some(sample =>
+        sample.recipe && sample.recipe.toLowerCase().includes('nanopore')
+    );
+};
+
 exports.getSeqAnalysisProjects = [
     function (req, res) {
         let recentDeliveriesPromise = apiServices.getRecentDeliveries();
@@ -29,42 +39,71 @@ exports.getSeqAnalysisProjects = [
                 let projectsToSequenceFurther = [];
                 let requestsPending = [];
 
-                // recent deliveries = reviewed requests
-                if (recentDeliveriesResult && recentDeliveriesResult.length) {
-                    recentDeliveriesResult.forEach((project)=> {
-                        reviewedRequestIdList.push(project.requestId);
-    
-                        const projectObj = utils.addProjectProperties(project);
-                        if (projectObj.needsReview) {
-                            projectsToReview.push(projectObj);
-                        } else {
-                            projectsToSequenceFurther.push(projectObj);
+                // Identify Nanopore projects and fetch their samplesONT data
+                const nanoporeProjects = recentDeliveriesResult ? recentDeliveriesResult.filter(isNanoporeProject) : [];
+                const nanoporeProjectIds = nanoporeProjects.map(p => p.requestId);
+                
+                // Fetch samplesONT for each Nanopore project, then process all projects
+                const ontDataPromises = nanoporeProjectIds.map(projectId =>
+                    apiServices.getProjectQc(projectId).catch(err => {
+                        logger.error(`Error fetching ONT data for project ${projectId}: ${err}`);
+                        return null;
+                    })
+                );
+                
+                return Promise.all(ontDataPromises).then((ontDataResults) => {
+                    // Build map of projectId -> samplesONT
+                    const ontDataMap = {};
+                    ontDataResults.forEach((result, index) => {
+                        const projectId = nanoporeProjectIds[index];
+                        const projectData = result && result[0] ? result[0] : null;
+                        if (projectData && projectData.samplesONT && projectData.samplesONT.length > 0) {
+                            ontDataMap[projectId] = projectData.samplesONT;
                         }
                     });
-                }
-                
-                // sequencing requests = incomplete requests
-                if (!seqRequestsResults.requests) {
-                    logger.log('warning', 'No incomplete sequencing requests found');
-                } else {
-                    incompleteRequests = seqRequestsResults.requests;
-                }
 
-                // Remove any incomplete requests that are not in the review queue / recently delivered.
-                requestsPending = incompleteRequests.filter((request) => {
-                    return !reviewedRequestIdList.includes(request.requestId);
+                    // recent deliveries = reviewed requests
+                    if (recentDeliveriesResult && recentDeliveriesResult.length) {
+                        recentDeliveriesResult.forEach((project) => {
+                            reviewedRequestIdList.push(project.requestId);
+                            
+                            // Merge samplesONT data if available for this Nanopore project
+                            if (ontDataMap[project.requestId]) {
+                                project.samplesONT = ontDataMap[project.requestId];
+                            }
+        
+                            const projectObj = utils.addProjectProperties(project);
+                            if (projectObj.needsReview) {
+                                projectsToReview.push(projectObj);
+                            } else {
+                                projectsToSequenceFurther.push(projectObj);
+                            }
+                        });
+                    }
+                    
+                    // sequencing requests = incomplete requests
+                    if (!seqRequestsResults || !seqRequestsResults.requests) {
+                        logger.log('warning', 'No incomplete sequencing requests found');
+                    } else {
+                        incompleteRequests = seqRequestsResults.requests;
+                    }
+
+                    // Remove any incomplete requests that are not in the review queue / recently delivered.
+                    requestsPending = incompleteRequests.filter((request) => {
+                        return !reviewedRequestIdList.includes(request.requestId);
+                    });
+
+                    let responseObject = {
+                        projectsToReview,
+                        projectsToSequenceFurther,
+                        requestsPending
+                    };
+
+                    return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
                 });
-
-                let responseObject = {
-                    projectsToReview,
-                    projectsToSequenceFurther,
-                    requestsPending
-                };
-
-                return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
-            
             })
             .catch((reasons) => {
+                logger.error(`Could not retrieve data from LIMS: ${reasons}`);
                 return apiResponse.errorResponse(res, `Could not retrieve data from LIMS: ${reasons}`);
             });
     }

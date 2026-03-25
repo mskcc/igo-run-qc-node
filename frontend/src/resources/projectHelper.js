@@ -290,7 +290,7 @@ export const orderONTData=(qcSamples)=>{
         return true; // Keep if all parts after first two are numeric
     });
 
-    // Create a map to group samples by base ID and calculate mean coverage
+    // Group samples by base IGO ID (request_sample) to sum Estimated Coverage per sample
     const baseIdGroups = {};
     
     filteredSamples.forEach(sampleONT => {
@@ -303,18 +303,20 @@ export const orderONTData=(qcSamples)=>{
         baseIdGroups[baseId].push(sampleONT);
     });
 
-    // Calculate mean target coverage for each group
-    const meanCoverageMap = {};
+    // Sum Estimated Coverage per group (single row => same as that row's Estimated Coverage)
+    const sumCoverageMap = {};
     Object.keys(baseIdGroups).forEach(baseId => {
         const samples = baseIdGroups[baseId];
-        const totalCoverage = samples.reduce((sum, sample) => sum + sample.estimatedCoverage, 0);
-        const meanCoverage = totalCoverage / samples.length;
-        meanCoverageMap[baseId] = meanCoverage;
+        const sumCoverage = samples.reduce(
+            (sum, sample) => sum + (Number(sample.estimatedCoverage) || 0),
+            0
+        );
+        sumCoverageMap[baseId] = sumCoverage;
     });
 
     filteredSamples.forEach(sampleONT=>{
         const baseId = sampleONT.igoId.split('_').slice(0, 2).join('_');
-        const meanTargetCoverage = meanCoverageMap[baseId];
+        const sumMeanTargetCoverage = sumCoverageMap[baseId];
         
         let sampleData=[];
         sampleData.push(sampleONT.qcStatus);
@@ -330,7 +332,7 @@ export const orderONTData=(qcSamples)=>{
         sampleData.push(sampleONT[Constants.SAMPLE_NAME]);
         sampleData.push(sampleONT[Constants.RECIPE]);
         console.log("Pushed ONT recipe = ", sampleONT[Constants.RECIPE]);
-        sampleData.push(meanTargetCoverage.toFixed(2)); // Add mean target coverage
+        sampleData.push(sumMeanTargetCoverage.toFixed(2));
         tableData.push(sampleData);
     });
     console.log("Final ordered Table for Nanopore:",tableData);

@@ -328,11 +328,11 @@ export const orderONTData=(qcSamples)=>{
         sampleData.push(sampleONT.medianReadLength);
         sampleData.push(sampleONT.flowcell);
         sampleData.push(sampleONT.sequencerPosition);
-        sampleData.push((sampleONT.estimatedCoverage).toFixed(2));
+        sampleData.push(Number(sampleONT.estimatedCoverage) || 0);
         sampleData.push(sampleONT[Constants.SAMPLE_NAME]);
         sampleData.push(sampleONT[Constants.RECIPE]);
         console.log("Pushed ONT recipe = ", sampleONT[Constants.RECIPE]);
-        sampleData.push(sumMeanTargetCoverage.toFixed(2));
+        sampleData.push(Number(sumMeanTargetCoverage) || 0);
         tableData.push(sampleData);
     });
     console.log("Final ordered Table for Nanopore:",tableData);

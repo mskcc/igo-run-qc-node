@@ -31,6 +31,12 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
     const medianUMIColumn = tableHeaders.indexOf('Median UMI Counts Per Cell');
     const numOfReadsColumn = tableHeaders.indexOf('# of Reads');
     const totalGenesColumn = tableHeaders.indexOf('Total Genes Detected');
+    // ONT fields
+    const readsColumn = tableHeaders.indexOf('Reads');
+    const basesColumn = tableHeaders.indexOf('Bases');
+    const n50Column = tableHeaders.indexOf('N50');
+    const medianReadLengthColumn = tableHeaders.indexOf('Median Read Length');
+    const estimatedCoverageColumn = tableHeaders.indexOf('Estimated Coverage');
     // target coverage columns (for css highlighting)
     const coverageTargetColumn = tableHeaders.indexOf('Coverage Target');
     const sumMeanTargetCoverageColumn = tableHeaders.indexOf('Sum Mean Target Coverage');
@@ -46,8 +52,14 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
         medianGenesColumn,
         medianUMIColumn,
         numOfReadsColumn,
-        totalGenesColumn
-    ];
+        totalGenesColumn,
+        readsColumn,
+        basesColumn,
+        n50Column,
+        medianReadLengthColumn,
+        estimatedCoverageColumn,
+        sumMeanTargetCoverageColumn
+    ].filter((index) => index >= 0);
 
     useEffect(() => {
       let cells = [];
@@ -182,7 +194,7 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
                 return {
                   type: (numericColumnIndexes.includes(index)) ? 'numeric': 'text',
                   numericFormat: {
-                    pattern: '0,0'
+                    pattern: '0,0.00'
                   }
                 };
             }}

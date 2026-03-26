@@ -268,7 +268,7 @@ export const orderSampleQcData = (qcSamples) => {
 };
 
 
-// Show ONT Data Table 
+// Show ONT Data Table
 
 export const orderONTData=(qcSamples)=>{
     let tableData =[];
@@ -290,33 +290,30 @@ export const orderONTData=(qcSamples)=>{
         return true; // Keep if all parts after first two are numeric
     });
 
-    // Group samples by base IGO ID (request_sample) to sum Estimated Coverage per sample
-    const baseIdGroups = {};
+    // Group by full IGO ID; sum Estimated Coverage only for rows with the same igoId
+    const rowsByIgoId = {};
     
     filteredSamples.forEach(sampleONT => {
-        // Extract base ID (e.g., "17199_25" from "17199_25_1_1_1_1_1")
-        const baseId = sampleONT.igoId.split('_').slice(0, 2).join('_');
-        
-        if (!baseIdGroups[baseId]) {
-            baseIdGroups[baseId] = [];
+        const id = sampleONT.igoId;
+        if (!rowsByIgoId[id]) {
+            rowsByIgoId[id] = [];
         }
-        baseIdGroups[baseId].push(sampleONT);
+        rowsByIgoId[id].push(sampleONT);
     });
 
-    // Sum Estimated Coverage per group (single row => same as that row's Estimated Coverage)
+    // Sum Estimated Coverage per IGO ID (single row per id => same as that row's Estimated Coverage)
     const sumCoverageMap = {};
-    Object.keys(baseIdGroups).forEach(baseId => {
-        const samples = baseIdGroups[baseId];
+    Object.keys(rowsByIgoId).forEach(igoId => {
+        const samples = rowsByIgoId[igoId];
         const sumCoverage = samples.reduce(
             (sum, sample) => sum + (Number(sample.estimatedCoverage) || 0),
             0
         );
-        sumCoverageMap[baseId] = sumCoverage;
+        sumCoverageMap[igoId] = sumCoverage;
     });
 
     filteredSamples.forEach(sampleONT=>{
-        const baseId = sampleONT.igoId.split('_').slice(0, 2).join('_');
-        const sumMeanTargetCoverage = sumCoverageMap[baseId];
+        const sumMeanTargetCoverage = sumCoverageMap[sampleONT.igoId];
         
         let sampleData=[];
         sampleData.push(sampleONT.qcStatus);

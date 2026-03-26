@@ -270,6 +270,22 @@ export const orderSampleQcData = (qcSamples) => {
 
 // Show ONT Data Table
 
+/**
+ * ONT source sample id for grouping/summing Estimated Coverage:
+ * - If the 2nd "_" segment is alphabetic (e.g. AB, J), use the first three segments (e.g. 17422_AB_18, 15688_J_1).
+ * - Otherwise (2nd segment numeric, e.g. 18), use the first two segments (e.g. 17422_18).
+ */
+const getOntSourceSampleId = (igoId) => {
+    const parts = igoId.split('_');
+    if (parts.length <= 1) return igoId;
+    const secondIsAlphabetic = /^[A-Za-z]+$/.test(parts[1]);
+    if (secondIsAlphabetic) {
+        if (parts.length >= 3) return parts.slice(0, 3).join('_');
+        return parts.slice(0, 2).join('_');
+    }
+    return parts.slice(0, 2).join('_');
+};
+
 export const orderONTData=(qcSamples)=>{
     let tableData =[];
 
@@ -290,30 +306,30 @@ export const orderONTData=(qcSamples)=>{
         return true; // Keep if all parts after first two are numeric
     });
 
-    // Group by full IGO ID; sum Estimated Coverage only for rows with the same igoId
-    const rowsByIgoId = {};
+    // Group by source sample id so aliquots (e.g. ..._2_... and ..._3_...) contribute to one sum
+    const rowsBySourceSampleId = {};
     
     filteredSamples.forEach(sampleONT => {
-        const id = sampleONT.igoId;
-        if (!rowsByIgoId[id]) {
-            rowsByIgoId[id] = [];
+        const sourceId = getOntSourceSampleId(sampleONT.igoId);
+        if (!rowsBySourceSampleId[sourceId]) {
+            rowsBySourceSampleId[sourceId] = [];
         }
-        rowsByIgoId[id].push(sampleONT);
+        rowsBySourceSampleId[sourceId].push(sampleONT);
     });
 
-    // Sum Estimated Coverage per IGO ID (single row per id => same as that row's Estimated Coverage)
     const sumCoverageMap = {};
-    Object.keys(rowsByIgoId).forEach(igoId => {
-        const samples = rowsByIgoId[igoId];
+    Object.keys(rowsBySourceSampleId).forEach(sourceId => {
+        const samples = rowsBySourceSampleId[sourceId];
         const sumCoverage = samples.reduce(
             (sum, sample) => sum + (Number(sample.estimatedCoverage) || 0),
             0
         );
-        sumCoverageMap[igoId] = sumCoverage;
+        sumCoverageMap[sourceId] = sumCoverage;
     });
 
     filteredSamples.forEach(sampleONT=>{
-        const sumMeanTargetCoverage = sumCoverageMap[sampleONT.igoId];
+        const sourceId = getOntSourceSampleId(sampleONT.igoId);
+        const sumMeanTargetCoverage = sumCoverageMap[sourceId];
         
         let sampleData=[];
         sampleData.push(sampleONT.qcStatus);

@@ -61,6 +61,11 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
         sumMeanTargetCoverageColumn
     ].filter((index) => index >= 0);
 
+    // ONT / Nanopore: show these as whole numbers (no decimal places)
+    const integerDecimalNumericColumns = [readsColumn, n50Column, medianReadLengthColumn].filter(
+        (index) => index >= 0
+    );
+
     useEffect(() => {
       let cells = [];
       const numOfRows = qcSamplesData.length;
@@ -191,12 +196,17 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
                 columns: columnsToHide
             }}
             columns={(index) => {
-                return {
-                  type: (numericColumnIndexes.includes(index)) ? 'numeric': 'text',
-                  numericFormat: {
-                    pattern: '0,0.00'
-                  }
+                const isNumeric = numericColumnIndexes.includes(index);
+                const useIntegerPattern = integerDecimalNumericColumns.includes(index);
+                const col = {
+                  type: isNumeric ? 'numeric' : 'text',
                 };
+                if (isNumeric) {
+                  col.numericFormat = {
+                    pattern: useIntegerPattern ? '0,0' : '0,0.00',
+                  };
+                }
+                return col;
             }}
             cell={customCells}
             multiColumnSorting={true}

@@ -31,6 +31,12 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
     const medianUMIColumn = tableHeaders.indexOf('Median UMI Counts Per Cell');
     const numOfReadsColumn = tableHeaders.indexOf('# of Reads');
     const totalGenesColumn = tableHeaders.indexOf('Total Genes Detected');
+    // ONT fields
+    const readsColumn = tableHeaders.indexOf('Reads');
+    const basesColumn = tableHeaders.indexOf('Bases');
+    const n50Column = tableHeaders.indexOf('N50');
+    const medianReadLengthColumn = tableHeaders.indexOf('Median Read Length');
+    const estimatedCoverageColumn = tableHeaders.indexOf('Estimated Coverage');
     // target coverage columns (for css highlighting)
     const coverageTargetColumn = tableHeaders.indexOf('Coverage Target');
     const sumMeanTargetCoverageColumn = tableHeaders.indexOf('Sum Mean Target Coverage');
@@ -46,8 +52,19 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
         medianGenesColumn,
         medianUMIColumn,
         numOfReadsColumn,
-        totalGenesColumn
-    ];
+        totalGenesColumn,
+        readsColumn,
+        basesColumn,
+        n50Column,
+        medianReadLengthColumn,
+        estimatedCoverageColumn,
+        sumMeanTargetCoverageColumn
+    ].filter((index) => index >= 0);
+
+    // ONT / Nanopore: show these as whole numbers (no decimal places)
+    const integerDecimalNumericColumns = [readsColumn, n50Column, medianReadLengthColumn].filter(
+        (index) => index >= 0
+    );
 
     useEffect(() => {
       let cells = [];
@@ -179,12 +196,17 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
                 columns: columnsToHide
             }}
             columns={(index) => {
-                return {
-                  type: (numericColumnIndexes.includes(index)) ? 'numeric': 'text',
-                  numericFormat: {
-                    pattern: '0,0'
-                  }
+                const isNumeric = numericColumnIndexes.includes(index);
+                const useIntegerPattern = integerDecimalNumericColumns.includes(index);
+                const col = {
+                  type: isNumeric ? 'numeric' : 'text',
                 };
+                if (isNumeric) {
+                  col.numericFormat = {
+                    pattern: useIntegerPattern ? '0,0' : '0,0.00',
+                  };
+                }
+                return col;
             }}
             cell={customCells}
             multiColumnSorting={true}

@@ -268,7 +268,23 @@ export const orderSampleQcData = (qcSamples) => {
 };
 
 
-// Show ONT Data Table 
+// Show ONT Data Table
+
+/**
+ * ONT source sample id for grouping/summing Estimated Coverage:
+ * - If the 2nd "_" segment is alphabetic (e.g. AB, J), use the first three segments (e.g. 17422_AB_18, 15688_J_1).
+ * - Otherwise (2nd segment numeric, e.g. 18), use the first two segments (e.g. 17422_18).
+ */
+const getOntSourceSampleId = (igoId) => {
+    const parts = igoId.split('_');
+    if (parts.length <= 1) return igoId;
+    const secondIsAlphabetic = /^[A-Za-z]+$/.test(parts[1]);
+    if (secondIsAlphabetic) {
+        if (parts.length >= 3) return parts.slice(0, 3).join('_');
+        return parts.slice(0, 2).join('_');
+    }
+    return parts.slice(0, 2).join('_');
+};
 
 export const orderONTData=(qcSamples)=>{
     let tableData =[];
@@ -290,31 +306,30 @@ export const orderONTData=(qcSamples)=>{
         return true; // Keep if all parts after first two are numeric
     });
 
-    // Create a map to group samples by base ID and calculate mean coverage
-    const baseIdGroups = {};
+    // Group by source sample id so aliquots (e.g. ..._2_... and ..._3_...) contribute to one sum
+    const rowsBySourceSampleId = {};
     
     filteredSamples.forEach(sampleONT => {
-        // Extract base ID (e.g., "17199_25" from "17199_25_1_1_1_1_1")
-        const baseId = sampleONT.igoId.split('_').slice(0, 2).join('_');
-        
-        if (!baseIdGroups[baseId]) {
-            baseIdGroups[baseId] = [];
+        const sourceId = getOntSourceSampleId(sampleONT.igoId);
+        if (!rowsBySourceSampleId[sourceId]) {
+            rowsBySourceSampleId[sourceId] = [];
         }
-        baseIdGroups[baseId].push(sampleONT);
+        rowsBySourceSampleId[sourceId].push(sampleONT);
     });
 
-    // Calculate mean target coverage for each group
-    const meanCoverageMap = {};
-    Object.keys(baseIdGroups).forEach(baseId => {
-        const samples = baseIdGroups[baseId];
-        const totalCoverage = samples.reduce((sum, sample) => sum + sample.estimatedCoverage, 0);
-        const meanCoverage = totalCoverage / samples.length;
-        meanCoverageMap[baseId] = meanCoverage;
+    const sumCoverageMap = {};
+    Object.keys(rowsBySourceSampleId).forEach(sourceId => {
+        const samples = rowsBySourceSampleId[sourceId];
+        const sumCoverage = samples.reduce(
+            (sum, sample) => sum + (Number(sample.estimatedCoverage) || 0),
+            0
+        );
+        sumCoverageMap[sourceId] = sumCoverage;
     });
 
     filteredSamples.forEach(sampleONT=>{
-        const baseId = sampleONT.igoId.split('_').slice(0, 2).join('_');
-        const meanTargetCoverage = meanCoverageMap[baseId];
+        const sourceId = getOntSourceSampleId(sampleONT.igoId);
+        const sumMeanTargetCoverage = sumCoverageMap[sourceId];
         
         let sampleData=[];
         sampleData.push(sampleONT.qcStatus);
@@ -326,11 +341,11 @@ export const orderONTData=(qcSamples)=>{
         sampleData.push(sampleONT.medianReadLength);
         sampleData.push(sampleONT.flowcell);
         sampleData.push(sampleONT.sequencerPosition);
-        sampleData.push((sampleONT.estimatedCoverage).toFixed(2));
+        sampleData.push(Number(sampleONT.estimatedCoverage) || 0);
         sampleData.push(sampleONT[Constants.SAMPLE_NAME]);
         sampleData.push(sampleONT[Constants.RECIPE]);
         console.log("Pushed ONT recipe = ", sampleONT[Constants.RECIPE]);
-        sampleData.push(meanTargetCoverage.toFixed(2)); // Add mean target coverage
+        sampleData.push(Number(sumMeanTargetCoverage) || 0);
         tableData.push(sampleData);
     });
     console.log("Final ordered Table for Nanopore:",tableData);

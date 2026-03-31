@@ -143,6 +143,12 @@ export const ProjectPage = () => {
           recipe = NANOPORE;
       }
       setTableHeaders(NANOPORE_HEADERS);
+      // Hide QC Record Id and Position in the grid only (data kept for status updates / exports)
+      setDataColumnsToHide(
+        [NANOPORE_HEADERS.indexOf('QC Record Id'), NANOPORE_HEADERS.indexOf('Position')].filter(
+          (i) => i >= 0
+        )
+      );
      const sampleData =orderONTData(data.samplesONT);
      console.log("Processed Nanopore data in samplesONT:",orderONTData);
      setOrderedSampleInfo(sampleData);

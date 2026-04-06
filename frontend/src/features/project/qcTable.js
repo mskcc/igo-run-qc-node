@@ -5,10 +5,11 @@ import { registerAllModules } from 'handsontable/registry';
 import 'handsontable/dist/handsontable.full.min.css';
 import { UpdateStatus } from './updateStatus';
 import { BehaviorSubject } from 'rxjs';
+import { NANOPORE } from '../../resources/constants';
 
 registerAllModules();
 
-export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) => {
+export const QcTable = ({ qcSamplesData, columnsToHide, tableHeaders, recipe, requestName = '' }) => {
     const [showModal, setShowModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
     const [customCells, setCustomCells] = useState([]);
@@ -197,7 +198,8 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
             }}
             columns={(index) => {
                 const isNumeric = numericColumnIndexes.includes(index);
-                const useIntegerPattern = integerDecimalNumericColumns.includes(index);
+                const useIntegerPattern =
+                  requestName !== NANOPORE && integerDecimalNumericColumns.includes(index);
                 const col = {
                   type: isNumeric ? 'numeric' : 'text',
                 };

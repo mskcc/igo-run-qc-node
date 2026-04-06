@@ -306,7 +306,7 @@ export const ProjectPage = () => {
         <div className='hottable-container'>
           {isLoading ? 
             <div className="dot-elastic"></div>
-            : <QcTable qcSamplesData={orderedSampleInfo} columnsToHide={dataColumnsToHide} tableHeaders={tableHeaders} recipe={recipeTypes} />
+            : <QcTable qcSamplesData={orderedSampleInfo} columnsToHide={dataColumnsToHide} tableHeaders={tableHeaders} recipe={recipeTypes} requestName={projectData.requestName ?? ''} />
           }
         </div>
       </div>

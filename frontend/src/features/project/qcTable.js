@@ -62,10 +62,15 @@ export const QcTable = ({ qcSamplesData, columnsToHide, tableHeaders, recipe, re
         sumMeanTargetCoverageColumn
     ].filter((index) => index >= 0);
 
-    // ONT / Nanopore: show these as whole numbers (no decimal places)
-    const integerDecimalNumericColumns = [readsColumn, n50Column, medianReadLengthColumn].filter(
-        (index) => index >= 0
-    );
+    // Whole-number display: ONT Reads/N50/Median read length (non-Nanopore); Sum Reads + Requested Reads on standard grids.
+    // When requestName === Nanopore, useIntegerPattern is false so ONT columns use decimals instead.
+    const integerDecimalNumericColumns = [
+        readsColumn,
+        n50Column,
+        medianReadLengthColumn,
+        sumReadsColumn,
+        requestedReadsColumn,
+    ].filter((index) => index >= 0);
 
     useEffect(() => {
       let cells = [];

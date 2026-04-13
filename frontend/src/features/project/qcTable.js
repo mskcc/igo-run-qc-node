@@ -61,10 +61,17 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
         sumMeanTargetCoverageColumn
     ].filter((index) => index >= 0);
 
-    // ONT / Nanopore: show these as whole numbers (no decimal places)
-    const integerDecimalNumericColumns = [readsColumn, n50Column, medianReadLengthColumn].filter(
-        (index) => index >= 0
-    );
+    // Whole-number display columns (no decimal places) across request types.
+    const integerDecimalNumericColumns = [
+        readsColumn,
+        n50Column,
+        medianReadLengthColumn,
+        sumReadsColumn,
+        requestedReadsColumn,
+        examinedReadsColumn,
+        unpairedReadsColumn,
+        unmappedReadsColumn,
+    ].filter((index) => index >= 0);
 
     useEffect(() => {
       let cells = [];

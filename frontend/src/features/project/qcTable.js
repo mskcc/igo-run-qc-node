@@ -54,9 +54,9 @@ export const QcTable = ({ qcSamplesData, columnsToHide, tableHeaders, recipe, re
         medianUMIColumn,
         numOfReadsColumn,
         totalGenesColumn,
-        readsColumn,
-        basesColumn,
-        n50Column,
+        // readsColumn,
+        // basesColumn,
+        // n50Column,
         medianReadLengthColumn,
         estimatedCoverageColumn,
         sumMeanTargetCoverageColumn
@@ -65,8 +65,8 @@ export const QcTable = ({ qcSamplesData, columnsToHide, tableHeaders, recipe, re
     // Whole-number display: ONT Reads/N50/Median read length (non-Nanopore); Sum Reads + Requested Reads on standard grids.
     // When requestName === Nanopore, useIntegerPattern is false so ONT columns use decimals instead.
     const integerDecimalNumericColumns = [
-        readsColumn,
-        n50Column,
+//         readsColumn,
+// -       n50Column,
         medianReadLengthColumn,
         sumReadsColumn,
         requestedReadsColumn,

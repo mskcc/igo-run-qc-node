@@ -84,7 +84,7 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
 
         case Constants.HUMAN_WHOLE_GENOME:
         case Constants.MOUSE_WHOLE_GENOME:
-            return [recordIdColumn, initialPoolColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, percentMRNAColumn, percentRibosomalColumn, tumorNormalColumn, genomeColumn];
+            return [recordIdColumn, initialPoolColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, percentOffBaitColumn, percentMRNAColumn, percentRibosomalColumn, tumorNormalColumn, genomeColumn];
 
         case Constants.S_WGS:
             return[tumorNormalColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, medianCoverageColumn, percentOffBaitColumn, meanCoverageColumn, coverageTargetColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, recordIdColumn, initialPoolColumn, genomeColumn];

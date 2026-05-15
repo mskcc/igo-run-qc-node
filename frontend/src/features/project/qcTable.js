@@ -58,6 +58,7 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
         n50Column,
         medianReadLengthColumn,
         estimatedCoverageColumn,
+        coverageTargetColumn,
         sumMeanTargetCoverageColumn
     ].filter((index) => index >= 0);
 

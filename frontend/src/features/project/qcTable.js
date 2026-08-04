@@ -71,6 +71,11 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
         examinedReadsColumn,
         unpairedReadsColumn,
         unmappedReadsColumn,
+        estNumofCellsColumn,
+        meanReadsPerCellColumn,
+        medianGenesColumn,
+        medianUMIColumn,
+        numOfReadsColumn,
     ].filter((index) => index >= 0);
 
     useEffect(() => {

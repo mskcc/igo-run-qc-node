@@ -61,6 +61,7 @@ export const FURTHER_SEQ_STATE_ID = 'projectsToSequenceFurther';
 export const PENDING_REQUESTS_STATE_ID = 'requestsPending';
 export const RECENT_DELIVERIES_STATE_ID = 'recentDeliveries';
 export const RECENT_RUNS_STATE_ID = 'recentRuns';
+export const TEMPORAL_RUNS_STATE_ID = 'temporalRuns';
 export const PROJECT_QC_STATE_ID = 'projectQc';
 export const METRICS_PROJECT_LIST_STATE_ID = 'cmProjectList';
 export const QC_STATUS_PICKLIST = 'qcStatusPicklist';

@@ -204,8 +204,9 @@ exports.getInterOpsData = [
         if (!runId || runId.length === 0) {
             return apiResponse.errorResponse(res, 'Missing runId for interops data');
         }
-        // remove '_laneBarcode.html' to just use runName
-        const runName = runId.slice(0, -18);
+        // remove '_laneBarcode.html' to just use runName. The Temporal pipeline's report,
+        // '_laneBarcode_temporal.html', is the same run: read it as Airflow's name first.
+        const runName = runId.replace(/_laneBarcode_temporal\.html$/, '_laneBarcode.html').slice(0, -18);
         let interOpsDataPromise = apiServices.getInterOpsData(runName);
         Promise.all([interOpsDataPromise])
             .then((results) => {

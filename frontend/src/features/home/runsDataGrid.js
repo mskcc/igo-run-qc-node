@@ -5,16 +5,17 @@ import { AiFillFileText } from 'react-icons/ai';
 import { MdOutlineDoNotDisturb } from 'react-icons/md';
 import config from '../../config';
 import { getRecentRunsData } from './homeSlice';
+import { reportRunName } from '../../resources/runReports';
 
-export const RunsDataGrid = ({runs, runsWithPicard}) => {
+// showRange: the 'Runs from past N days' control. The Temporal section follows the one above it.
+export const RunsDataGrid = ({runs, runsWithPicard, showRange = true}) => {
     const dispatch = useDispatch();
     const [numDays, setNumDays] = useState(7);
     const [tempNumDays, setTempNumDays] = useState(numDays);
 
     const formatRunName = (htmlName) =>{
         if(!htmlName) return '';
-        const name = htmlName.split('_laneBarcode.html')[0];
-        return name;
+        return reportRunName(htmlName);
     };
 
     const isValidRange = (n) => {
@@ -112,6 +113,7 @@ export const RunsDataGrid = ({runs, runsWithPicard}) => {
 
     return (
         <div>
+            { showRange &&
             <div className={'box height-50px inline-block'}>
                 <div className={'width-250px pos-rel inline-block text-align-center'}>
                     <label className={'inline-block'}>
@@ -126,6 +128,7 @@ export const RunsDataGrid = ({runs, runsWithPicard}) => {
                 </div>
                 { renderRunUpdateBtn() }
             </div>
+            }
             {renderTable()}
         </div>
     );

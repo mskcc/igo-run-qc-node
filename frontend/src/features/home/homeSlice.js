@@ -5,6 +5,7 @@ import {
   PENDING_REQUESTS_STATE_ID,
   RECENT_DELIVERIES_STATE_ID,
   RECENT_RUNS_STATE_ID,
+  TEMPORAL_RUNS_STATE_ID,
   METRICS_PROJECT_LIST_STATE_ID
 } from '../../resources/constants';
 import {
@@ -14,6 +15,7 @@ import {
   getCrosscheckMetrics
 } from '../../services/igo-qc-service';
 import { setProjectFlags } from '../../resources/projectHelper';
+import { splitRunsByPipeline } from '../../resources/runReports';
 
 const initialState = {
   entities: {}
@@ -49,6 +51,11 @@ const homeSlice = createSlice({
       const id = RECENT_RUNS_STATE_ID;
       state.entities[id] = data;
     },
+    setTemporalRunsData(state, action) {
+      const data = action.payload;
+      const id = TEMPORAL_RUNS_STATE_ID;
+      state.entities[id] = data;
+    },
     setCrosscheckMetricsProjList(state, action) {
       const data = action.payload;
       const id = METRICS_PROJECT_LIST_STATE_ID;
@@ -63,6 +70,7 @@ export const {
   setPendingRequestsData,
   setRecentDeliveriesData,
   setRecentRunsData,
+  setTemporalRunsData,
   setCrosscheckMetricsProjList
 } = homeSlice.actions;
 
@@ -113,7 +121,10 @@ export const getRecentRunsData = (numDays) => async dispatch => {
   if (recentRuns.length > 1) {
     recentRuns.sort((a, b) => (a.date < b.date) ? 1 : -1);
   }
-  dispatch(setRecentRunsData(recentRuns));
+  // The Temporal pipeline's reports get their own section.
+  const { airflow, temporal } = splitRunsByPipeline(recentRuns);
+  dispatch(setRecentRunsData(airflow));
+  dispatch(setTemporalRunsData(temporal));
 };
 
 // Selectors
@@ -137,6 +148,9 @@ export const selectRecentDeliveriesData = state => {
 };
 export const selectRecentRunsData = state => {
   return selectHomeEntities(state)[RECENT_RUNS_STATE_ID];
+};
+export const selectTemporalRunsData = state => {
+  return selectHomeEntities(state)[TEMPORAL_RUNS_STATE_ID];
 };
 export const selectCrosscheckMetrics = state => {
   return selectHomeEntities(state)[METRICS_PROJECT_LIST_STATE_ID];

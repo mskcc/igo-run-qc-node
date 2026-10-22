@@ -8,8 +8,9 @@ import { useParams, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { SiMicrosoftexcel } from 'react-icons/si';
 import { FaDna } from 'react-icons/fa';
-import { TiDownload } from 'react-icons/ti';
-import { getProjectQC, getCrosscheckMetrics } from '../../services/igo-qc-service';
+import { TiDownload, TiExport } from 'react-icons/ti';
+import { getProjectQC, getCrosscheckMetrics, getWebSummaries } from '../../services/igo-qc-service';
+import { webSummariesBySample, webSummaryLabel, webSummaryHref } from '../../resources/webSummaries';
 import {
   setProjectQCData,
   selectProjectDataById,
@@ -42,6 +43,8 @@ export const ProjectPage = () => {
   const [tableHeaders, setTableHeaders] = useState(TABLE_HEADERS);
   const [orderedSampleInfo, setOrderedSampleInfo] = useState([]);
   const [showWebSummaries, setShowWebSummaries] = useState(false);
+  // The project's web summaries the Temporal pipeline published, by sample.
+  const [publishedSummaries, setPublishedSummaries] = useState({});
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
   const [qualityCheckStatus, setQualityCheckStatus] = useState('button-disabled');
   const [recipeTypes, setRecipeTypes] = useState('');
@@ -207,6 +210,9 @@ export const ProjectPage = () => {
 };
 
   const handleWebSummaryClick = () => {
+    if (!showWebSummaries && projectId) {
+      getWebSummaries(projectId).then(summaries => setPublishedSummaries(webSummariesBySample(summaries)));
+    }
     setShowWebSummaries(!showWebSummaries);
   };
 
@@ -285,10 +291,19 @@ export const ProjectPage = () => {
               {showWebSummaries && projectData.samples ? (
                 projectData.samples.map((sample, index) => {
                   const summaryName = `${sample.qc.sampleName}_IGO_${sample.baseId}`;
+                  const published = publishedSummaries[summaryName] || [];
+                  // A summary the Temporal pipeline published opens here; otherwise ngs-stats' copy downloads.
                   return <div key={index}>
-                    <div onClick={() => downloadWebSummary(sample)} className={'download-stats'}>
-                      <span>{summaryName} </span><TiDownload />
-                    </div>
+                    {published.length ? published.map(summary => (
+                      <a key={summary.path} href={webSummaryHref(summary)} target='_blank' rel='noreferrer'
+                         className={'download-stats'} title={`Open ${summaryName}'s web summary`}>
+                        <span>{summaryName} · {webSummaryLabel(summary)} </span><TiExport />
+                      </a>
+                    )) : (
+                      <div onClick={() => downloadWebSummary(sample)} className={'download-stats'}>
+                        <span>{summaryName} </span><TiDownload />
+                      </div>
+                    )}
                   </div>;
                 })
               )

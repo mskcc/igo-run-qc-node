@@ -86,6 +86,18 @@ exports.getCellRangerSample = [
     }
 ];
 
+exports.getWebSummaries = [
+    async function(req, res) {
+        const projectId = req.params.projectId;
+        try {
+            const webSummaries = await apiServices.getWebSummaries(projectId);
+            return apiResponse.successResponseWithData(res, 'Operation success', { webSummaries });
+        } catch (error) {
+            return apiResponse.errorResponse(res, `Could not list web summaries for project ${projectId}: ${error.message}`);
+        }
+    }
+];
+
 exports.changeRunStatus = [
     async function(req, res) {
         const sample = req.query.recordId;

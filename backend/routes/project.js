@@ -5,6 +5,7 @@ var router = express.Router();
 router.get('/getProjectQc/:projectId', projectController.projectQc);
 router.get('/qcStatusLabels', projectController.qcStatusLabels);
 router.get('/getCellRangerSample', projectController.getCellRangerSample);
+router.get('/getWebSummaries/:projectId', projectController.getWebSummaries);
 router.get('/changeRunStatus', projectController.changeRunStatus);
 
 // router.get('/addComment', projectController.addComment);

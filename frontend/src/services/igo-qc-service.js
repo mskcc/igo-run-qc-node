@@ -97,6 +97,20 @@ export const getProjectQC = projectId => {
     });
 };
 
+/** The project's 10x web summaries published by the Temporal pipeline; [] when there are none. */
+export const getWebSummaries = projectId => {
+  return axios
+    .get(config.NODE_API_ROOT + `/project/getWebSummaries/${projectId}`)
+    .then(resp => {
+      const payload = parseResp(resp);
+      return (payload.data && payload.data.webSummaries) || [];
+    })
+    .catch(error => {
+      console.log('Unable to fetch web summaries: ' + error);
+      return [];
+    });
+};
+
 export function getInterOpsData(runId) {
   return axios
     .get(config.NODE_API_ROOT + `/homePage/getInterOpsData?runId=${runId}`)

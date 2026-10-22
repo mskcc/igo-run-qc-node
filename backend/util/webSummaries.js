@@ -3,12 +3,12 @@
  *
  *   <FASTQC_PATH>/CELLRANGER/<project>/<sample>___<kind>___<run>_temporal.html
  *
- * kind is GEX, TCR, BCR, OCM, ARC (Multiome) or VISIUM. Inside FASTQ/ because nginx
+ * kind is GEX, TCR, BCR, OCM, FB (feature barcoding), ARC (Multiome) or VISIUM. Inside FASTQ/ because nginx
  * serves only /static/html/FASTQ/; getRecentRunsData lists FASTQ/*.html alone, so the
  * subfolder is never taken for a run.
  */
 const WEB_SUMMARY_DIR = 'CELLRANGER';
-const WEB_SUMMARY_RE = /^(.+)___(GEX|TCR|BCR|OCM|ARC|VISIUM)___(.+)_temporal\.html$/;
+const WEB_SUMMARY_RE = /^(.+)___(GEX|TCR|BCR|OCM|FB|ARC|VISIUM)___(.+)_temporal\.html$/;
 
 /** 'S1_IGO_18995_1___ARC___BONO_0230_B23M3FMLT3_temporal.html' -> { sample, kind, run }, or null. */
 const parseWebSummaryName = (fileName) => {

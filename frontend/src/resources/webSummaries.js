@@ -8,6 +8,7 @@ const KIND_LABELS = {
   TCR: 'TCR',
   BCR: 'BCR',
   OCM: 'OCM',
+  FB: 'Feature Barcoding (multi)',
   ARC: 'Multiome (ARC)',
   VISIUM: 'Visium'
 };

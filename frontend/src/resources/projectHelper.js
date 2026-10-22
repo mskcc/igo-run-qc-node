@@ -154,8 +154,6 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
         case Constants.TENX_GENOMICS_CNV:
         case Constants.TENX_GENOMICS_GENE_EXP:
         case Constants.TENX_GENOMICS_GENE_EXP_VDJ:
-        case Constants.TENX_GENOMICS_MULTIOME_ATAC:
-        case Constants.TENX_GENOMICS_MULTIOME_EXP:
         case Constants.TENX_GENOMICS_VISIUM:
             return [initialPoolColumn, recordIdColumn, sumReadsColumn, examinedReadsColumn, unpairedReadsColumn, unmappedReadsColumn, requestedReadsColumn, percentAdaptersColumn, percentDuplicationColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, coverageTargetColumn, percentOffBaitColumn, meanCoverageColumn, medianCoverageColumn, percentMRNAColumn, percentRibosomalColumn, tumorNormalColumn, statsVersionColumn, genomeColumn];
 
@@ -172,6 +170,9 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
         case Constants.TENX_GENOMICS_GENE_EXP_5:
          case Constants.SC_CHROMIUM_ATAC:
          case Constants.SC_CHROMIUM_MULTIOME:
+         // The split Multiome recipes show the read columns like the combined one does.
+         case Constants.TENX_GENOMICS_MULTIOME_ATAC:
+         case Constants.TENX_GENOMICS_MULTIOME_EXP:
             return [examinedReadsColumn, unmappedReadsColumn, tumorNormalColumn, percentAdaptersColumn, percentDuplicationColumn, baitSetColumn, percentTarget100Column, percentTarget30Column, meanTargetCoverageColumn, medianCoverageColumn, percentOffBaitColumn, meanCoverageColumn, coverageTargetColumn, percentMRNAColumn, percentRibosomalColumn, statsVersionColumn, recordIdColumn, initialPoolColumn, genomeColumn];
 
 

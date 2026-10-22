@@ -1,4 +1,4 @@
-import { webSummariesBySample, webSummaryLabel, webSummaryHref, webSummaryEntries } from './webSummaries';
+import { webSummariesBySample, webSummaryLabel, webSummaryHref, webSummaryEntries, productionSummaryLabel } from './webSummaries';
 
 describe('web summaries', () => {
   const arc1 = { sample: 'S_IGO_18995_1', kind: 'ARC', run: 'BONO_0230', modified: '2026-10-22T18:00:00Z',
@@ -25,18 +25,20 @@ describe('web summaries', () => {
     const published = { 'AS38_IGO_19022_1': [{ ...arc1, sample: 'AS38_IGO_19022_1', kind: 'GEX' }] };
     const entries = webSummaryEntries(rows, published);
     expect(entries.map(e => e.name)).toEqual(['AS725_IGO_19022_4', 'AS38_IGO_19022_1', 'AS70_IGO_19022_3']);
-    // Published: its summaries, once.
+    // Published: Temporal's summaries, and production's downloads beside them.
     expect(entries[1].published).toHaveLength(1);
-    expect(entries[1].downloads).toBeUndefined();
-    // Not published: one download per distinct run - those reports can differ.
+    expect(entries[1].downloads.map(d => d.run)).toEqual(['BONO_0226', 'FAUCI2_0236']);
+    // Not published: production's alone - one download per distinct run, as those can differ.
+    expect(entries[0].published).toEqual([]);
     expect(entries[0].downloads.map(d => d.run)).toEqual(['BONO_0226', 'FAUCI2_0236']);
     expect(entries[2].downloads.map(d => d.run)).toEqual(['BONO_0226']);
     expect(webSummaryEntries(undefined)).toEqual([]);
   });
 
   it('labels a summary by what it is and which run made it, and links it from the site root', () => {
-    expect(webSummaryLabel(arc1)).toBe('Multiome (ARC) · BONO_0230');
-    expect(webSummaryLabel({ ...arc1, kind: 'NEW' })).toBe('NEW · BONO_0230');
+    expect(webSummaryLabel(arc1)).toBe('Temporal · Multiome (ARC) · BONO_0230');
+    expect(webSummaryLabel({ ...arc1, kind: 'NEW' })).toBe('Temporal · NEW · BONO_0230');
+    expect(productionSummaryLabel('BONO_0226')).toBe('Production · BONO_0226');
     expect(webSummaryHref(arc1)).toBe('/static/html/FASTQ/CELLRANGER/18995/S_IGO_18995_1___ARC___BONO_0230_temporal.html');
   });
 });

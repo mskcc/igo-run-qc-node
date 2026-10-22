@@ -2,7 +2,9 @@ const https = require('https');
 const axios = require('axios');
 const glob = require('glob');
 const fs = require('fs');
+const path = require('path');
 const { logger } = require('../util/winston');
+const { WEB_SUMMARY_DIR, parseWebSummaryName, isProjectId } = require('../util/webSummaries');
 const DIR_PATH = process.env.FASTQC_PATH;
 
 const LIMS_AUTH = {
@@ -283,6 +285,40 @@ exports.requestRepool = (id, qc_status, recipe) => {
             return formatData(resp);
         });
 }
+
+/**
+ * The project's 10x web summaries published by the Temporal pipeline (util/webSummaries.js),
+ * newest first: [{ sample, kind, run, modified, path }], path relative to the site root.
+ */
+exports.getWebSummaries = async (projectId) => {
+    if (!isProjectId(projectId)) {
+        throw new Error(`Invalid project id: ${projectId}`);
+    }
+    const dir = path.join(DIR_PATH, WEB_SUMMARY_DIR, projectId);
+    let files;
+    try {
+        files = await fs.promises.readdir(dir);
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            return [];
+        }
+        throw error;
+    }
+    const summaries = [];
+    for (const file of files) {
+        const parsed = parseWebSummaryName(file);
+        if (!parsed) {
+            continue;
+        }
+        const stats = await fs.promises.stat(path.join(dir, file));
+        summaries.push({
+            ...parsed,
+            modified: stats.mtime.toISOString(),
+            path: `static/html/FASTQ/${WEB_SUMMARY_DIR}/${projectId}/${file}`,
+        });
+    }
+    return summaries.sort((a, b) => b.modified.localeCompare(a.modified));
+};
 
 exports.getRecentRunsData = (days) => {
     return new Promise(async (resolve, reject) => {

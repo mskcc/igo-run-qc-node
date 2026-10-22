@@ -37,6 +37,7 @@ describe('web summaries', () => {
 
   it('labels a summary by what it is and which run made it, and links it from the site root', () => {
     expect(webSummaryLabel(arc1)).toBe('Temporal · Multiome (ARC) · BONO_0230');
+    expect(webSummaryLabel({ ...arc1, kind: 'FB' })).toBe('Temporal · Feature Barcoding (multi) · BONO_0230');
     expect(webSummaryLabel({ ...arc1, kind: 'NEW' })).toBe('Temporal · NEW · BONO_0230');
     expect(productionSummaryLabel('BONO_0226')).toBe('Production · BONO_0226');
     expect(webSummaryHref(arc1)).toBe('/static/html/FASTQ/CELLRANGER/18995/S_IGO_18995_1___ARC___BONO_0230_temporal.html');

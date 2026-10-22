@@ -595,10 +595,14 @@ a:link {
   border-radius: 3px;
   background-color: white;
   width: max-content;
+  /* Anchored to the window's right edge rather than 240px left of the buttons, so a
+     long entry (sample · Multiome (ARC) · run) cannot push it off the screen. */
+  right: 16px;
+  max-width: min(640px, calc(100vw - 32px));
   max-height:300px;
-  overflow: scroll;
+  overflow: auto;
+  overflow-wrap: anywhere;
   z-index: 5;
-  margin-left: -240px;
   padding: 5px;
 }
 .ht_clone_top {

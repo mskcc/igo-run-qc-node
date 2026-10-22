@@ -10,7 +10,7 @@ import { SiMicrosoftexcel } from 'react-icons/si';
 import { FaDna } from 'react-icons/fa';
 import { TiDownload, TiExport } from 'react-icons/ti';
 import { getProjectQC, getCrosscheckMetrics, getWebSummaries } from '../../services/igo-qc-service';
-import { webSummariesBySample, webSummaryLabel, webSummaryHref } from '../../resources/webSummaries';
+import { webSummariesBySample, webSummaryLabel, webSummaryHref, webSummaryEntries } from '../../resources/webSummaries';
 import {
   setProjectQCData,
   selectProjectDataById,
@@ -289,21 +289,19 @@ export const ProjectPage = () => {
             </div>
             <div className={showWebSummaries ? 'actions-popup' : 'hidden'}>
               {showWebSummaries && projectData.samples ? (
-                projectData.samples.map((sample, index) => {
-                  const summaryName = `${sample.qc.sampleName}_IGO_${sample.baseId}`;
-                  const published = publishedSummaries[summaryName] || [];
+                webSummaryEntries(projectData.samples, publishedSummaries).map(entry => {
                   // A summary the Temporal pipeline published opens here; otherwise ngs-stats' copy downloads.
-                  return <div key={index}>
-                    {published.length ? published.map(summary => (
+                  return <div key={entry.name}>
+                    {entry.published ? entry.published.map(summary => (
                       <a key={summary.path} href={webSummaryHref(summary)} target='_blank' rel='noreferrer'
-                         className={'download-stats'} title={`Open ${summaryName}'s web summary`}>
-                        <span>{summaryName} · {webSummaryLabel(summary)} </span><TiExport />
+                         className={'download-stats'} title={`Open ${entry.name}'s web summary`}>
+                        <span>{entry.name} · {webSummaryLabel(summary)} </span><TiExport />
                       </a>
-                    )) : (
-                      <div onClick={() => downloadWebSummary(sample)} className={'download-stats'}>
-                        <span>{summaryName} </span><TiDownload />
+                    )) : entry.downloads.map(({ row, run }) => (
+                      <div key={run} onClick={() => downloadWebSummary(row)} className={'download-stats'}>
+                        <span>{entry.name}{entry.downloads.length > 1 ? ` · ${run}` : ''} </span><TiDownload />
                       </div>
-                    )}
+                    ))}
                   </div>;
                 })
               )

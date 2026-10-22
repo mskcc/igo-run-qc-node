@@ -2,13 +2,14 @@
 /* eslint-disable quotes */
 /* eslint-disable no-use-before-define */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Card } from '../common/card';
 import { useParams, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { SiMicrosoftexcel } from 'react-icons/si';
 import { FaDna } from 'react-icons/fa';
-import { TiDownload, TiExport } from 'react-icons/ti';
+import { TiDownload, TiExport, TiTimes } from 'react-icons/ti';
+import { useDismiss } from '../../utils/useDismiss';
 import { getProjectQC, getCrosscheckMetrics, getWebSummaries } from '../../services/igo-qc-service';
 import { webSummariesBySample, webSummaryLabel, webSummaryHref, webSummaryEntries, productionSummaryLabel } from '../../resources/webSummaries';
 import {
@@ -45,6 +46,12 @@ export const ProjectPage = () => {
   const [showWebSummaries, setShowWebSummaries] = useState(false);
   // The project's web summaries the Temporal pipeline published, by sample.
   const [publishedSummaries, setPublishedSummaries] = useState({});
+  // A click outside the Web Summaries popup, or Escape, closes it: it sits over the page.
+  const webSummariesPopup = useRef(null);
+  const webSummariesButton = useRef(null);
+  const webSummariesRefs = useRef([webSummariesPopup, webSummariesButton]).current;
+  const closeWebSummaries = useRef(() => setShowWebSummaries(false)).current;
+  useDismiss(showWebSummaries, webSummariesRefs, closeWebSummaries);
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
   const [qualityCheckStatus, setQualityCheckStatus] = useState('button-disabled');
   const [recipeTypes, setRecipeTypes] = useState('');
@@ -287,7 +294,15 @@ export const ProjectPage = () => {
                 <FaDna />
               </a>
             </div>
-            <div className={showWebSummaries ? 'actions-popup' : 'hidden'}>
+            <div ref={webSummariesButton} onClick={handleWebSummaryClick} className={showWebSummaries ? 'additional-actions action-button-clicked' : 'additional-actions'}>Web Summaries</div>
+            <div onClick={handleQualityCheckClick} className={`additional-actions ${qualityCheckStatus}`}>Quality Checks</div>
+            <div onClick={handleColumnModalOpen} className='additional-actions'>Set Columns</div>
+            <div ref={webSummariesPopup} className={showWebSummaries ? 'actions-popup' : 'hidden'}>
+              <div className='actions-popup-header'>
+                <span>Web Summaries</span>
+                <TiTimes className='actions-popup-close' role='button' aria-label='Close web summaries'
+                         onClick={() => setShowWebSummaries(false)} />
+              </div>
               {showWebSummaries && projectData.samples ? (
                 webSummaryEntries(projectData.samples, publishedSummaries).map(entry => {
                   // Temporal's published summaries open here; production's download from ngs-stats.
@@ -310,9 +325,6 @@ export const ProjectPage = () => {
               : ''
               }
             </div>
-            <div onClick={handleWebSummaryClick} className={showWebSummaries ? 'additional-actions action-button-clicked' : 'additional-actions'}>Web Summaries</div>
-            <div onClick={handleQualityCheckClick} className={`additional-actions ${qualityCheckStatus}`}>Quality Checks</div>
-            <div onClick={handleColumnModalOpen} className='additional-actions'>Set Columns</div>
           </div>
         </div>
         {cellRangerError && (

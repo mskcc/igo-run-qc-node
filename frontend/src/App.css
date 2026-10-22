@@ -605,6 +605,19 @@ a:link {
   z-index: 5;
   padding: 5px;
 }
+.actions-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
+}
+.actions-popup-close {
+  cursor: pointer;
+  font-size: 1.2em;
+}
 .ht_clone_top {
   z-index: auto !important;
 }

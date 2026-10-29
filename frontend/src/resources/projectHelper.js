@@ -212,6 +212,19 @@ export const mapColumnsToHideByRecipe = (recipe, tableHeaders) => {
     }
 };
 
+/**
+ * Share of a run's read pairs that did not map: (Unmapped - Unpaired) / (Examined + Unpaired).
+ * Examined + Unpaired is the run's read pairs. Null when the run has no reads.
+ */
+export const unmappedFraction = (examined, unpaired, unmapped) => {
+    const readPairs = Number(examined) + Number(unpaired);
+    if (!(readPairs > 0) || unmapped === null || unmapped === undefined || unmapped === '') return null;
+    return (Number(unmapped) - Number(unpaired)) / readPairs;
+};
+
+export const isHighUnmapped = (examined, unpaired, unmapped) =>
+    unmappedFraction(examined, unpaired, unmapped) > Constants.HIGH_UNMAPPED_FRACTION;
+
 export const orderSampleQcData = (qcSamples) => {
     let tableData = [];
 

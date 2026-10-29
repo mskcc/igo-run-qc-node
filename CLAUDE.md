@@ -37,7 +37,8 @@ IGO Run QC is the web app IGO staff use to review post-sequencing QC for runs, p
 ### Config
 - **Backend:** `backend/.env` (gitignored, no template) with `PORT` (default 3001), `MONGODB_URL_LOGIN`, `JWT_SECRET` (must match the login app's), `LIMS_URL`, `LIMS_USER`, `LIMS_PASSWORD`, `NGS_STATS`, `FASTQC_PATH` (the report directory, with a trailing slash) and `NODE_ENV`.
 - **Frontend:** `src/config.js` (gitignored, no template) is imported directly by each module that needs it.
-  - Keys used: `NODE_API_ROOT`, `SITE_HOME`, `AUTH_URL`, `BASENAME` (router basename), `NGS_STATS`.
+  - Keys used: `NODE_API_ROOT`, `SITE_HOME`, `AUTH_URL`, `BASENAME` (router basename), `NGS_STATS` (the ngs-stats host, e.g. `https://igodb.mskcc.org:8443`), and optionally `NGS_STATS_PATH` (default `/ngs-stats`; dev sets `/ngs-stats-dev`). The browser's Excel links go to `resources/ngsStats.js`'s `ngsStatsBase(config)`.
+  - The backend's `NGS_STATS` is the full base instead, path included (`https://igodb.mskcc.org:8443/ngs-stats`, or `/ngs-stats-dev` on dev).
   - `config.dev.js` and `config.prod.js` are gitignored too, but no code chooses between them. Put the target environment's values in `config.js` before `start` or `build`.
 - **Dev proxy:** the CRA `proxy` in `frontend/package.json` is `localhost:3228`, while the backend defaults to 3001. Set `PORT` to match if `NODE_API_ROOT` is relative.
 - Configuration and secrets come from these uncommitted files. Never commit real values.
@@ -58,7 +59,7 @@ It does not run `npm install` or the tests, and it writes no config, so new depe
 - **Responses:** reply through `util/apiResponse.js` (`{status, message, data}`). The frontend axios interceptor unwraps `data.data` into `response.payload`, and sends the browser to the login app on a 401.
 - **Missing dependencies:**
   - `mongoose` is required by `index.js` and `models/UserModel.js` but is not in `backend/package.json`. On a fresh clone, run `npm install mongoose` or `npm start` fails.
-  - `frontend/src/setupTests.js` imports `@testing-library/jest-dom`, which is not in `frontend/package.json`, so install it or `npm test` fails at setup.
+  - `frontend/src/setupTests.js` imports `@testing-library/jest-dom`, which is not in `frontend/package.json`, so install it or `npm test` fails at setup. Use 5.x (`npm i --no-save --legacy-peer-deps @testing-library/jest-dom@5.17.0`); 6.x needs `@testing-library/dom`, which isn't installed either.
 - **Formatting and Node:** `npm run format` points at `./.prettierrc`, which isn't committed, and the backend eslint/prettier configs are gitignored. No Node version is pinned; the backend tests need Node 18+ for `node:test`.
 - **Never commit** `backend/.env`, `frontend/src/config*.js`, `frontend/build/`, `RunQc_*.log` (winston writes these to the working directory) or `backend/public/` (the deploy fills it, and it is not gitignored).
 - **Logging:** use `logger` from `util/winston.js`. It logs to files, and adds a console transport only when `NODE_ENV=production`. The `winston.loggers.get('logger')` used in some controllers has no configuration.

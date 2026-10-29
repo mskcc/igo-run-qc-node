@@ -30,6 +30,7 @@ import {
 } from '../../resources/projectHelper';
 import { downloadExcel } from '../../utils/other-utils';
 import config from '../../config';
+import { ngsStatsBase } from '../../resources/ngsStats';
 import { downloadNgsStatsFile, mapCellRangerRecipe, getCellRangerData } from '../../services/ngs-stats-service';
 
 export const ProjectPage = () => {
@@ -290,7 +291,7 @@ export const ProjectPage = () => {
             >
                 <SiMicrosoftexcel />
             </div>
-              <a href={`${config.NGS_STATS}/ngs-stats/get-picard-project-excel/${projectId}`} target='_blank' className={'em5 download-stats'} title='Full Picard Stats' rel='noreferrer'>
+              <a href={`${ngsStatsBase(config)}/get-picard-project-excel/${projectId}`} target='_blank' className={'em5 download-stats'} title='Full Picard Stats' rel='noreferrer'>
                 <FaDna />
               </a>
             </div>

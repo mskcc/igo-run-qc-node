@@ -4,6 +4,7 @@ import { FaChartBar, FaDna } from 'react-icons/fa';
 import { AiFillFileText } from 'react-icons/ai';
 import { MdOutlineDoNotDisturb } from 'react-icons/md';
 import config from '../../config';
+import { ngsStatsBase } from '../../resources/ngsStats';
 import { getRecentRunsData } from './homeSlice';
 import { reportRunName } from '../../resources/runReports';
 
@@ -83,7 +84,7 @@ export const RunsDataGrid = ({runs, runsWithPicard, showRange = true}) => {
                 </td>
                 <td className={'text-align-center light-blue-border'}>
                 { runsWithPicard && runsWithPicard.includes(name) ?
-                    <a href={`${config.NGS_STATS}/ngs-stats/get-picard-run-excel/${name}`} target='_blank'>
+                    <a href={`${ngsStatsBase(config)}/get-picard-run-excel/${name}`} target='_blank' rel='noreferrer'>
                         <button className='table-btn run-info-button em5'>
                             <FaDna />
                         </button>

@@ -11,6 +11,7 @@ import {
   CELL_RANGER_APPLICATION_VISIUM
 } from '../resources/constants';
 import { downloadHtml } from '../utils/other-utils';
+import { ngsStatsBase } from '../resources/ngsStats';
 
 /**
  * Returns promise of request sent to ngs-stats for the excel sheet of a run
@@ -19,7 +20,7 @@ import { downloadHtml } from '../utils/other-utils';
  * @returns {Promise<AxiosResponse<T>>}
  */
 export const getPicardRunExcel = run => {
-  return axios.get(`${config.NGS_STATS}/ngs-stats/get-picard-run-excel/${run}`, { withCredentials: false });
+  return axios.get(`${ngsStatsBase(config)}/get-picard-run-excel/${run}`, { withCredentials: false });
 };
 
 /**

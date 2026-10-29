@@ -50,6 +50,8 @@ export const TABLE_HEADERS = ['QC Status', 'IGO ID', 'Sample', 'Sum Reads', 'Req
 export const ADDITIONAL_10X_TABLE_HEADERS = ['Estimated # of Cells', 'Mean Reads Per Cell', 'Fraction Reads in Cells', 'Median Genes Per Cell', 'Median UMI Counts Per Cell', '# of Reads', 'Q30 Bases in Barcode', 'Q30 Bases in Sample Index', 'Q30 Bases in UMI', 'Q30 Bases in RNA Read', 'Reads Mapped Antisense to Gene', 'Reads Mapped Confidently to Genome', 'Reads Mapped to Exonic Regions', 'Reads Mapped to Genome', 'Reads Mapped to Intergenic Regions', 'Reads Mapped to Intronic Regions', 'Reads Mapped to Transcriptome', 'Sequencing Saturation', 'Total Genes Detected', 'Valid Barcodes'];
 export const NANOPORE_HEADERS =['QC Status', 'IGO ID', 'QC Record Id', 'Reads','Bases','N50','Median Read Length','Flowcell','Position','Estimated Coverage', 'Sample', 'Recipe','Sum Mean Target Coverage'];
 export const NUMERIC_COLUMNS = ['Sum Reads', 'Examined Reads', 'Unmapped Reads', 'Requested Reads (Millions)'];
+// Unmapped Reads is highlighted when (Unmapped - Unpaired) / (Examined + Unpaired) is above this fraction
+export const HIGH_UNMAPPED_FRACTION = 0.10;
 
 // PAGE STATE
 export const HOME_PAGE = 'HOME';

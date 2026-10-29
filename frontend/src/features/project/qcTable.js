@@ -5,6 +5,7 @@ import { registerAllModules } from 'handsontable/registry';
 import 'handsontable/dist/handsontable.full.min.css';
 import { UpdateStatus } from './updateStatus';
 import { BehaviorSubject } from 'rxjs';
+import { isHighUnmapped } from '../../resources/projectHelper';
 
 registerAllModules();
 
@@ -116,6 +117,18 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
       setCustomCells(cells);
     }, [qcSamplesData]);
 
+    // Unmapped Reads cell css when too many of the run's read pairs didn't map, e.g. a contaminated library.
+    // Handsontable passes physical indexes, so the highlight stays with its sample when the table is sorted.
+    // Always set className on this column: the meta is kept, so a stale highlight would otherwise stick.
+    const highlightHighUnmapped = (row, col) => {
+      if (col !== unmappedReadsColumn) {
+        return undefined;
+      }
+      const rowData = qcSamplesData[row] || [];
+      const high = isHighUnmapped(rowData[examinedReadsColumn], rowData[unpairedReadsColumn], rowData[unmappedReadsColumn]);
+      return { className: high ? 'high-unmapped' : '' };
+    };
+
     const handleCloseModal = () => {
       setShowModal(false);
     };
@@ -221,6 +234,7 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
                 return col;
             }}
             cell={customCells}
+            cells={highlightHighUnmapped}
             multiColumnSorting={true}
             manualColumnMove={true}
             readOnly={true}

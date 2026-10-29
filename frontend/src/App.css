@@ -415,6 +415,11 @@ body {
 .red-highlight {
   color: var(--mskcc-orange);
 }
+.handsontable td.high-unmapped {
+  background-color: #fbd9c8;
+  color: var(--mskcc-dark-orange);
+  font-weight: 700;
+}
 .run-info-button {
   width: 65px;
   height: 40px;

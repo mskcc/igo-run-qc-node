@@ -6,6 +6,7 @@ import 'handsontable/dist/handsontable.full.min.css';
 import { UpdateStatus } from './updateStatus';
 import { BehaviorSubject } from 'rxjs';
 import { isHighUnmapped } from '../../resources/projectHelper';
+import { NO_NGS_STATS_LABEL } from '../../resources/constants';
 
 registerAllModules();
 
@@ -41,6 +42,9 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
     // target coverage columns (for css highlighting)
     const coverageTargetColumn = tableHeaders.indexOf('Coverage Target');
     const sumMeanTargetCoverageColumn = tableHeaders.indexOf('Sum Mean Target Coverage');
+    // rows the backend's QC_STATS_SOURCE=ngs-stats found no stats for (css greying)
+    const statsVersionColumn = tableHeaders.indexOf('Stats Version');
+    const hasNoStatsRows = statsVersionColumn >= 0 && qcSamplesData.some(row => row[statsVersionColumn] === NO_NGS_STATS_LABEL);
 
     const numericColumnIndexes = [
         examinedReadsColumn,
@@ -120,13 +124,18 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
     // Unmapped Reads cell css when too many of the run's read pairs didn't map, e.g. a contaminated library.
     // Handsontable passes physical indexes, so the highlight stays with its sample when the table is sorted.
     // Always set className on this column: the meta is kept, so a stale highlight would otherwise stick.
+    // A row with no ngs-stats is greyed in every cell but QC Status (column 0 keeps its own css).
     const highlightHighUnmapped = (row, col) => {
-      if (col !== unmappedReadsColumn) {
-        return undefined;
-      }
       const rowData = qcSamplesData[row] || [];
+      const noStats = hasNoStatsRows && col !== 0 && rowData[statsVersionColumn] === NO_NGS_STATS_LABEL;
+      if (col !== unmappedReadsColumn) {
+        if (!hasNoStatsRows || col === 0) {
+          return undefined;
+        }
+        return { className: noStats ? 'no-ngs-stats' : '' };
+      }
       const high = isHighUnmapped(rowData[examinedReadsColumn], rowData[unpairedReadsColumn], rowData[unmappedReadsColumn]);
-      return { className: high ? 'high-unmapped' : '' };
+      return { className: [high ? 'high-unmapped' : '', noStats ? 'no-ngs-stats' : ''].filter(Boolean).join(' ') };
     };
 
     const handleCloseModal = () => {

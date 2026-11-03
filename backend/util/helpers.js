@@ -196,7 +196,9 @@ exports.enrichSampleInfo = (samples) => {
     enrichedSamples.forEach((sample)=> {
         const sampleQc = sample['qc'];
         const qcStatus = sampleQc['qcStatus'];
-        if (qcStatus !== 'Failed' && qcStatus !== 'Failed-Reprocess') {
+        // A row QC_STATS_SOURCE=ngs-stats found no stats for has no metrics to add (util/ngsStatsQc.js).
+        const noStats = sampleQc['ngsStatsMatched'] === false;
+        if (!noStats && qcStatus !== 'Failed' && qcStatus !== 'Failed-Reprocess') {
             
             // set sumReads
             if (sampleReadsHash[sample.baseId]) {

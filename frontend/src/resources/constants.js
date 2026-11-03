@@ -52,6 +52,9 @@ export const NANOPORE_HEADERS =['QC Status', 'IGO ID', 'QC Record Id', 'Reads','
 export const NUMERIC_COLUMNS = ['Sum Reads', 'Examined Reads', 'Unmapped Reads', 'Requested Reads (Millions)'];
 // Unmapped Reads is highlighted when (Unmapped - Unpaired) / (Examined + Unpaired) is above this fraction
 export const HIGH_UNMAPPED_FRACTION = 0.10;
+// Stats Version cell of a row the backend's QC_STATS_SOURCE=ngs-stats found no stats for (backend/util/ngsStatsQc.js)
+export const NO_NGS_STATS_LABEL = 'no beta stats';
+export const NGS_STATS_SOURCE = 'ngs-stats';
 
 // PAGE STATE
 export const HOME_PAGE = 'HOME';

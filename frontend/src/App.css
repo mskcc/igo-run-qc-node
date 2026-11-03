@@ -420,6 +420,18 @@ body {
   color: var(--mskcc-dark-orange);
   font-weight: 700;
 }
+.handsontable td.no-ngs-stats {
+  background-color: #eceff1;
+  color: #6e7781;
+  font-style: italic;
+}
+.ngs-stats-source-note {
+  margin: 8px 0;
+  padding: 8px 12px;
+  border-left: 4px solid #8c959f;
+  background-color: #f6f8fa;
+  color: #1f2328;
+}
 .run-info-button {
   width: 65px;
   height: 40px;

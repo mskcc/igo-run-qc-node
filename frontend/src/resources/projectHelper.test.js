@@ -37,3 +37,41 @@ describe('high unmapped reads', () => {
     expect(isHighUnmapped(undefined, undefined, undefined)).toBe(false);
   });
 });
+
+describe('QC table rows with QC_STATS_SOURCE=ngs-stats', () => {
+  const { orderSampleQcData } = require('./projectHelper');
+  const { TABLE_HEADERS, NO_NGS_STATS_LABEL } = require('./constants');
+  const col = name => TABLE_HEADERS.indexOf(name);
+  const sample = (qc) => ({
+    baseId: '12437_QM_9', recipe: 'HumanWholeGenome', requestedReads: 30, coverageTarget: 30, initialPool: 'Pool-1',
+    tumorOrNormal: 'Tumor', species: 'Human', sumReads: 102, sumMTC: 30.5,
+    qc: { qcStatus: 'Under-Review', sampleName: 'DK-1', recordId: 7, run: 'BONO_0229_A25GH37LT4', readsExamined: 100,
+          unpairedReadsExamined: 2, unmapped: 3, percentAdapters: 0.001, percentDuplication: 0.12, baitSet: 'IDT_Exome',
+          percentOffBait: 0.1, percentTarget100x: 0.2, percentTarget30x: 0.9, meanTargetCoverage: 30.5, mean_COVERAGE: 31,
+          median_COVERAGE: 29, percentMrnaBases: 0, percentRibosomalBases: 0, statsVersion: 'v2', ...qc },
+  });
+  const METRICS = ['Sum Reads', 'Sum Mean Target Coverage', '% mRNA', '% Ribosomal', 'Examined Reads', 'Unpaired Reads',
+                   'Unmapped Reads', '% Adapters', '% Duplication', 'Bait Set', '% Off Bait', '% Target 100x',
+                   '% Target 30x', 'Mean Target Coverage', 'Median Coverage'];
+  const LIMS = ['QC Status', 'IGO ID', 'Sample', 'Requested Reads (Millions)', 'Coverage Target', 'QC Record Id',
+                'Initial Pool', 'Run', 'Recipe', 'Tumor/Normal'];
+
+  it('a row without stats has its metrics blank and is marked; its LIMS fields show', () => {
+    const blankQc = Object.fromEntries(['readsExamined', 'unpairedReadsExamined', 'unmapped', 'percentAdapters',
+      'percentDuplication', 'baitSet', 'percentOffBait', 'percentTarget100x', 'percentTarget30x', 'meanTargetCoverage',
+      'mean_COVERAGE', 'median_COVERAGE', 'percentMrnaBases', 'percentRibosomalBases', 'statsVersion'].map(f => [f, null]));
+    const [row] = orderSampleQcData([{ ...sample({ ...blankQc, ngsStatsMatched: false }), sumReads: undefined, sumMTC: undefined }]);
+    for (const name of METRICS) expect([name, row[col(name)]]).toEqual([name, '']);
+    expect(row[col('Stats Version')]).toBe(NO_NGS_STATS_LABEL);
+    const full = orderSampleQcData([sample({})])[0];
+    for (const name of LIMS) expect([name, row[col(name)]]).toEqual([name, full[col(name)]]);
+  });
+
+  it('a matched row and a LIMS row (no flag) show exactly the same cells', () => {
+    const [matched] = orderSampleQcData([sample({ ngsStatsMatched: true })]);
+    const [lims] = orderSampleQcData([sample({})]);
+    expect(matched).toEqual(lims);
+    expect(lims[col('Examined Reads')]).toBe(100);
+    expect(lims[col('Stats Version')]).toBe('v2');
+  });
+});

@@ -160,6 +160,30 @@ exports.getCrossCheckMetrics = (projects) => {
         });
 }
 
+/**
+ * One run's Picard stats from ngs-stats, keyed by row id: the rows LimsRest's
+ * updateLimsSampleLevelSequencingQc files in LIMS. Used when QC_STATS_SOURCE=ngs-stats.
+ */
+exports.getPicardRunStats = (runName) => {
+    const url = `${NGS_STATS_API_URL}/picardstats/run/${encodeURIComponent(runName)}`;
+    return axios
+        .get(url, {
+            ...axiosConfig,
+            timeout: 120000,
+        })
+        .then((resp) => {
+            info(url);
+            return resp;
+        })
+        .catch((error) => {
+            errorlog(url, error);
+            throw error;
+        })
+        .then((resp) => {
+            return resp.data || {};
+        });
+}
+
 exports.getInterOpsData = (runName) => {
     const url = `${LIMS_URL}/getInterOpsData?runId=${runName}`;
     return axios

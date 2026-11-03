@@ -36,6 +36,7 @@ IGO Run QC is the web app IGO staff use to review post-sequencing QC for runs, p
 
 ### Config
 - **Backend:** `backend/.env` (gitignored, no template) with `PORT` (default 3001), `MONGODB_URL_LOGIN`, `JWT_SECRET` (must match the login app's), `LIMS_URL`, `LIMS_USER`, `LIMS_PASSWORD`, `NGS_STATS`, `FASTQC_PATH` (the report directory, with a trailing slash) and `NODE_ENV`.
+  - `LIMS_READ_ONLY=true` (also `1`/`yes`) makes `services.js` refuse every LIMS write (`setQcStatus`, `setPooledSampleStatus`) before it calls LIMS. Dev runqc sets it so it can read production LIMS; production leaves it unset.
 - **Frontend:** `src/config.js` (gitignored, no template) is imported directly by each module that needs it.
   - Keys used: `NODE_API_ROOT`, `SITE_HOME`, `AUTH_URL`, `BASENAME` (router basename), `NGS_STATS` (the ngs-stats host, e.g. `https://igodb.mskcc.org:8443`), and optionally `NGS_STATS_PATH` (default `/ngs-stats`; dev sets `/ngs-stats-dev`). The browser's Excel links go to `resources/ngsStats.js`'s `ngsStatsBase(config)`.
   - The backend's `NGS_STATS` is the full base instead, path included (`https://igodb.mskcc.org:8443/ngs-stats`, or `/ngs-stats-dev` on dev).

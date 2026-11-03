@@ -138,7 +138,8 @@ exports.changeRunStatus = [
                 return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
             })
             .catch((reasons) => {
-                let string = JSON.stringify(reasons);
+                // An Error stringifies to {}, so use its message.
+                let string = reasons instanceof Error ? reasons.message : JSON.stringify(reasons);
                 return apiResponse.errorResponse(res, `Error trying to update status: ${string}`);
         });
     }

@@ -12,6 +12,13 @@ const LIMS_AUTH = {
     password: process.env.LIMS_PASSWORD,
 };
 const LIMS_URL = process.env.LIMS_URL;
+// LIMS_READ_ONLY=true refuses every LIMS write, so a dev runqc can read production LIMS
+// without being able to change it. Read at call time, so tests can flip it.
+const limsReadOnly = () => /^(1|true|yes)$/i.test((process.env.LIMS_READ_ONLY || '').trim());
+const refuseIfReadOnly = (what) => limsReadOnly()
+    ? Promise.reject(new Error(`LIMS is read-only here (LIMS_READ_ONLY), so ${what} was not sent`))
+    : null;
+exports.limsReadOnly = limsReadOnly;
 const NGS_STATS_API_URL = process.env.NGS_STATS;
 // LIMS is authorized. Avoids certificate verification & "unable to verify the first certificate in nodejs" errors
 const agent = new https.Agent({
@@ -215,6 +222,10 @@ exports.ngsStatsDownload = (ngsType, sample, projectId, run, download = true) =>
 }
 
 exports.setQCStatus = (id, qc_status, projectId, recipe, qcType) => {
+    const refused = refuseIfReadOnly('the QC status change');
+    if (refused) {
+        return refused;
+    }
     const payload = {
         'record': id,
         'status': qc_status,
@@ -253,6 +264,10 @@ exports.setQCStatus = (id, qc_status, projectId, recipe, qcType) => {
 }
 
 exports.requestRepool = (id, qc_status, recipe) => {
+    const refused = refuseIfReadOnly('the repool request');
+    if (refused) {
+        return refused;
+    }
     const payload = {
         'record': id,
         'status': "Ready for - Pooling of Sample Libraries for Sequencing"

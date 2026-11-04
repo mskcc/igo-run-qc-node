@@ -8,7 +8,7 @@ Guidance for Claude Code, and for people, working in this repo. Claude Code load
 IGO Run QC is the web app IGO staff use to review post-sequencing QC for runs, projects and samples. They make pass/fail/deliver decisions there, including setting sample QC status.
 - An Express API (`backend/`) sits in front of two services:
   - the IGO LIMS REST service: project QC, recent deliveries, pending requests, the QC-status picklist, InterOp stats, search, and QC-status writes;
-  - ngs-stats: fingerprint crosscheck metrics, Cell Ranger stats and web summaries.
+  - ngs-stats: fingerprint crosscheck metrics, Cell Ranger stats and web summaries, and, with `QC_STATS_SOURCE=ngs-stats`, the project QC table's metrics.
 - It also lists the run and 10x HTML reports that the demux pipelines (Airflow and Temporal) write under `FASTQC_PATH`.
 - A React app (`frontend/`) is the UI.
 
@@ -37,6 +37,7 @@ IGO Run QC is the web app IGO staff use to review post-sequencing QC for runs, p
 ### Config
 - **Backend:** `backend/.env` (gitignored, no template) with `PORT` (default 3001), `MONGODB_URL_LOGIN`, `JWT_SECRET` (must match the login app's), `LIMS_URL`, `LIMS_USER`, `LIMS_PASSWORD`, `NGS_STATS`, `FASTQC_PATH` (the report directory, with a trailing slash) and `NODE_ENV`.
   - `LIMS_READ_ONLY=true` (also `1`/`yes`) makes `services.js` refuse every LIMS write (`setQcStatus`, `setPooledSampleStatus`) before it calls LIMS. Dev runqc sets it so it can read production LIMS; production leaves it unset.
+  - `QC_STATS_SOURCE=ngs-stats` makes `project/getProjectQc` take the QC table's metrics from `NGS_STATS`'s `picardstats/run/<run>` (`util/ngsStatsQc.js`) instead of LIMS's `SeqAnalysisSampleQC` records. LIMS still gives the samples, runs, QC statuses and record ids. Rows are matched on version-less run + IGO id. An unmatched row gets null metrics and `qc.ngsStatsMatched: false`, and the table shows it grey, blank and `no beta stats`. Dev sets it, with the dev ngs-stats Temporal beta files into, so dev shows beta's numbers; production leaves it unset.
 - **Frontend:** `src/config.js` (gitignored, no template) is imported directly by each module that needs it.
   - Keys used: `NODE_API_ROOT`, `SITE_HOME`, `AUTH_URL`, `BASENAME` (router basename), `NGS_STATS` (the ngs-stats host, e.g. `https://igodb.mskcc.org:8443`), and optionally `NGS_STATS_PATH` (default `/ngs-stats`; dev sets `/ngs-stats-dev`). The browser's Excel links go to `resources/ngsStats.js`'s `ngsStatsBase(config)`.
   - The backend's `NGS_STATS` is the full base instead, path included (`https://igodb.mskcc.org:8443/ngs-stats`, or `/ngs-stats-dev` on dev).
@@ -68,7 +69,9 @@ It does not run `npm install` or the tests, and it writes no config, so new depe
   - web-summary kinds: `backend/util/webSummaries.js` and `frontend/src/resources/webSummaries.js`;
   - `_laneBarcode[_temporal].html` run-report names: `HomePageController.getInterOpsData` and `resources/runReports.js`;
   - search fields: `SearchController.js`, `services.searchQc` and `igo-qc-service.searchQc`;
-  - Nanopore detection: `HomePageController`, `util/helpers.js` and `ProjectController.changeRunStatus`.
+  - Nanopore detection: `HomePageController`, `util/helpers.js`, `ProjectController.changeRunStatus` and `util/ngsStatsQc.js`.
+  - the picardstats → QC-field mapping in `util/ngsStatsQc.js` copies LimsRest's `UpdateLimsSampleLevelSequencingQcTask.getQcValues` + `GetSampleQcTask`; change it when they change.
+  - the QC table's metric cells: `resources/projectHelper.js`'s `orderSampleQcData` blanks them for a `ngsStatsMatched: false` row, so a new metric column needs its `metric(...)` wrapper there.
 - **Unused file:** `backend/constants.js` isn't used, and it is written with ES `export` syntax, so requiring it from the CommonJS backend throws.
 - **QC-status writes:** a QC-status change is a GET (`project/changeRunStatus`) that writes to whatever LIMS `LIMS_URL` points at. Point a local backend at a dev LIMS.
 - **Run names from paths:** `getRecentRunsData` takes the run name from a fixed path segment (`split('/')[7]`), so a local `FASTQC_PATH` at a different depth gives wrong run names.

@@ -2,6 +2,27 @@ const axios = require('axios');
 const apiResponse = require('../util/apiResponse');
 const apiServices = require('../services/services');
 const { enrichSampleInfo, enrichProjectQC } = require('../util/helpers');
+const { logger } = require('../util/winston');
+const { usesNgsStats, runsToFetch, overlayNgsStats, ngsStatsCounts, NGS_STATS_SOURCE } = require('../util/ngsStatsQc');
+
+/**
+ * QC_STATS_SOURCE=ngs-stats: replace the samples' LIMS QC metrics with ngs-stats' (util/ngsStatsQc.js).
+ * A run ngs-stats can't return counts as having no stats, so its rows show blank and marked.
+ */
+const withNgsStats = async (projectQc) => {
+    const runs = runsToFetch(projectQc.samples);
+    const results = await Promise.allSettled(runs.map(run => apiServices.getPicardRunStats(run)));
+    const statsByRun = {};
+    results.forEach((result, i) => {
+        if (result.status === 'fulfilled') {
+            statsByRun[runs[i]] = result.value;
+        } else {
+            logger.error(`ngs-stats picardstats for ${runs[i]}: ${result.reason}`);
+        }
+    });
+    const samples = overlayNgsStats(projectQc.samples, statsByRun);
+    return { ...projectQc, samples, statsSource: NGS_STATS_SOURCE, ngsStatsRows: ngsStatsCounts(samples) };
+};
 
 
 /**
@@ -15,16 +36,19 @@ exports.projectQc = [
         const projectId = req.params.projectId;
         let projectQcPromise = apiServices.getProjectQc(projectId);
         Promise.all([projectQcPromise])
-            .then((results) => {
+            .then(async (results) => {
                 if(!results) {
                     return apiResponse.errorResponse(res, 'Could not find project QC data.');
                 }
 
                 let [projectQcResults] = results;
-                const projectQc = projectQcResults[0];
+                let projectQc = projectQcResults[0];
 
                 if (!projectQc || projectQc.length === 0 || projectQc.samples === []) {
                     return apiResponse.errorResponse(res, `No project data for project ${projectId}`);
+                }
+                if (usesNgsStats() && Array.isArray(projectQc.samples)) {
+                    projectQc = await withNgsStats(projectQc);
                 }
 
                 const enrichedSamples = enrichSampleInfo(projectQc.samples);

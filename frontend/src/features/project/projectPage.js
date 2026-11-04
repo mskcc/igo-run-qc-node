@@ -20,7 +20,7 @@ import {
 } from './projectSlice';
 import { QcTable } from './qcTable';
 import { AdditionalColumnsModal } from '../common/additionalColumnsModal';
-import { PED_PEG, NANOPORE, TABLE_HEADERS, ADDITIONAL_10X_TABLE_HEADERS, INVESTIGATOR_PREP_LIB, NANOPORE_HEADERS } from '../../resources/constants';
+import { PED_PEG, NANOPORE, TABLE_HEADERS, ADDITIONAL_10X_TABLE_HEADERS, INVESTIGATOR_PREP_LIB, NANOPORE_HEADERS, NGS_STATS_SOURCE, NO_NGS_STATS_LABEL } from '../../resources/constants';
 import {
   mapColumnsToHideByRecipe,
   orderSampleQcData,
@@ -330,6 +330,12 @@ export const ProjectPage = () => {
         </div>
         {cellRangerError && (
           <div className='text-align-center'>{cellRangerError}</div>
+        )}
+        {projectData.statsSource === NGS_STATS_SOURCE && projectData.ngsStatsRows && (
+          <div className='ngs-stats-source-note'>
+            QC metrics on this page come from ngs-stats (Temporal beta), not LIMS: {projectData.ngsStatsRows.matched} of {projectData.ngsStatsRows.total} rows have beta stats.
+            {projectData.ngsStatsRows.matched < projectData.ngsStatsRows.total && <> Grey rows have none, so their metrics are blank (Stats Version: '{NO_NGS_STATS_LABEL}').</>}
+          </div>
         )}
         <div className='hottable-container'>
           {isLoading ? 

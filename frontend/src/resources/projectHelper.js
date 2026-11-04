@@ -230,49 +230,50 @@ export const orderSampleQcData = (qcSamples) => {
 
     // data ordering based on order of TABLE_HEADERS
     qcSamples.forEach(sample => {
+        // With QC_STATS_SOURCE=ngs-stats, a row ngs-stats has no stats for shows its metrics blank
+        // and 'no beta stats' as its Stats Version; its LIMS fields show as usual.
+        const noStats = sample.qc.ngsStatsMatched === false;
+        const metric = (value) => noStats ? '' : value();
         let sampleData = [];
         sampleData.push(sample.qc[Constants.QC_STATUS]);
         sampleData.push(sample[Constants.IGO_ID]);
         sampleData.push(sample.qc[Constants.SAMPLE_NAME]);
-        sampleData.push(sample[Constants.SUM_READS]);
+        sampleData.push(metric(() => sample[Constants.SUM_READS]));
         sampleData.push(sample[Constants.REQUESTED_READS]);
         const coverageTarget = sample[Constants.COVERAGE_TARGET] || '';
         sampleData.push(coverageTarget);
-        const sumMtc = sample[Constants.SUM_MTC] ? sample[Constants.SUM_MTC] : 0;
-        sampleData.push(sumMtc.toFixed(2));
-        const percentmRNA = Number(sample.qc[Constants.PERCENT_MRNA] * 100).toFixed(2);
-        sampleData.push(percentmRNA);
-        const percentRibosomal = Number(sample.qc[Constants.PERCENT_RIBOS] * 100).toFixed(2);
-        sampleData.push(percentRibosomal);
+        sampleData.push(metric(() => {
+            const sumMtc = sample[Constants.SUM_MTC] ? sample[Constants.SUM_MTC] : 0;
+            return sumMtc.toFixed(2);
+        }));
+        sampleData.push(metric(() => Number(sample.qc[Constants.PERCENT_MRNA] * 100).toFixed(2)));
+        sampleData.push(metric(() => Number(sample.qc[Constants.PERCENT_RIBOS] * 100).toFixed(2)));
         sampleData.push(sample.qc[Constants.RECORD_ID]);
         sampleData.push(sample[Constants.INITIAL_POOL]);
         sampleData.push(sample.qc[Constants.RUN]);
         sampleData.push(sample[Constants.RECIPE]);
-        sampleData.push(sample.qc[Constants.READS_EXAMINED]);
-        sampleData.push(sample.qc[Constants.UNPAIRED_READS]);
-        sampleData.push(sample.qc[Constants.UNMAPPED]);
+        sampleData.push(metric(() => sample.qc[Constants.READS_EXAMINED]));
+        sampleData.push(metric(() => sample.qc[Constants.UNPAIRED_READS]));
+        sampleData.push(metric(() => sample.qc[Constants.UNMAPPED]));
         sampleData.push(sample[Constants.TUMOR_OR_NORMAL]);
-        const percentAdapters = Number((sample.qc[Constants.PERCENT_ADAPTERS] * 100).toFixed(6));
-        sampleData.push(percentAdapters);
-        const percentDuplication = Number(sample.qc[Constants.PERCENT_DUPLICATION] * 100).toFixed(2);
-        sampleData.push(percentDuplication);
-        sampleData.push(sample.qc[Constants.BAIT_SET]);
-        const percentOffBait = Number(sample.qc[Constants.PERCENT_OFF_BAIT] * 100).toFixed(2);
-        sampleData.push(percentOffBait);
-        const percentTarget100x = Number(sample.qc[Constants.PERCENT_100X] * 100).toFixed(2);
-        sampleData.push(percentTarget100x);
-        const percentTarget30x = Number(sample.qc[Constants.PERCENT_30X] * 100).toFixed(2);
-        sampleData.push(percentTarget30x);
-        let meanTargetCoverage = 0;
-        if (sample.qc[Constants.MEAN_TARGET_COVERAGE_HS] !== 0) {
-            meanTargetCoverage = sample.qc[Constants.MEAN_TARGET_COVERAGE_HS];
-        } else if (sample.qc[Constants.MEAN_TARGET_COVERAGE_WGS] !== 0) {
-            meanTargetCoverage = sample.qc[Constants.MEAN_TARGET_COVERAGE_WGS];
-        }
-        sampleData.push(meanTargetCoverage.toFixed(2));
-        sampleData.push(sample.qc[Constants.MEDIAN_TARGET_COVERAGE].toFixed(2));
+        sampleData.push(metric(() => Number((sample.qc[Constants.PERCENT_ADAPTERS] * 100).toFixed(6))));
+        sampleData.push(metric(() => Number(sample.qc[Constants.PERCENT_DUPLICATION] * 100).toFixed(2)));
+        sampleData.push(metric(() => sample.qc[Constants.BAIT_SET]));
+        sampleData.push(metric(() => Number(sample.qc[Constants.PERCENT_OFF_BAIT] * 100).toFixed(2)));
+        sampleData.push(metric(() => Number(sample.qc[Constants.PERCENT_100X] * 100).toFixed(2)));
+        sampleData.push(metric(() => Number(sample.qc[Constants.PERCENT_30X] * 100).toFixed(2)));
+        sampleData.push(metric(() => {
+            let meanTargetCoverage = 0;
+            if (sample.qc[Constants.MEAN_TARGET_COVERAGE_HS] !== 0) {
+                meanTargetCoverage = sample.qc[Constants.MEAN_TARGET_COVERAGE_HS];
+            } else if (sample.qc[Constants.MEAN_TARGET_COVERAGE_WGS] !== 0) {
+                meanTargetCoverage = sample.qc[Constants.MEAN_TARGET_COVERAGE_WGS];
+            }
+            return meanTargetCoverage.toFixed(2);
+        }));
+        sampleData.push(metric(() => sample.qc[Constants.MEDIAN_TARGET_COVERAGE].toFixed(2)));
         sampleData.push(sample[Constants.GENOME]);
-        const statsVersion = sample.qc[Constants.STATS_VERSION] || '';
+        const statsVersion = noStats ? Constants.NO_NGS_STATS_LABEL : (sample.qc[Constants.STATS_VERSION] || '');
         sampleData.push(statsVersion);
 
         tableData.push(sampleData);

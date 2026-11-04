@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="820" viewBox="0 0 1400 820">
+  <style>
+    text { font-family: Helvetica, Arial, sans-serif; fill: #1f2328; }
+    .title { font-size: 24px; font-weight: bold; }
+    .panel { font-size: 20px; font-weight: bold; }
+    .h { font-size: 16px; font-weight: bold; }
+    .t { font-size: 14px; }
+    .s { font-size: 13px; fill: #57606a; }
+    .green { fill: #1a7f37; }
+    .box { fill: #f6f8fa; stroke: #8c959f; stroke-width: 1.5; }
+    .app { fill: #eef5ff; stroke: #0969da; stroke-width: 2; }
+    .new { fill: #e9f7ec; stroke: #1a7f37; stroke-width: 2.5; }
+    .a-gray { stroke: #6e7781; stroke-width: 2; fill: none; }
+    .a-green { stroke: #1a7f37; stroke-width: 2.5; fill: none; }
+  </style>
+  <defs>
+    <marker id="mg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6e7781"/></marker>
+    <marker id="mn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1a7f37"/></marker>
+  </defs>
+  <rect x="0" y="0" width="1400" height="820" fill="#ffffff"/>
+  <text x="30" y="38" class="title">runqc project QC table: metrics from LIMS → from ngs-stats (QC_STATS_SOURCE=ngs-stats)</text>
+
+  <!-- CURRENT -->
+  <rect x="20" y="60" width="1360" height="300" rx="10" fill="#fbfbfc" stroke="#d0d7de"/>
+  <text x="40" y="90" class="panel">Current (production, and dev until now)</text>
+  <rect x="50" y="120" width="280" height="110" rx="6" class="box"/>
+  <text x="66" y="148" class="h">ngs-stats</text>
+  <text x="66" y="172" class="t">picardstats/run/&lt;run&gt;</text>
+  <text x="66" y="194" class="s">per-sample Picard metrics</text>
+  <rect x="460" y="110" width="360" height="130" rx="6" class="box"/>
+  <text x="476" y="138" class="h">LimsRest → LIMS (Sapio)</text>
+  <text x="476" y="162" class="t">updateLimsSampleLevelSequencingQc</text>
+  <text x="476" y="182" class="t">files SeqAnalysisSampleQC records</text>
+  <text x="476" y="206" class="s">getProjectQc returns samples + those metrics</text>
+  <rect x="960" y="110" width="380" height="130" rx="8" class="app"/>
+  <text x="976" y="138" class="h">runqc</text>
+  <text x="976" y="162" class="t">project/getProjectQc → QC table</text>
+  <text x="976" y="184" class="s">samples, runs, QC status AND metrics</text>
+  <text x="976" y="204" class="s">all from LIMS</text>
+  <path d="M330,175 L458,175" class="a-gray" marker-end="url(#mg)"/>
+  <text x="342" y="165" class="s">pipeline filing</text>
+  <path d="M820,175 L958,175" class="a-gray" marker-end="url(#mg)"/>
+  <text x="50" y="290" class="t">Dev runqc reads production LIMS read-only (LIMS_READ_ONLY), so its table showed production's numbers,</text>
+  <text x="50" y="312" class="t">not the ones Temporal beta files into the dev ngs-stats (stats_notify_lims is off; nothing writes beta's into a LIMS).</text>
+
+  <!-- NEW -->
+  <rect x="20" y="380" width="1360" height="420" rx="10" fill="#fbfbfc" stroke="#d0d7de"/>
+  <text x="40" y="410" class="panel">New (dev: QC_STATS_SOURCE=ngs-stats)</text>
+  <rect x="50" y="450" width="300" height="120" rx="6" class="box"/>
+  <text x="66" y="478" class="h">production LIMS (read-only)</text>
+  <text x="66" y="502" class="t">getProjectQc</text>
+  <text x="66" y="524" class="s">samples, runs, QC status, record ids</text>
+  <rect x="50" y="620" width="300" height="120" rx="6" class="box"/>
+  <text x="66" y="648" class="h">dev ngs-stats</text>
+  <text x="66" y="672" class="t">picardstats/run/&lt;run&gt;, one call per run</text>
+  <text x="66" y="694" class="s">what Temporal beta filed</text>
+  <rect x="480" y="470" width="460" height="260" rx="8" class="app"/>
+  <text x="498" y="498" class="h">runqc backend: project/getProjectQc</text>
+  <rect x="498" y="516" width="424" height="140" rx="6" class="new"/>
+  <text x="512" y="540" class="h green">NEW  util/ngsStatsQc.js overlayNgsStats</text>
+  <text x="512" y="564" class="t">match row on version-less run + IGO id</text>
+  <text x="512" y="586" class="t">matched: LimsRest's field mapping (0 / "null" for missing)</text>
+  <text x="512" y="608" class="t">unmatched: metrics null, ngsStatsMatched: false</text>
+  <text x="512" y="630" class="s">nanopore rows untouched; a failed run fetch = no stats</text>
+  <text x="498" y="684" class="s">sums (Sum Reads, Sum MTC) skip unmatched rows</text>
+  <text x="498" y="706" class="s">response adds statsSource + ngsStatsRows {matched, total}</text>
+  <rect x="1060" y="470" width="290" height="260" rx="8" class="box"/>
+  <text x="1076" y="498" class="h">QC table (frontend)</text>
+  <text x="1076" y="524" class="t">note: "N of M rows have beta stats"</text>
+  <text x="1076" y="550" class="t">matched rows: beta's numbers</text>
+  <text x="1076" y="576" class="t">unmatched rows: grey, italic,</text>
+  <text x="1076" y="596" class="t">metrics blank,</text>
+  <text x="1076" y="616" class="t">Stats Version 'no beta stats'</text>
+  <text x="1076" y="650" class="s">QC Status column unchanged</text>
+  <path d="M350,510 C410,510 420,560 478,560" class="a-gray" marker-end="url(#mg)"/>
+  <path d="M350,680 C410,680 420,620 478,620" class="a-green" marker-end="url(#mn)"/>
+  <path d="M940,600 L1058,600" class="a-green" marker-end="url(#mn)"/>
+  <text x="50" y="775" class="s">Production runqc leaves QC_STATS_SOURCE unset: same LIMS-only path as Current.</text>
+</svg>

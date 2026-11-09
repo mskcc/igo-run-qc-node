@@ -8,26 +8,24 @@ import { UpdateStatus } from './updateStatus';
 import { BehaviorSubject } from 'rxjs';
 import { isHighUnmapped } from '../../resources/projectHelper';
 import { NO_NGS_STATS_LABEL } from '../../resources/constants';
-import { webSummaryShortLabel, webSummaryLabel, webSummaryHref, productionSummaryLabel } from '../../resources/webSummaries';
+import { webSummaryShortLabel, webSummaryLabel, webSummaryHref } from '../../resources/webSummaries';
 
 registerAllModules();
 
 /**
  * webSummaryLinks: one entry per row of qcSamplesData (webSummaryRowLinks), shown in the row's
- * Sample cell. onDownloadWebSummary(row) downloads production's summary for a row.
+ * Sample cell.
  */
-export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe, webSummaryLinks = [], onDownloadWebSummary}) => {
+export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe, webSummaryLinks = []}) => {
     const [showModal, setShowModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
     const [customCells, setCustomCells] = useState([]);
     const [selectionSubject] = useState(new BehaviorSubject([])); // Observable that can emit updates of user-selection
     const [tableRef] = useState(React.createRef());
-    // The renderer reads the links from refs, so links that arrive after the table is drawn
+    // The renderer reads the links from a ref, so links that arrive after the table is drawn
     // need only a re-render (below), not new settings, which would lose the user's sorting.
     const webSummaryLinksRef = useRef(webSummaryLinks);
     webSummaryLinksRef.current = webSummaryLinks;
-    const onDownloadRef = useRef(onDownloadWebSummary);
-    onDownloadRef.current = onDownloadWebSummary;
     const sampleColumn = tableHeaders.indexOf('Sample');
 
     // recordIdColumn needed for status update
@@ -146,12 +144,12 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe, web
     function sampleRenderer(instance, td, row, col, prop, value, cellProperties) {
       textRenderer.apply(this, arguments);
       const links = webSummaryLinksRef.current[instance.toPhysicalRow(row)];
-      if (!links || (!links.published.length && !links.download)) {
+      if (!links || !links.published.length) {
         return td;
       }
       const container = document.createElement('span');
       container.className = 'web-summary-links';
-      // A click on a link opens or downloads it, without selecting the cell under it.
+      // A click on a link opens it, without selecting the cell under it.
       container.addEventListener('mousedown', event => event.stopPropagation());
       links.published.forEach(summary => {
         const a = document.createElement('a');
@@ -163,16 +161,6 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe, web
         a.textContent = `${webSummaryShortLabel(summary)} ↗`;
         container.appendChild(a);
       });
-      if (links.download) {
-        const run = links.download.qc.run;
-        const button = document.createElement('span');
-        button.className = 'web-summary-link';
-        button.setAttribute('role', 'button');
-        button.title = `Download ${productionSummaryLabel(run)}'s web summary for ${links.name}`;
-        button.textContent = 'Production ↓';
-        button.addEventListener('click', () => onDownloadRef.current && onDownloadRef.current(links.download));
-        container.appendChild(button);
-      }
       td.appendChild(container);
       return td;
     }

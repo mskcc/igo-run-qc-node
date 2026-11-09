@@ -31,21 +31,16 @@ const sameRun = (a, b) => !!a && !!b && (a === b || a.startsWith(`${b}_`) || b.s
  * The web summaries to link from each row of the project table: one entry per row of
  * `samples`, in the same order. The table has a row per sample per run.
  *
- *   { name, published: [summaries], download: row | null }
+ *   { name, published: [summaries] }
  *
- * Both sources, side by side:
- *   - published: the Temporal pipeline's summaries, each on the row of the run that made it.
- *     One whose run matches none of the sample's rows goes on the sample's first row, so none
- *     is lost.
- *   - download: production's summary for the row's own run, from ngs-stats, on the rows
- *     `hasProductionSummary(recipe)` says Cell Ranger ran for.
- * Production stays the system of record; Temporal's copy is the one being validated.
+ * published: the Temporal pipeline's summaries, each on the row of the run that made it.
+ * One whose run matches none of the sample's rows goes on the sample's first row, so none
+ * is lost. (Production's summaries, from ngs-stats, are not linked: those links never worked.)
  */
-export const webSummaryRowLinks = (samples = [], publishedBySample = {}, hasProductionSummary = () => false) => {
+export const webSummaryRowLinks = (samples = [], publishedBySample = {}) => {
   const links = samples.map(row => ({
     name: `${row.qc.sampleName}_IGO_${row.baseId}`,
-    published: [],
-    download: hasProductionSummary(row.recipe) ? row : null
+    published: []
   }));
   const firstRowOf = {};
   links.forEach((link, i) => {
@@ -67,9 +62,6 @@ export const webSummaryShortLabel = summary => `Temporal ${summary.kind}`;
 
 /** A published summary: 'Temporal · Multiome (ARC) · BONO_0230_B23M3FMLT3' */
 export const webSummaryLabel = summary => `Temporal · ${KIND_LABELS[summary.kind] || summary.kind} · ${summary.run}`;
-
-/** Production's copy of a run's summary, from ngs-stats: 'Production · BONO_0226_B23MMK2LT3' */
-export const productionSummaryLabel = run => `Production · ${run}`;
 
 /** The summary's URL on this site: '/static/html/FASTQ/CELLRANGER/...' */
 export const webSummaryHref = summary => `/${summary.path}`;

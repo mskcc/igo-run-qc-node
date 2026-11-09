@@ -10,7 +10,6 @@ import {
    CELL_RANGER_APPLICATION_MULTI,
   CELL_RANGER_APPLICATION_VISIUM
 } from '../resources/constants';
-import { downloadHtml } from '../utils/other-utils';
 import { ngsStatsBase } from '../resources/ngsStats';
 
 /**
@@ -42,46 +41,6 @@ export const getPicardRunExcel = run => {
 //   }
 //   return new Promise(resolve => resolve([]));
 // };
-
-/**
- * Downloads the webSummary.html file of the specified parameters
- *
- * @param type,     e.g. 'count'
- * @param sample,   e.g. 'SC16
- * @param igoId,    e.g. 'IGO_09335_O_1'
- * @param project,  e.g. '09335_O'
- * @param run
- * @returns {Promise<String>}
- */
-export const downloadNgsStatsFile = (
-  type,
-  sample,
-  igoId,
-  project,
-  run,
-  download = true
-) => {
-  // e.g. [ 'SC16-UN', 'IGO_09335_O_1' ] => 'SC16-UN_IGO_09335_O_1'
-  sample = `${sample}_IGO_${igoId}`;
-  return axios
-    .get(
-      config.NODE_API_ROOT +
-        `/homePage/ngsStatsDownload?type=${type}&sample=${sample}&project=${project}&run=${run}&download=${download}`
-    )
-    .then(res => {
-      const payload = res['data'] || {};
-      const data = payload['data'];
-      const ngsData = data.ngsDownloadData;
-      const downloadData = ngsData.data;
-      if (ngsData && downloadData) {
-        downloadHtml(downloadData, sample);
-      } else {
-        alert(`Data not available for ${sample}.`);
-      }
-      return ngsData;
-    })
-    .catch(handleError);
-};
 
 /**
  * Returns the CellRanger output type taht the input IGO recipe should map to

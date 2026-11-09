@@ -65,8 +65,3 @@ const mapDataObjKeys = (data, keys) => {
     return dataArray;
 };
 
-export const downloadHtml = (data, fileName) => {
-    const blob = new Blob([data], {type: 'text/html'});
-    const blobURL = URL.createObjectURL(blob);
-    window.open(blobURL, '_blank');
-};

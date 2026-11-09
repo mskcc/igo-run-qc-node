@@ -29,7 +29,7 @@ import {
 import { downloadExcel } from '../../utils/other-utils';
 import config from '../../config';
 import { ngsStatsBase } from '../../resources/ngsStats';
-import { downloadNgsStatsFile, mapCellRangerRecipe, getCellRangerData } from '../../services/ngs-stats-service';
+import { mapCellRangerRecipe, getCellRangerData } from '../../services/ngs-stats-service';
 
 export const ProjectPage = () => {
   const { projectId } = useParams();
@@ -218,23 +218,11 @@ export const ProjectPage = () => {
     console.log(`🎛️ User modified columns: hiding ${columnIndicesToAdd.length} columns`);
 };
 
-  const downloadWebSummary = (row) => {
-    const cellRangerRecipe = mapCellRangerRecipe(row.recipe);
-    downloadNgsStatsFile(cellRangerRecipe, row.qc.sampleName, row.baseId, projectData.requestId, row.qc.run)
-      .then((data) => {
-        if (!data) {
-          // TODO add error UI messaging
-          // alert(`Data not available for ${row.qc.sampleName}.`);
-        }
-      });
-  };
-
   // One entry per table row: the table's rows are projectData.samples, in order (orderSampleQcData).
   // Nanopore projects have no web summaries.
   const rowWebSummaries = useMemo(() => {
     const isNanopore = projectData.samplesONT && projectData.samplesONT.length > 0;
-    const hasProductionSummary = recipe => !!recipe && !!mapCellRangerRecipe(recipe);
-    return isNanopore ? [] : webSummaryRowLinks(projectData.samples, publishedSummaries, hasProductionSummary);
+    return isNanopore ? [] : webSummaryRowLinks(projectData.samples, publishedSummaries);
   }, [projectData, publishedSummaries]);
 
   const handleQualityCheckClick = () => {
@@ -314,7 +302,7 @@ export const ProjectPage = () => {
           {isLoading ? 
             <div className="dot-elastic"></div>
             : <QcTable qcSamplesData={orderedSampleInfo} columnsToHide={dataColumnsToHide} tableHeaders={tableHeaders} recipe={recipeTypes}
-                       webSummaryLinks={rowWebSummaries} onDownloadWebSummary={downloadWebSummary} />
+                       webSummaryLinks={rowWebSummaries} />
           }
         </div>
       </div>

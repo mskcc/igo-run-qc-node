@@ -72,6 +72,7 @@ It does not run `npm install` or the tests, and it writes no config, so new depe
   - Nanopore detection: `HomePageController`, `util/helpers.js`, `ProjectController.changeRunStatus` and `util/ngsStatsQc.js`.
   - the picardstats → QC-field mapping in `util/ngsStatsQc.js` copies LimsRest's `UpdateLimsSampleLevelSequencingQcTask.getQcValues` + `GetSampleQcTask`; change it when they change.
   - the QC table's metric cells: `resources/projectHelper.js`'s `orderSampleQcData` blanks them for a `ngsStatsMatched: false` row, so a new metric column needs its `metric(...)` wrapper there.
+- **Loading spinner:** every loader is `features/common/turkeySpinner.js` (a seasonal turkey). Block spinners are the 3D turkey in `turkey3d.js`, drawn with `three` and code-split, so three.js loads only when a spinner first shows. The flat SVG turkey stands in while it loads, without WebGL, for inline spinners and for reduced motion. `three` is a frontend dependency, so a host that hasn't run `npm install` since it was added fails `npm run build`.
 - **Unused file:** `backend/constants.js` isn't used, and it is written with ES `export` syntax, so requiring it from the CommonJS backend throws.
 - **QC-status writes:** a QC-status change is a GET (`project/changeRunStatus`) that writes to whatever LIMS `LIMS_URL` points at. Point a local backend at a dev LIMS.
 - **Run names from paths:** `getRecentRunsData` takes the run name from a fixed path segment (`split('/')[7]`), so a local `FASTQC_PATH` at a different depth gives wrong run names.

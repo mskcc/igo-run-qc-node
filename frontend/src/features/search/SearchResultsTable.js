@@ -1,4 +1,5 @@
 import React, { memo, useCallback } from 'react';
+import { TurkeySpinner } from '../common/turkeySpinner';
 import { BsFillArrowRightCircleFill } from 'react-icons/bs';
 
 export const SearchResultsTable = memo(({ 
@@ -163,7 +164,7 @@ export const SearchResultsTable = memo(({
     const renderLoadingIndicator = () => (
         isLoading && (
             <div className="text-align-center" style={{ marginTop: '15px', color: '#666', fontSize: '14px' }}>
-                <div className="dot-elastic" style={{ display: 'inline-block', marginRight: '10px' }}></div>
+                <TurkeySpinner size={24} inline style={{ marginRight: '10px' }} />
                 <span style={{ animation: 'fadeIn 1s ease-in-out infinite alternate' }}>
                     Searching database...
                 </span>

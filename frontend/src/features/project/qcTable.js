@@ -1,21 +1,34 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { HotTable } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
+import { textRenderer } from 'handsontable/renderers/textRenderer';
 import 'handsontable/dist/handsontable.full.min.css';
 import { UpdateStatus } from './updateStatus';
 import { BehaviorSubject } from 'rxjs';
 import { isHighUnmapped } from '../../resources/projectHelper';
 import { NO_NGS_STATS_LABEL } from '../../resources/constants';
+import { webSummaryShortLabel, webSummaryLabel, webSummaryHref, productionSummaryLabel } from '../../resources/webSummaries';
 
 registerAllModules();
 
-export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) => {
+/**
+ * webSummaryLinks: one entry per row of qcSamplesData (webSummaryRowLinks), shown in the row's
+ * Sample cell. onDownloadWebSummary(row) downloads production's summary for a row.
+ */
+export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe, webSummaryLinks = [], onDownloadWebSummary}) => {
     const [showModal, setShowModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
     const [customCells, setCustomCells] = useState([]);
     const [selectionSubject] = useState(new BehaviorSubject([])); // Observable that can emit updates of user-selection
     const [tableRef] = useState(React.createRef());
+    // The renderer reads the links from refs, so links that arrive after the table is drawn
+    // need only a re-render (below), not new settings, which would lose the user's sorting.
+    const webSummaryLinksRef = useRef(webSummaryLinks);
+    webSummaryLinksRef.current = webSummaryLinks;
+    const onDownloadRef = useRef(onDownloadWebSummary);
+    onDownloadRef.current = onDownloadWebSummary;
+    const sampleColumn = tableHeaders.indexOf('Sample');
 
     // recordIdColumn needed for status update
     let recordColumn = tableHeaders.indexOf('QC Record Id');
@@ -120,6 +133,49 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
 
       setCustomCells(cells);
     }, [qcSamplesData]);
+
+    useEffect(() => {
+      const hot = tableRef.current && tableRef.current.hotInstance;
+      if (hot && !hot.isDestroyed) {
+        hot.render();
+      }
+    }, [webSummaryLinks, tableRef]);
+
+    // The Sample cell: the sample's name, then a link to each of the row's web summaries.
+    // Handsontable passes the visual row; the links are in the data's (physical) order.
+    function sampleRenderer(instance, td, row, col, prop, value, cellProperties) {
+      textRenderer.apply(this, arguments);
+      const links = webSummaryLinksRef.current[instance.toPhysicalRow(row)];
+      if (!links || (!links.published.length && !links.download)) {
+        return td;
+      }
+      const container = document.createElement('span');
+      container.className = 'web-summary-links';
+      // A click on a link opens or downloads it, without selecting the cell under it.
+      container.addEventListener('mousedown', event => event.stopPropagation());
+      links.published.forEach(summary => {
+        const a = document.createElement('a');
+        a.className = 'web-summary-link';
+        a.href = webSummaryHref(summary);
+        a.target = '_blank';
+        a.rel = 'noreferrer';
+        a.title = `Open ${webSummaryLabel(summary)} for ${links.name}`;
+        a.textContent = `${webSummaryShortLabel(summary)} ↗`;
+        container.appendChild(a);
+      });
+      if (links.download) {
+        const run = links.download.qc.run;
+        const button = document.createElement('span');
+        button.className = 'web-summary-link';
+        button.setAttribute('role', 'button');
+        button.title = `Download ${productionSummaryLabel(run)}'s web summary for ${links.name}`;
+        button.textContent = 'Production ↓';
+        button.addEventListener('click', () => onDownloadRef.current && onDownloadRef.current(links.download));
+        container.appendChild(button);
+      }
+      td.appendChild(container);
+      return td;
+    }
 
     // Unmapped Reads cell css when too many of the run's read pairs didn't map, e.g. a contaminated library.
     // Handsontable passes physical indexes, so the highlight stays with its sample when the table is sorted.
@@ -239,6 +295,9 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe}) =>
                   col.numericFormat = {
                     pattern: useIntegerPattern ? '0,0' : '0,0.00',
                   };
+                }
+                if (index === sampleColumn) {
+                  col.renderer = sampleRenderer;
                 }
                 return col;
             }}

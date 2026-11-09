@@ -1,6 +1,6 @@
 /**
  * 10x web summaries the Temporal pipeline publishes for a project
- * (backend util/webSummaries.js), grouped for the Web Summaries popup.
+ * (backend util/webSummaries.js), matched to the project table's rows.
  */
 
 const KIND_LABELS = {
@@ -24,34 +24,46 @@ export const webSummariesBySample = (summaries = []) => {
   return bySample;
 };
 
+/** 'BONO_0230' and 'BONO_0230_B23M3FMLT3' are the same run; 'BONO_0230' and 'BONO_02301' are not. */
+const sameRun = (a, b) => !!a && !!b && (a === b || a.startsWith(`${b}_`) || b.startsWith(`${a}_`));
+
 /**
- * One entry per sample for the Web Summaries popup, in the table's order. The project
- * table has a row per sample per run, so a sample sequenced on two runs came up twice.
+ * The web summaries to link from each row of the project table: one entry per row of
+ * `samples`, in the same order. The table has a row per sample per run.
  *
- *   { name, published: [summaries], downloads: [{ row, run }] }
+ *   { name, published: [summaries], download: row | null }
  *
- * Both sources, side by side: the Temporal pipeline's published summaries, and
- * production's from ngs-stats - one download per distinct run, since those can differ.
+ * Both sources, side by side:
+ *   - published: the Temporal pipeline's summaries, each on the row of the run that made it.
+ *     One whose run matches none of the sample's rows goes on the sample's first row, so none
+ *     is lost.
+ *   - download: production's summary for the row's own run, from ngs-stats, on the rows
+ *     `hasProductionSummary(recipe)` says Cell Ranger ran for.
  * Production stays the system of record; Temporal's copy is the one being validated.
  */
-export const webSummaryEntries = (samples = [], publishedBySample = {}) => {
-  const entries = [];
-  const byName = {};
-  samples.forEach(row => {
-    const name = `${row.qc.sampleName}_IGO_${row.baseId}`;
-    let entry = byName[name];
-    if (!entry) {
-      entry = { name, published: publishedBySample[name] || [], downloads: [] };
-      byName[name] = entry;
-      entries.push(entry);
-    }
-    const run = row.qc.run;
-    if (!entry.downloads.some(d => d.run === run)) {
-      entry.downloads.push({ row, run });
+export const webSummaryRowLinks = (samples = [], publishedBySample = {}, hasProductionSummary = () => false) => {
+  const links = samples.map(row => ({
+    name: `${row.qc.sampleName}_IGO_${row.baseId}`,
+    published: [],
+    download: hasProductionSummary(row.recipe) ? row : null
+  }));
+  const firstRowOf = {};
+  links.forEach((link, i) => {
+    if (!(link.name in firstRowOf)) {
+      firstRowOf[link.name] = i;
     }
   });
-  return entries;
+  Object.keys(firstRowOf).forEach(name => {
+    (publishedBySample[name] || []).forEach(summary => {
+      const i = links.findIndex((link, j) => link.name === name && sameRun(samples[j].qc.run, summary.run));
+      links[i >= 0 ? i : firstRowOf[name]].published.push(summary);
+    });
+  });
+  return links;
 };
+
+/** What a published summary is, for its link in the table: 'Temporal ARC' */
+export const webSummaryShortLabel = summary => `Temporal ${summary.kind}`;
 
 /** A published summary: 'Temporal · Multiome (ARC) · BONO_0230_B23M3FMLT3' */
 export const webSummaryLabel = summary => `Temporal · ${KIND_LABELS[summary.kind] || summary.kind} · ${summary.run}`;

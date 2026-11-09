@@ -864,14 +864,13 @@ body {
   color: #6e7781;
   font-style: italic;
 }
-/* A row's web summaries, after the sample's name in its Sample cell. */
+/* A row's web summaries, in the project table's Web Summary column. */
 .handsontable td .web-summary-links {
-  margin-left: 6px;
   font-style: normal;
 }
 .handsontable td .web-summary-link {
   display: inline-block;
-  margin-left: 4px;
+  margin: 0 2px;
   padding: 0 5px;
   border: 1px solid var(--mskcc-light-blue);
   border-radius: 3px;

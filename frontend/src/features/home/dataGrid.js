@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { TurkeySpinner } from '../common/turkeySpinner';
 import { PROJECT_FLAGS,  LIMS_REQUEST_ID } from '../../resources/constants';
 import { BsFillArrowRightCircleFill } from 'react-icons/bs';
 import config from '../../config';
@@ -118,7 +119,7 @@ export const DataGrid = ({projects}) => {
             </div>;
         } else {
             // LOADING - Input properties are still loading
-            return <div className="dot-elastic"></div>;
+            return <TurkeySpinner />;
         }
     };
 

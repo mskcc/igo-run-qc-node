@@ -213,10 +213,6 @@
   cursor: default;
 }
 
-.search-button .dot-elastic {
-  transform: scale(0.5);
-}
-
 body {
   margin: 0;
   padding: 0;
@@ -258,91 +254,534 @@ body {
   margin-top: 20px;
 }
 
-/* LOADER */
-.dot-elastic {
-  position: relative;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
-  background-color: var(--mskcc-dark-green);
-  color: var(--mskcc-dark-green);
-  animation: dot-elastic 1s infinite linear;
-  margin: auto;
+/* TURKEY SPINNER */
+.turkey-spinner {
+  display: block;
+  margin: 16px auto;
 }
-.dot-elastic::before, .dot-elastic::after {
-  content: "";
+.turkey-spinner.inline {
   display: inline-block;
-  position: absolute;
-  top: 0;
+  margin: 0;
+  vertical-align: middle;
 }
-.dot-elastic::before {
-  left: -15px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
-  background-color: var(--mskcc-dark-green);
-  color: var(--mskcc-dark-green);
-  animation: dot-elastic-before 1s infinite linear;
+.turkey-spinner svg {
+  display: block;
+  overflow: visible;
 }
-.dot-elastic::after {
-  left: 15px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
-  background-color: var(--mskcc-dark-green);
-  color: var(--mskcc-dark-green);
-  animation: dot-elastic-after 1s infinite linear;
+.turkey-shadow {
+  fill: #000;
+  opacity: 0.18;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: turkey-shadow 0.9s ease-in-out infinite;
+}
+.turkey-red {
+  fill: #c0392b;
+}
+.turkey-orange {
+  fill: #e8731a;
+}
+.turkey-gold {
+  fill: #f4c430;
+}
+.turkey-feather-tip {
+  fill: #fff;
+  opacity: 0.35;
+}
+.turkey-body {
+  fill: #7a4a26;
+}
+.turkey-belly {
+  fill: #9a6234;
+}
+.turkey-face {
+  fill: #8d5a32;
+}
+.turkey-eye-white {
+  fill: #fff;
+}
+.turkey-pupil {
+  fill: #222;
+}
+.turkey-beak {
+  fill: #f5a623;
+}
+.turkey-wattle,
+.turkey-side-wattle {
+  fill: #d63031;
 }
 
-@keyframes dot-elastic-before {
-  0% {
-    transform: scale(1, 1);
+/* Front view: struts in place, fans its tail, bobs its head and blinks */
+.turkey-bird {
+  animation: turkey-bounce 0.9s ease-in-out infinite;
+}
+/* Each feather rotates about the tail's base; --a is its fully open angle */
+.turkey-feather {
+  transform: rotate(var(--a));
+  animation: turkey-fan 1.8s ease-in-out infinite;
+}
+.turkey-wing {
+  fill: #5e3519;
+  transform-box: fill-box;
+  transform-origin: 50% 10%;
+  animation: turkey-flap 0.9s ease-in-out infinite;
+}
+.turkey-wing.right {
+  animation-name: turkey-flap-right;
+}
+.turkey-foot path,
+.turkey-leg path {
+  fill: none;
+  stroke: #e8901a;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.turkey-foot {
+  animation: turkey-step 0.9s ease-in-out infinite;
+}
+.turkey-foot.right {
+  animation-delay: -0.45s;
+}
+.turkey-head {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: turkey-head-bob 0.9s ease-in-out infinite;
+}
+.turkey-eyes {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: turkey-blink 3.6s linear infinite;
+}
+.turkey-wattle {
+  transform-box: fill-box;
+  transform-origin: 30% 0%;
+  animation: turkey-wattle 0.45s ease-in-out infinite alternate;
+}
+
+/* Running (block spinners). One 4.8 s lap: run right 2-31% (with a jump and a skid), hop-turn at 33%
+   to face you and strut, hop-turn at 50% and run left 52-81%, hop-turn at 83% and strut, hop-turn at 100%.
+   Each view swap happens mid-hop behind a dust poof, so the turkey never squeezes flat. */
+.turkey-spinner.running {
+  position: relative;
+}
+.turkey-spinner.running svg {
+  animation: turkey-run 4.8s ease-in-out infinite;
+}
+.turkey-spinner.running .turkey-shadow {
+  animation: turkey-shadow-hops 4.8s ease-in-out infinite;
+}
+.turkey-side-show,
+.turkey-side-pose,
+.turkey-front-pose,
+.turkey-poof {
+  transform-box: view-box;
+}
+/* Shown while running; mirrored for the run back to the left */
+.turkey-side-show {
+  opacity: 0;
+  transform-origin: 50% 50%;
+  animation: turkey-side-show 4.8s step-end infinite;
+}
+.turkey-front-show {
+  animation: turkey-front-show 4.8s step-end infinite;
+}
+/* Lean into the run, jump halfway, skid to a stop, hop into the turn */
+.turkey-side-pose {
+  transform-origin: 50% 95%;
+  animation: turkey-side-pose 4.8s ease-in-out infinite;
+}
+.turkey-front-pose {
+  transform-origin: 50% 95%;
+  animation: turkey-front-pose 4.8s ease-in-out infinite;
+}
+.turkey-spinner.running .turkey-front .turkey-bird {
+  animation: none;
+}
+.turkey-spinner.running .turkey-front .turkey-feather {
+  animation: turkey-pause-fan 4.8s ease-in-out infinite;
+}
+.turkey-side-bird {
+  animation: turkey-side-bob 0.12s ease-in-out infinite alternate;
+}
+.turkey-side-feather {
+  transform: rotate(var(--a));
+  animation: turkey-side-wiggle 0.24s ease-in-out infinite alternate;
+}
+.turkey-leg {
+  animation: turkey-leg 0.24s linear infinite;
+}
+.turkey-leg.back {
+  animation-delay: -0.12s;
+}
+.turkey-leg.back path {
+  stroke: #c46f12;
+}
+.turkey-side-wing {
+  fill: #5e3519;
+  transform-box: fill-box;
+  transform-origin: 85% 30%;
+  animation: turkey-side-flap 0.12s ease-in-out infinite alternate;
+}
+.turkey-side-head {
+  transform-box: fill-box;
+  transform-origin: 20% 90%;
+  animation: turkey-side-peck 0.24s ease-in-out infinite;
+}
+.turkey-side-wattle {
+  transform-box: fill-box;
+  transform-origin: 40% 0%;
+  animation: turkey-wattle 0.12s ease-in-out infinite alternate;
+}
+.turkey-dust circle,
+.turkey-skid circle {
+  fill: #c8c2b8;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+.turkey-dust circle {
+  animation: turkey-dust 0.5s ease-out infinite;
+}
+.turkey-dust circle + circle {
+  animation-delay: -0.25s;
+}
+.turkey-skid circle {
+  opacity: 0;
+  animation: turkey-skid 4.8s ease-out infinite;
+}
+.turkey-speed path {
+  fill: none;
+  stroke: #b9b0a2;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  animation: turkey-speed 0.24s linear infinite;
+}
+.turkey-speed path:nth-child(2) {
+  animation-delay: -0.08s;
+}
+.turkey-speed path:nth-child(3) {
+  animation-delay: -0.16s;
+}
+.turkey-poof {
+  opacity: 0;
+  transform-origin: 50% 65%;
+  animation: turkey-poof 4.8s ease-out infinite;
+}
+.turkey-poof circle {
+  fill: #f4efe7;
+  stroke: #ddd3c4;
+  stroke-width: 1;
+}
+.turkey-sparks {
+  fill: none;
+  stroke: #f4c430;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+@keyframes turkey-fan {
+  0%, 100% {
+    transform: rotate(calc(var(--a) * 0.45));
   }
-  25% {
-    transform: scale(1, 1.5);
+  45% {
+    transform: rotate(var(--a));
   }
   50% {
-    transform: scale(1, 0.67);
+    transform: rotate(calc(var(--a) + 3deg));
   }
-  75% {
-    transform: scale(1, 1);
+  55% {
+    transform: rotate(calc(var(--a) - 3deg));
   }
-  100% {
-    transform: scale(1, 1);
+  62% {
+    transform: rotate(var(--a));
   }
 }
-@keyframes dot-elastic {
-  0% {
-    transform: scale(1, 1);
-  }
-  25% {
-    transform: scale(1, 1);
+@keyframes turkey-bounce {
+  0%, 100% {
+    transform: translateY(0);
   }
   50% {
-    transform: scale(1, 1.5);
-  }
-  75% {
-    transform: scale(1, 1);
-  }
-  100% {
-    transform: scale(1, 1);
+    transform: translateY(-2px);
   }
 }
-@keyframes dot-elastic-after {
-  0% {
-    transform: scale(1, 1);
-  }
-  25% {
-    transform: scale(1, 1);
+@keyframes turkey-shadow {
+  0%, 100% {
+    transform: scaleX(1);
   }
   50% {
-    transform: scale(1, 0.67);
+    transform: scaleX(0.85);
+  }
+}
+@keyframes turkey-head-bob {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-1.5px) rotate(-6deg);
+  }
+  50% {
+    transform: translateY(0.5px) rotate(0deg);
   }
   75% {
-    transform: scale(1, 1.5);
+    transform: translateY(-1.5px) rotate(6deg);
   }
-  100% {
-    transform: scale(1, 1);
+}
+@keyframes turkey-wattle {
+  from {
+    transform: rotate(-14deg);
+  }
+  to {
+    transform: rotate(14deg);
+  }
+}
+@keyframes turkey-blink {
+  0%, 90%, 100% {
+    transform: scaleY(1);
+  }
+  94% {
+    transform: scaleY(0.1);
+  }
+}
+@keyframes turkey-flap {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(14deg);
+  }
+}
+@keyframes turkey-flap-right {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-14deg);
+  }
+}
+@keyframes turkey-step {
+  0%, 50%, 100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-1.5px);
+  }
+}
+@keyframes turkey-run {
+  0%, 2% {
+    transform: translateX(0);
+  }
+  31%, 52% {
+    transform: translateX(var(--run));
+  }
+  81%, 100% {
+    transform: translateX(0);
+  }
+}
+@keyframes turkey-side-show {
+  0% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  33% {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(-1);
+  }
+  83%, 100% {
+    opacity: 0;
+    transform: scaleX(-1);
+  }
+}
+@keyframes turkey-front-show {
+  0% {
+    opacity: 0;
+  }
+  33% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  83%, 100% {
+    opacity: 1;
+  }
+}
+@keyframes turkey-side-pose {
+  0%, 50%, 100% {
+    transform: translateY(-6px) rotate(0deg) scale(1);
+  }
+  3%, 53% {
+    transform: translateY(0) rotate(0deg) scale(1.08, 0.9);
+  }
+  6%, 13%, 56%, 63% {
+    transform: translateY(0) rotate(8deg) scale(1);
+  }
+  16.5%, 66.5% {
+    transform: translateY(-9px) rotate(-6deg) scale(1);
+  }
+  20%, 70% {
+    transform: translateY(0) rotate(8deg) scale(1.05, 0.94);
+  }
+  22%, 26%, 72%, 76% {
+    transform: translateY(0) rotate(8deg) scale(1);
+  }
+  29%, 31%, 79%, 81% {
+    transform: translateY(0) rotate(-14deg) scale(1);
+  }
+  33%, 83% {
+    transform: translateY(-6px) rotate(-4deg) scale(1);
+  }
+}
+@keyframes turkey-front-pose {
+  0%, 33%, 50%, 83%, 100% {
+    transform: translateY(-6px) scale(1);
+  }
+  36%, 86% {
+    transform: translateY(0) scale(1.1, 0.88);
+  }
+  38%, 88% {
+    transform: translateY(0) scale(1);
+  }
+  41%, 91% {
+    transform: translateY(-5px) scale(0.96, 1.04);
+  }
+  43%, 93% {
+    transform: translateY(0) scale(1.06, 0.93);
+  }
+  45%, 95% {
+    transform: translateY(-3px) scale(1);
+  }
+  47%, 97% {
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes turkey-shadow-hops {
+  0%, 33%, 50%, 83%, 100% {
+    transform: scaleX(0.7);
+  }
+  3%, 13%, 20%, 31%, 36%, 43%, 47%, 53%, 63%, 70%, 81%, 86%, 93%, 97% {
+    transform: scaleX(1);
+  }
+  16.5%, 66.5% {
+    transform: scaleX(0.6);
+  }
+  41%, 91% {
+    transform: scaleX(0.8);
+  }
+}
+@keyframes turkey-pause-fan {
+  0%, 33%, 50%, 83%, 100% {
+    transform: rotate(calc(var(--a) * 0.3));
+  }
+  37%, 46%, 87%, 96% {
+    transform: rotate(var(--a));
+  }
+  40%, 90% {
+    transform: rotate(calc(var(--a) + 5deg));
+  }
+  43%, 93% {
+    transform: rotate(calc(var(--a) - 5deg));
+  }
+}
+@keyframes turkey-poof {
+  0%, 33%, 50%, 83%, 100% {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+  2.5%, 35.5%, 52.5%, 85.5% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+  2.6%, 31%, 35.6%, 48%, 52.6%, 81%, 85.6%, 98% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+@keyframes turkey-skid {
+  0%, 26.5%, 50%, 76.5%, 100% {
+    opacity: 0;
+    transform: translateX(0) scale(0.3);
+  }
+  28%, 78% {
+    opacity: 0.9;
+    transform: translateX(1px) scale(1);
+  }
+  32%, 82% {
+    opacity: 0;
+    transform: translateX(5px) scale(1.6);
+  }
+}
+@keyframes turkey-speed {
+  from {
+    opacity: 0.9;
+    transform: translateX(2px);
+  }
+  to {
+    opacity: 0.1;
+    transform: translateX(-4px);
+  }
+}
+@keyframes turkey-side-bob {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-2.5px);
+  }
+}
+@keyframes turkey-side-wiggle {
+  from {
+    transform: rotate(calc(var(--a) - 5deg));
+  }
+  to {
+    transform: rotate(calc(var(--a) + 5deg));
+  }
+}
+@keyframes turkey-leg {
+  0%, 100% {
+    transform: rotate(38deg);
+  }
+  50% {
+    transform: rotate(-38deg);
+  }
+}
+@keyframes turkey-side-flap {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-30deg);
+  }
+}
+@keyframes turkey-side-peck {
+  0%, 100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(1.4px) rotate(6deg);
+  }
+}
+@keyframes turkey-dust {
+  from {
+    opacity: 0.8;
+    transform: translateX(0) scale(0.4);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-8px) scale(1.6);
+  }
+}
+/* 3D turkey: the canvas is drawn by turkey3d.js */
+.turkey-3d canvas {
+  display: block;
+}
+/* Reduced motion: a still turkey facing you */
+@media (prefers-reduced-motion: reduce) {
+  .turkey-spinner svg,
+  .turkey-spinner svg * {
+    animation: none !important;
   }
 }
 

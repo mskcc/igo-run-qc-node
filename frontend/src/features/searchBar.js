@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { TurkeySpinner } from './common/turkeySpinner';
 import { useHistory } from 'react-router-dom';
 import { FaSearch, FaChevronDown } from 'react-icons/fa';
 
@@ -286,7 +287,7 @@ export const SearchBar = () => {
                 }}
             >
                 {isLoading ? (
-                    <div className="dot-elastic" style={{ transform: 'scale(0.5)' }} />
+                    <TurkeySpinner size={22} inline />
                 ) : (
                     <FaSearch />
                 )}

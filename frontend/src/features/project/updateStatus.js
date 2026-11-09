@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { TurkeySpinner } from '../common/turkeySpinner';
 import { useParams } from 'react-router-dom';
 import { MdClose } from 'react-icons/md';
 import Select from 'react-dropdown-select';
@@ -161,7 +162,7 @@ export const UpdateStatus = ({selectionSubject, handleModalClose, handleGridUpda
                     <span className='status-title-text'>New Status</span>
                     <Select options={availableStatuses} onChange={(choice) => handleStatusChoice(choice)} />
                 </div>
-                {isLoading && <div className="dot-elastic"></div>}
+                {isLoading && <TurkeySpinner size={40} />}
                 <div className={successMessage ? 'text-align-center mskcc-dark-green overflow-wrap status-set-text' : 'hidden'}>{successMessage}</div>
                 <div className={errorMessage ? 'text-align-center mskcc-red overflow-wrap status-set-text' : 'hidden'}>{errorMessage}</div>
                 <button onClick={submitStatusChange} className='ok-button' disabled={newStatus === ''}>Update</button>

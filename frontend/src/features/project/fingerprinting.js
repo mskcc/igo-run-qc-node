@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { TurkeySpinner } from '../common/turkeySpinner';
 import { HotTable } from '@handsontable/react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -121,7 +122,7 @@ export const FingerprintingTable = () => {
                 Fingerprinting
             </div>
             <div className='fingerprint-subtitle'>{projectId}</div>
-            {isLoading ? <div className='dot-elastic'></div> : renderFingerprintingData()}
+            {isLoading ? <TurkeySpinner /> : renderFingerprintingData()}
         </div>
     );
 };

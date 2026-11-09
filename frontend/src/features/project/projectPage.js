@@ -3,6 +3,7 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useMemo, useState } from 'react';
+import { TurkeySpinner } from '../common/turkeySpinner';
 import { Card } from '../common/card';
 import { useParams, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -300,7 +301,7 @@ export const ProjectPage = () => {
         )}
         <div className='hottable-container'>
           {isLoading ? 
-            <div className="dot-elastic"></div>
+            <TurkeySpinner size={72} />
             : <QcTable qcSamplesData={orderedSampleInfo} columnsToHide={dataColumnsToHide} tableHeaders={tableHeaders} recipe={recipeTypes}
                        webSummaryLinks={rowWebSummaries} />
           }

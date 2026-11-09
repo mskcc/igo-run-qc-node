@@ -2,16 +2,14 @@
 /* eslint-disable quotes */
 /* eslint-disable no-use-before-define */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Card } from '../common/card';
 import { useParams, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { SiMicrosoftexcel } from 'react-icons/si';
 import { FaDna } from 'react-icons/fa';
-import { TiDownload, TiExport, TiTimes } from 'react-icons/ti';
-import { useDismiss } from '../../utils/useDismiss';
 import { getProjectQC, getCrosscheckMetrics, getWebSummaries } from '../../services/igo-qc-service';
-import { webSummariesBySample, webSummaryLabel, webSummaryHref, webSummaryEntries, productionSummaryLabel } from '../../resources/webSummaries';
+import { webSummariesBySample, webSummaryRowLinks } from '../../resources/webSummaries';
 import {
   setProjectQCData,
   selectProjectDataById,
@@ -31,7 +29,7 @@ import {
 import { downloadExcel } from '../../utils/other-utils';
 import config from '../../config';
 import { ngsStatsBase } from '../../resources/ngsStats';
-import { downloadNgsStatsFile, mapCellRangerRecipe, getCellRangerData } from '../../services/ngs-stats-service';
+import { mapCellRangerRecipe, getCellRangerData } from '../../services/ngs-stats-service';
 
 export const ProjectPage = () => {
   const { projectId } = useParams();
@@ -44,15 +42,8 @@ export const ProjectPage = () => {
   const [dataColumnsToHide, setDataColumnsToHide] = useState([]);
   const [tableHeaders, setTableHeaders] = useState(TABLE_HEADERS);
   const [orderedSampleInfo, setOrderedSampleInfo] = useState([]);
-  const [showWebSummaries, setShowWebSummaries] = useState(false);
   // The project's web summaries the Temporal pipeline published, by sample.
   const [publishedSummaries, setPublishedSummaries] = useState({});
-  // A click outside the Web Summaries popup, or Escape, closes it: it sits over the page.
-  const webSummariesPopup = useRef(null);
-  const webSummariesButton = useRef(null);
-  const webSummariesRefs = useRef([webSummariesPopup, webSummariesButton]).current;
-  const closeWebSummaries = useRef(() => setShowWebSummaries(false)).current;
-  useDismiss(showWebSummaries, webSummariesRefs, closeWebSummaries);
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
   const [qualityCheckStatus, setQualityCheckStatus] = useState('button-disabled');
   const [recipeTypes, setRecipeTypes] = useState('');
@@ -119,6 +110,16 @@ export const ProjectPage = () => {
       fetch10XData(recipeToUse);
     }
   }, [is10xProject]);
+
+  // Web summaries, linked from each sample's row in the table.
+  useEffect(() => {
+    let current = true;
+    setPublishedSummaries({});
+    if (projectId) {
+      getWebSummaries(projectId).then(summaries => current && setPublishedSummaries(webSummariesBySample(summaries)));
+    }
+    return () => { current = false; };
+  }, [projectId]);
 
   // Quality Checks - fingerprinting info
   useEffect(() => {
@@ -217,23 +218,12 @@ export const ProjectPage = () => {
     console.log(`🎛️ User modified columns: hiding ${columnIndicesToAdd.length} columns`);
 };
 
-  const handleWebSummaryClick = () => {
-    if (!showWebSummaries && projectId) {
-      getWebSummaries(projectId).then(summaries => setPublishedSummaries(webSummariesBySample(summaries)));
-    }
-    setShowWebSummaries(!showWebSummaries);
-  };
-
-  const downloadWebSummary = (row) => {
-    const cellRangerRecipe = mapCellRangerRecipe(row.recipe);
-    downloadNgsStatsFile(cellRangerRecipe, row.qc.sampleName, row.baseId, projectData.requestId, row.qc.run)
-      .then((data) => {
-        if (!data) {
-          // TODO add error UI messaging
-          // alert(`Data not available for ${row.qc.sampleName}.`);
-        }
-      });
-  };
+  // One entry per table row: the table's rows are projectData.samples, in order (orderSampleQcData).
+  // Nanopore projects have no web summaries.
+  const rowWebSummaries = useMemo(() => {
+    const isNanopore = projectData.samplesONT && projectData.samplesONT.length > 0;
+    return isNanopore ? [] : webSummaryRowLinks(projectData.samples, publishedSummaries);
+  }, [projectData, publishedSummaries]);
 
   const handleQualityCheckClick = () => {
     if(projectData.samplesONT && projectData.samplesONT.length>0){
@@ -295,37 +285,8 @@ export const ProjectPage = () => {
                 <FaDna />
               </a>
             </div>
-            <div ref={webSummariesButton} onClick={handleWebSummaryClick} className={showWebSummaries ? 'additional-actions action-button-clicked' : 'additional-actions'}>Web Summaries</div>
             <div onClick={handleQualityCheckClick} className={`additional-actions ${qualityCheckStatus}`}>Quality Checks</div>
             <div onClick={handleColumnModalOpen} className='additional-actions'>Set Columns</div>
-            <div ref={webSummariesPopup} className={showWebSummaries ? 'actions-popup' : 'hidden'}>
-              <div className='actions-popup-header'>
-                <span>Web Summaries</span>
-                <TiTimes className='actions-popup-close' role='button' aria-label='Close web summaries'
-                         onClick={() => setShowWebSummaries(false)} />
-              </div>
-              {showWebSummaries && projectData.samples ? (
-                webSummaryEntries(projectData.samples, publishedSummaries).map(entry => {
-                  // Temporal's published summaries open here; production's download from ngs-stats.
-                  return <div key={entry.name}>
-                    {entry.published.map(summary => (
-                      <a key={summary.path} href={webSummaryHref(summary)} target='_blank' rel='noreferrer'
-                         className={'download-stats'} title={`Open the Temporal pipeline's web summary for ${entry.name}`}>
-                        <span>{entry.name} · {webSummaryLabel(summary)} </span><TiExport />
-                      </a>
-                    ))}
-                    {entry.downloads.map(({ row, run }) => (
-                      <div key={run} onClick={() => downloadWebSummary(row)} className={'download-stats'}
-                           title={`Download production's web summary for ${entry.name} from ${run}`}>
-                        <span>{entry.name} · {productionSummaryLabel(run)} </span><TiDownload />
-                      </div>
-                    ))}
-                  </div>;
-                })
-              )
-              : ''
-              }
-            </div>
           </div>
         </div>
         {cellRangerError && (
@@ -340,7 +301,8 @@ export const ProjectPage = () => {
         <div className='hottable-container'>
           {isLoading ? 
             <div className="dot-elastic"></div>
-            : <QcTable qcSamplesData={orderedSampleInfo} columnsToHide={dataColumnsToHide} tableHeaders={tableHeaders} recipe={recipeTypes} />
+            : <QcTable qcSamplesData={orderedSampleInfo} columnsToHide={dataColumnsToHide} tableHeaders={tableHeaders} recipe={recipeTypes}
+                       webSummaryLinks={rowWebSummaries} />
           }
         </div>
       </div>

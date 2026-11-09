@@ -49,10 +49,10 @@ describe('web summaries', () => {
   });
 
   it('labels a summary by what it is and which run made it, and links it from the site root', () => {
-    expect(webSummaryLabel(arc1)).toBe('Temporal · Multiome (ARC) · BONO_0230');
-    expect(webSummaryLabel({ ...arc1, kind: 'FB' })).toBe('Temporal · Feature Barcoding (multi) · BONO_0230');
-    expect(webSummaryLabel({ ...arc1, kind: 'NEW' })).toBe('Temporal · NEW · BONO_0230');
-    expect(webSummaryShortLabel(arc1)).toBe('Temporal ARC');
+    expect(webSummaryLabel(arc1)).toBe('Multiome (ARC) · BONO_0230');
+    expect(webSummaryLabel({ ...arc1, kind: 'FB' })).toBe('Feature Barcoding (multi) · BONO_0230');
+    expect(webSummaryLabel({ ...arc1, kind: 'NEW' })).toBe('NEW · BONO_0230');
+    expect(webSummaryShortLabel(arc1)).toBe('ARC');
     expect(webSummaryHref(arc1)).toBe('/static/html/FASTQ/CELLRANGER/18995/S_IGO_18995_1___ARC___BONO_0230_temporal.html');
   });
 });

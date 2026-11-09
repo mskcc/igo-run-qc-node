@@ -30,7 +30,7 @@ export const QcTable = ({qcSamplesData: sampleRows, columnsToHide: hiddenDataCol
     webSummaryLinksRef.current = webSummaryLinks;
 
     // The Web Summary column goes after Sample, as a copy of the rows with one more cell: the
-    // row's link labels ('Temporal FB'), which the column's filter and sort use. Everything below
+    // row's link labels ('FB'), which the column's filter and sort use. Everything below
     // works on these display headers and rows, by header name, so it needs no other change.
     const hasWebSummaries = webSummaryLinks.some(links => links && links.published.length > 0);
     const dataSampleColumn = dataHeaders.indexOf('Sample');
@@ -170,7 +170,7 @@ export const QcTable = ({qcSamplesData: sampleRows, columnsToHide: hiddenDataCol
         a.href = webSummaryHref(summary);
         a.target = '_blank';
         a.rel = 'noreferrer';
-        a.title = `Open ${webSummaryLabel(summary)} for ${links.name}`;
+        a.title = `${links.name} · ${webSummaryLabel(summary)}`;
         a.textContent = `${webSummaryShortLabel(summary)} ↗`;
         container.appendChild(a);
       });

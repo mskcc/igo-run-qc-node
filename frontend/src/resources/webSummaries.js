@@ -57,11 +57,11 @@ export const webSummaryRowLinks = (samples = [], publishedBySample = {}) => {
   return links;
 };
 
-/** What a published summary is, for its link in the table: 'Temporal ARC' */
-export const webSummaryShortLabel = summary => `Temporal ${summary.kind}`;
+/** What a published summary is, for its link in the table: 'ARC' */
+export const webSummaryShortLabel = summary => summary.kind;
 
-/** A published summary: 'Temporal · Multiome (ARC) · BONO_0230_B23M3FMLT3' */
-export const webSummaryLabel = summary => `Temporal · ${KIND_LABELS[summary.kind] || summary.kind} · ${summary.run}`;
+/** A published summary: 'Multiome (ARC) · BONO_0230_B23M3FMLT3' */
+export const webSummaryLabel = summary => `${KIND_LABELS[summary.kind] || summary.kind} · ${summary.run}`;
 
 /** The summary's URL on this site: '/static/html/FASTQ/CELLRANGER/...' */
 export const webSummaryHref = summary => `/${summary.path}`;

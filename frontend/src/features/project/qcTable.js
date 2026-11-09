@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { HotTable } from '@handsontable/react';
 import { registerAllModules } from 'handsontable/registry';
 import { textRenderer } from 'handsontable/renderers/textRenderer';
@@ -12,21 +12,41 @@ import { webSummaryShortLabel, webSummaryLabel, webSummaryHref } from '../../res
 
 registerAllModules();
 
+export const WEB_SUMMARY_HEADER = 'Web Summary';
+
 /**
- * webSummaryLinks: one entry per row of qcSamplesData (webSummaryRowLinks), shown in the row's
- * Sample cell.
+ * webSummaryLinks: one entry per row of qcSamplesData (webSummaryRowLinks). When any row has a
+ * published summary, the table shows a Web Summary column after Sample with each row's links.
+ * The column is the table's own: qcSamplesData, tableHeaders and columnsToHide (and so the Excel
+ * download and Set Columns) don't include it.
  */
-export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe, webSummaryLinks = []}) => {
+export const QcTable = ({qcSamplesData: sampleRows, columnsToHide: hiddenDataColumns, tableHeaders: dataHeaders, recipe, webSummaryLinks = []}) => {
     const [showModal, setShowModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
     const [customCells, setCustomCells] = useState([]);
     const [selectionSubject] = useState(new BehaviorSubject([])); // Observable that can emit updates of user-selection
     const [tableRef] = useState(React.createRef());
-    // The renderer reads the links from a ref, so links that arrive after the table is drawn
-    // need only a re-render (below), not new settings, which would lose the user's sorting.
     const webSummaryLinksRef = useRef(webSummaryLinks);
     webSummaryLinksRef.current = webSummaryLinks;
-    const sampleColumn = tableHeaders.indexOf('Sample');
+
+    // The Web Summary column goes after Sample, as a copy of the rows with one more cell: the
+    // row's link labels ('FB'), which the column's filter and sort use. Everything below
+    // works on these display headers and rows, by header name, so it needs no other change.
+    const hasWebSummaries = webSummaryLinks.some(links => links && links.published.length > 0);
+    const dataSampleColumn = dataHeaders.indexOf('Sample');
+    const webSummaryColumn = hasWebSummaries && dataSampleColumn >= 0 ? dataSampleColumn + 1 : -1;
+    const tableHeaders = useMemo(() => webSummaryColumn < 0 ? dataHeaders
+      : [...dataHeaders.slice(0, webSummaryColumn), WEB_SUMMARY_HEADER, ...dataHeaders.slice(webSummaryColumn)],
+      [dataHeaders, webSummaryColumn]);
+    const qcSamplesData = useMemo(() => webSummaryColumn < 0 ? sampleRows
+      : sampleRows.map((row, i) => {
+          const links = webSummaryLinks[i];
+          const labels = links ? links.published.map(webSummaryShortLabel).join(', ') : '';
+          return [...row.slice(0, webSummaryColumn), labels, ...row.slice(webSummaryColumn)];
+        }),
+      [sampleRows, webSummaryLinks, webSummaryColumn]);
+    const columnsToHide = webSummaryColumn < 0 ? hiddenDataColumns
+      : hiddenDataColumns.map(i => (i >= webSummaryColumn ? i + 1 : i));
 
     // recordIdColumn needed for status update
     let recordColumn = tableHeaders.indexOf('QC Record Id');
@@ -132,17 +152,10 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe, web
       setCustomCells(cells);
     }, [qcSamplesData]);
 
-    useEffect(() => {
-      const hot = tableRef.current && tableRef.current.hotInstance;
-      if (hot && !hot.isDestroyed) {
-        hot.render();
-      }
-    }, [webSummaryLinks, tableRef]);
-
-    // The Sample cell: the sample's name, then a link to each of the row's web summaries.
+    // The Web Summary cell: a link to each of the row's web summaries.
     // Handsontable passes the visual row; the links are in the data's (physical) order.
-    function sampleRenderer(instance, td, row, col, prop, value, cellProperties) {
-      textRenderer.apply(this, arguments);
+    function webSummaryRenderer(instance, td, row, col, prop, value, cellProperties) {
+      textRenderer.call(this, instance, td, row, col, prop, '', cellProperties);
       const links = webSummaryLinksRef.current[instance.toPhysicalRow(row)];
       if (!links || !links.published.length) {
         return td;
@@ -157,7 +170,7 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe, web
         a.href = webSummaryHref(summary);
         a.target = '_blank';
         a.rel = 'noreferrer';
-        a.title = `Open ${webSummaryLabel(summary)} for ${links.name}`;
+        a.title = `${links.name} · ${webSummaryLabel(summary)}`;
         a.textContent = `${webSummaryShortLabel(summary)} ↗`;
         container.appendChild(a);
       });
@@ -284,8 +297,8 @@ export const QcTable = ({qcSamplesData, columnsToHide, tableHeaders, recipe, web
                     pattern: useIntegerPattern ? '0,0' : '0,0.00',
                   };
                 }
-                if (index === sampleColumn) {
-                  col.renderer = sampleRenderer;
+                if (index === webSummaryColumn) {
+                  col.renderer = webSummaryRenderer;
                 }
                 return col;
             }}

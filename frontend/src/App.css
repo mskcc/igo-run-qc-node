@@ -478,6 +478,18 @@ body {
   stroke-width: 1.8;
   stroke-linecap: round;
 }
+/* Start the lap just after the hop-turn at 0%, so the first frame is the turkey running, not the dust poof.
+   Every animation on the 4.8 s lap gets the same delay to stay in step. */
+.turkey-spinner.running svg,
+.turkey-spinner.running .turkey-shadow,
+.turkey-side-show,
+.turkey-front-show,
+.turkey-side-pose,
+.turkey-front-pose,
+.turkey-poof,
+.turkey-skid circle {
+  animation-delay: -0.15s;
+}
 @keyframes turkey-fan {
   0%, 100% {
     transform: rotate(calc(var(--a) * 0.45));

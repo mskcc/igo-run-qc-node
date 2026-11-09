@@ -141,9 +141,11 @@ const SvgTurkeySpinner = ({ size, inline, style }) => {
     );
 };
 
-// The block spinner is the 3D turkey (three.js loads on first use); the flat one shows while it loads,
-// without WebGL, for inline spinners and for people who prefer reduced motion.
-const Turkey3D = React.lazy(() => import('./turkey3d'));
+// The block spinner is the 3D turkey; the flat one shows without WebGL, for inline spinners and for people who
+// prefer reduced motion. Its code (with three.js) starts loading when the app does, so it's usually ready before the
+// first loader shows; the browser caches it after that. If it can't load, the flat turkey shows instead.
+const turkey3D = import('./turkey3d').catch(() => ({ default: ({ fallback }) => fallback }));
+const Turkey3D = React.lazy(() => turkey3D);
 const prefersReducedMotion = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export const TurkeySpinner = ({ size = 64, inline = false, style }) => {
@@ -151,8 +153,11 @@ export const TurkeySpinner = ({ size = 64, inline = false, style }) => {
     if (inline || prefersReducedMotion()) {
         return flat;
     }
+    // While three.js downloads, hold the 3D turkey's space empty: showing the flat turkey there flashed its
+    // dust poof and then jumped to the 3D one
+    const loading = <div className='turkey-spinner running' style={{ width: size * 3, height: Math.round(size * 1.2), ...style }} role='status' aria-label='Loading' />;
     return (
-        <Suspense fallback={flat}>
+        <Suspense fallback={loading}>
             <Turkey3D size={size} style={style} fallback={flat} />
         </Suspense>
     );
